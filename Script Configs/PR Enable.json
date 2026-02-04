@@ -1,0 +1,17 @@
+{
+    "name": "PR Enable",
+    "filename": "PR Enable.py",
+    "team": "Unassigned",
+    "description": "Draft Script",
+    "status": "draft",
+    "expected_columns": [
+        "croppableAreaId",
+        "CA_Name",
+        "farmerId",
+        "status",
+        "message",
+        "SRPlotID",
+        "Response"
+    ],
+    "requiresLogin": true
+}

@@ -1,0 +1,24 @@
+{
+    "name": "Generate Coordinates.py",
+    "filename": "Generate_Coordinates.py",
+    "team": "QA",
+    "description": "Generates 1-acre square coordinates within the configured boundary.",
+    "expected_columns": [
+        "CAName",
+        "CA_ID"
+    ],
+    "columns": [
+        {
+            "name": "CAName",
+            "type": "Mandatory",
+            "description": "Croppable Area Name"
+        },
+        {
+            "name": "CA_ID",
+            "type": "Mandatory",
+            "description": "Croppable Area ID"
+        }
+    ],
+    "requiresLogin": false,
+    "isReusable": true
+}

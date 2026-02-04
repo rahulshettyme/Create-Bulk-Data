@@ -1,0 +1,50 @@
+{
+    "name": "PR_Batch_Enable.py",
+    "filename": "PR_Batch_Enable.py",
+    "team": "Both",
+    "description": "This scripts uses batch API to enable 25 plots at a time like UI and runs without threading to avoid overloading of system",
+    "expected_columns": [
+        "croppableAreaName",
+        "croppableAreaId",
+        "farmerId",
+        "Status",
+        "APIresponse",
+        "srPlotId"
+    ],
+    "columns": [
+        {
+            "name": "croppableAreaName",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        },
+        {
+            "name": "croppableAreaId",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        },
+        {
+            "name": "farmerId",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        },
+        {
+            "name": "Status",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        },
+        {
+            "name": "APIresponse",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        },
+        {
+            "name": "srPlotId",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        }
+    ],
+    "requiresLogin": true,
+    "isMultithreaded": true,
+    "batchSize": 25,
+    "groupByColumn": ""
+}

@@ -1,0 +1,45 @@
+{
+    "name": "Create Asset.py",
+    "filename": "Create_Asset.py",
+    "team": "QA",
+    "description": "Creates assets/plots for farmers.",
+    "expected_columns": [
+        "Asset Name",
+        "Farmer Code",
+        "Soil Type",
+        "Irrigation Type"
+    ],
+    "columns": [
+        {
+            "name": "Asset Name",
+            "type": "Mandatory",
+            "description": "Asset/Plot Name"
+        },
+        {
+            "name": "Farmer Code",
+            "type": "Mandatory",
+            "description": "Owner Code (or Farmer ID)"
+        },
+        {
+            "name": "Soil Type",
+            "type": "Mandatory",
+            "description": "Exact name of Soil Type"
+        },
+        {
+            "name": "Irrigation Type",
+            "type": "Mandatory",
+            "description": "Exact name of Irrigation Type"
+        },
+        {
+            "name": "Address",
+            "type": "Mandatory",
+            "description": "Address for Geocoding"
+        },
+        {
+            "name": "Declared Area",
+            "type": "Optional",
+            "description": "Area count"
+        }
+    ],
+    "requiresLogin": true
+}

@@ -1,0 +1,10 @@
+Starting Conversion Analysis
+FOUND: def save_df_to_excel()
+FOUND: def phase1_send_deletes()
+FOUND: def phase2_check_status()
+FOUND: def main()
+FOUND: Main Guard
+ASSEMBLING BODY:
+  1. Appending main_def_node
+  2. Appending 26 other nodes
+  3. Appending Main Guard

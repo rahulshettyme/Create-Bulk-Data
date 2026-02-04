@@ -1,0 +1,100 @@
+{
+    "name": "CheckAndRemoveAreaAuditOutsideLocation.py",
+    "filename": "CheckAndRemoveAreaAuditOutsideLocation.py",
+    "team": "CS",
+    "description": "To check and delete area audit of CAs outside mentioned Location",
+    "expected_columns": [
+        "CA_ID",
+        "CA_Name",
+        "Latitude",
+        "Longitude",
+        "is_outside_location",
+        "area_audit_status",
+        "area_audit_api_response"
+    ],
+    "columns": [
+        {
+            "name": "CA_ID",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        },
+        {
+            "name": "CA_Name",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        },
+        {
+            "name": "Latitude",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        },
+        {
+            "name": "Longitude",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        },
+        {
+            "name": "is_outside_location",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        },
+        {
+            "name": "area_audit_status",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        },
+        {
+            "name": "area_audit_api_response",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        }
+    ],
+    "requiresLogin": true,
+    "isMultithreaded": true,
+    "batchSize": "10",
+    "groupByColumn": "",
+    "enableGeofencing": true,
+    "outputConfig": {
+        "uiMapping": [
+            {
+                "colName": "ID",
+                "value": "CA_ID",
+                "logic": "from excel column 'CA_ID'"
+            },
+            {
+                "colName": "Name",
+                "value": "CA_Name",
+                "logic": "from excel column 'CA_Name'"
+            },
+            {
+                "colName": "Status",
+                "value": "Success or Fail ",
+                "logic": "Success if response attribute 'cropAudited' = false\nFail if  response attribute 'cropAudited' = true"
+            },
+            {
+                "colName": "Response",
+                "value": "cropAudited =  true or cropAudited =  false ",
+                "logic": "put the response attribute cropAudited and its value as 'cropAudited =  false' or 'cropAudited =  true'........"
+            }
+        ],
+        "aiInstructions": "",
+        "excelMapping": [
+            {
+                "colName": "is_outside_india",
+                "value": "",
+                "logic": "depending on the result of Embedded India Polygon Check - Ray Casting"
+            },
+            {
+                "colName": "area_audit_status",
+                "value": "",
+                "logic": "Success if response attribute 'cropAudited' = false\nFail if  response attribute 'cropAudited' = true"
+            },
+            {
+                "colName": "area_audit_api_response",
+                "value": "",
+                "logic": "put the response attribute cropAudited and its value"
+            }
+        ],
+        "isDynamicUI": true
+    }
+}

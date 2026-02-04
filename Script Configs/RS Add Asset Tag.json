@@ -1,0 +1,21 @@
+{
+  "name": "RS Add Asset Tag.py",
+  "description": "Draft Script",
+  "columns": [
+    "Asset Name",
+    "Asset ID",
+    "Tag",
+    "Tag ID",
+    "Status",
+    "API_Response"
+  ],
+  "expected_columns": [
+    "Asset Name",
+    "Asset ID",
+    "Tag",
+    "Tag ID",
+    "Status",
+    "API_Response"
+  ],
+  "updatedAt": "2026-01-06T02:02:07.416Z"
+}

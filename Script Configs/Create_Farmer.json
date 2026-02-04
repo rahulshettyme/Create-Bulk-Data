@@ -1,0 +1,39 @@
+{
+    "name": "Create Farmer.py",
+    "filename": "Create_Farmer.py",
+    "team": "QA",
+    "description": "Creates farmers with automatic geocoding.",
+    "expected_columns": [
+        "Farmer Name",
+        "Farmer Code",
+        "Phone Number"
+    ],
+    "columns": [
+        {
+            "name": "Farmer Name",
+            "type": "Mandatory",
+            "description": "Farmer Name"
+        },
+        {
+            "name": "Farmer Code",
+            "type": "Mandatory",
+            "description": "Unique Code"
+        },
+        {
+            "name": "Phone Number",
+            "type": "Mandatory",
+            "description": "Mobile (+CC inside or default +91)"
+        },
+        {
+            "name": "Address",
+            "type": "Optional",
+            "description": "Text address for geocoding"
+        },
+        {
+            "name": "AssignedTo",
+            "type": "Optional",
+            "description": "User ID to assign"
+        }
+    ],
+    "requiresLogin": true
+}

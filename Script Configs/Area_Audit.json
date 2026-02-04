@@ -1,0 +1,28 @@
+{
+    "name": "Area Audit.py",
+    "filename": "Area_Audit.py",
+    "team": "Both",
+    "description": "Performs area audit for plots, generating coordinates if needed.",
+    "expected_columns": [
+        "CAName",
+        "CA_ID"
+    ],
+    "columns": [
+        {
+            "name": "CAName",
+            "type": "Mandatory",
+            "description": "Croppable Area Name"
+        },
+        {
+            "name": "CA_ID",
+            "type": "Mandatory",
+            "description": "Croppable Area ID"
+        },
+        {
+            "name": "Coordinates",
+            "type": "Optional",
+            "description": "Existing Coords (JSON)"
+        }
+    ],
+    "requiresLogin": true
+}

@@ -1,0 +1,2128 @@
+
+[2025-12-30 17:32:26.309281] Runner Started for TEST_1767096145194.py
+
+[2025-12-30 17:36:20.416946] Runner Started for TEST_1767096379465.py
+
+[2025-12-30 18:05:52.898007] Runner Started for TEST_1767098152025.py
+
+[2025-12-30 18:25:59.878517] Runner Started for TEST_1767099359073.py
+
+[2025-12-30 18:32:05.197107] Runner Started for TEST_1767099724405.py
+
+[2025-12-30 18:37:18.987980] Runner Started for TEST_1767100038098.py
+
+[2025-12-30 18:56:44.920328] Runner Started for TEST_1767101204398.py
+
+[2025-12-31 19:24:21.555174] Runner Started for TEST_1767189260572.py
+
+[2025-12-31 19:31:52.254778] Runner Started for TEST_1767189711272.py
+
+[2025-12-31 19:36:22.406669] Runner Started for TEST_1767189981445.py
+
+[2025-12-31 19:42:50.765159] Runner Started for TEST_1767190369853.py
+
+[2025-12-31 19:55:42.989836] Runner Started for TEST_1767191142086.py
+
+[2025-12-31 20:23:42.445019] Runner Started for TEST_1767192821651.py
+
+[2025-12-31 20:59:53.728683] Runner Started for TEST_1767194993336.py
+
+[2026-01-01 15:43:39.690671] Runner Started for TEST_1767262418736.py
+
+[2026-01-01 18:44:38.957716] Runner Started for TEST_1767273278161.py
+
+[2026-01-01 18:53:28.571056] Runner Started for TEST_1767273808108.py
+
+[2026-01-01 19:03:55.585796] Runner Started for TEST_1767274435160.py
+
+[2026-01-01 21:28:43.038635] Runner Started for TEST_1767283122602.py
+
+[2026-01-02 19:46:39.880576] Runner Started for Create_Farmer.py
+
+[2026-01-02 19:56:42.913224] Runner Started for Create_Farmer.py
+
+[2026-01-02 19:58:19.916995] Runner Started for Create_Farmer.py
+
+[2026-01-02 20:03:28.441453] Runner Started for Create_Farmer.py
+
+[2026-01-02 20:05:07.794753] Runner Started for Create_Farmer.py
+
+[2026-01-02 20:11:46.679358] Runner Started for Create_Farmer.py
+
+[2026-01-02 20:25:39.997366] Runner Started for Create_Farmer.py
+
+[2026-01-02 20:36:25.921320] Runner Started for Create_Farmer.py
+
+[2026-01-02 20:44:17.193597] Runner Started for Create_Farmer.py
+
+[2026-01-02 20:54:03.929198] Runner Started for Create_Farmer.py
+
+[2026-01-02 21:17:11.222122] Runner Started for Create_Farmer.py
+
+[2026-01-02 21:17:58.730171] Runner Started for Create_Farmer.py
+
+[2026-01-05 14:35:44.050725] Runner Started for TEST_1767603943680.py
+
+[2026-01-05 15:15:33.700348] Runner Started for Create_Farmer.py
+
+[2026-01-05 20:49:11.102559] Runner Started for TEST_1767626350926.py
+
+[2026-01-06 06:32:47.911247] Runner Started for TEST_1767661367224.py
+
+[2026-01-06 06:38:27.431280] Runner Started for TEST_1767661706964.py
+
+[2026-01-06 06:44:54.229999] Runner Started for TEST_1767662093624.py
+
+[2026-01-06 07:00:07.151579] Runner Started for TEST_1767663006570.py
+
+[2026-01-06 07:33:38.059068] Runner Started for TEST_1767665017415.py
+
+[2026-01-06 18:57:01.553642] Runner Started for TEST_1767706021015.py
+
+[2026-01-06 19:10:52.169496] Runner Started for TEST_1767706851656.py
+
+[2026-01-06 19:43:26.056931] Runner Started for TEST_1767708805376.py
+
+[2026-01-06 20:42:27.331306] Runner Started for TEST_1767712346780.py
+
+[2026-01-08 08:27:42.397175] Runner Started for TEST_1767841061749.py
+
+[2026-01-08 09:40:03.322169] Runner Started for Add_Farmer_Tag.py
+
+[2026-01-09 16:36:57.190149] Runner Started for TEST_1767956816968.py
+
+[2026-01-11 13:54:25.200517] Runner Started for TEST_1768119864679.py
+
+[2026-01-12 16:27:42.877724] Runner Started for TEST_1768215462210.py
+
+[2026-01-12 16:32:25.072606] Runner Started for TEST_1768215744392.py
+
+[2026-01-12 16:32:29.980202] ERROR: No module named 'data_platform'
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 73, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768215744392.py", line 7, in run
+    from data_platform import thread_utils
+ModuleNotFoundError: No module named 'data_platform'
+
+
+[2026-01-12 16:32:29.998252] CRITICAL ERROR: 1
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 73, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768215744392.py", line 7, in run
+    from data_platform import thread_utils
+ModuleNotFoundError: No module named 'data_platform'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 137, in run_script
+    sys.exit(1) # Exit with error code
+    ~~~~~~~~^^^
+SystemExit: 1
+
+
+[2026-01-12 16:33:57.805404] Runner Started for TEST_1768215837207.py
+
+[2026-01-12 16:34:01.948875] ERROR: No module named 'data_platform'
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 73, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768215837207.py", line 7, in run
+    from data_platform import thread_utils
+ModuleNotFoundError: No module named 'data_platform'
+
+
+[2026-01-12 16:34:01.967282] CRITICAL ERROR: 1
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 73, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768215837207.py", line 7, in run
+    from data_platform import thread_utils
+ModuleNotFoundError: No module named 'data_platform'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 137, in run_script
+    sys.exit(1) # Exit with error code
+    ~~~~~~~~^^^
+SystemExit: 1
+
+
+[2026-01-12 16:43:50.143964] Runner Started for TEST_1768216429593.py
+
+[2026-01-12 16:43:54.173941] ERROR: No module named 'data_platform'
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 73, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768216429593.py", line 7, in run
+    from data_platform import thread_utils
+ModuleNotFoundError: No module named 'data_platform'
+
+
+[2026-01-12 16:43:54.192138] CRITICAL ERROR: 1
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 73, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768216429593.py", line 7, in run
+    from data_platform import thread_utils
+ModuleNotFoundError: No module named 'data_platform'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 137, in run_script
+    sys.exit(1) # Exit with error code
+    ~~~~~~~~^^^
+SystemExit: 1
+
+
+[2026-01-12 16:51:51.481096] Runner Started for TEST_1768216910853.py
+
+[2026-01-12 16:51:55.494546] ERROR: No module named 'data_platform'
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 73, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768216910853.py", line 8, in run
+    from data_platform import attribute_utils
+ModuleNotFoundError: No module named 'data_platform'
+
+
+[2026-01-12 16:51:55.516772] CRITICAL ERROR: 1
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 73, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768216910853.py", line 8, in run
+    from data_platform import attribute_utils
+ModuleNotFoundError: No module named 'data_platform'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 137, in run_script
+    sys.exit(1) # Exit with error code
+    ~~~~~~~~^^^
+SystemExit: 1
+
+
+[2026-01-12 21:47:42.066399] Runner Started for TEST_1768234661494.py
+
+[2026-01-12 21:52:34.725002] Runner Started for TEST_1768234954211.py
+
+[2026-01-14 13:12:01.484433] Runner Started for TEST_1768376521223.py
+
+[2026-01-14 13:14:51.600530] Runner Started for TEST_1768376691356.py
+
+[2026-01-14 13:16:58.553894] Runner Started for TEST_1768376818241.py
+
+[2026-01-14 13:22:01.258007] Runner Started for TEST_1768377121016.py
+
+[2026-01-14 13:24:15.048070] Runner Started for TEST_1768377254825.py
+
+[2026-01-14 13:25:04.719568] Runner Started for TEST_1768377304490.py
+
+[2026-01-14 14:36:56.412915] Runner Started for TEST_1768381616167.py
+
+[2026-01-14 14:38:37.339245] Runner Started for TEST_1768381717131.py
+
+[2026-01-14 14:47:44.168863] Runner Started for TEST_1768382263939.py
+
+[2026-01-14 15:11:55.458515] Runner Started for AddVariety.py
+
+[2026-01-14 18:55:51.548177] Runner Started for TEST_1768397151309.py
+
+[2026-01-14 19:20:19.283792] Runner Started for TEST_1768398619053.py
+
+[2026-01-14 19:34:06.091805] Runner Started for TEST_1768399445823.py
+
+[2026-01-14 19:34:07.865682] ERROR: Critical Error: Failed to fetch Crop Master Data (Step 2). Check API connection or Token.
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 73, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768399445823.py", line 483, in run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768399445823.py", line 482, in _user_run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768399445823.py", line 383, in _user_run
+    raise Exception('Critical Error: Failed to fetch Crop Master Data (Step 2). Check API connection or Token.')
+Exception: Critical Error: Failed to fetch Crop Master Data (Step 2). Check API connection or Token.
+
+
+[2026-01-14 19:34:07.873003] CRITICAL ERROR: 1
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 73, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768399445823.py", line 483, in run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768399445823.py", line 482, in _user_run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768399445823.py", line 383, in _user_run
+    raise Exception('Critical Error: Failed to fetch Crop Master Data (Step 2). Check API connection or Token.')
+Exception: Critical Error: Failed to fetch Crop Master Data (Step 2). Check API connection or Token.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 137, in run_script
+    sys.exit(1) # Exit with error code
+    ~~~~~~~~^^^
+SystemExit: 1
+
+
+[2026-01-14 21:42:42.875176] Runner Started for TEST_1768407162251.py
+
+[2026-01-14 21:42:47.740964] ERROR: Critical Error: Failed to fetch Crop Master Data (Step 2). Check API connection or Token.
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 73, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768407162251.py", line 490, in run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768407162251.py", line 489, in _user_run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768407162251.py", line 390, in _user_run
+    raise Exception('Critical Error: Failed to fetch Crop Master Data (Step 2). Check API connection or Token.')
+Exception: Critical Error: Failed to fetch Crop Master Data (Step 2). Check API connection or Token.
+
+
+[2026-01-14 21:42:47.761661] CRITICAL ERROR: 1
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 73, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768407162251.py", line 490, in run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768407162251.py", line 489, in _user_run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768407162251.py", line 390, in _user_run
+    raise Exception('Critical Error: Failed to fetch Crop Master Data (Step 2). Check API connection or Token.')
+Exception: Critical Error: Failed to fetch Crop Master Data (Step 2). Check API connection or Token.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 137, in run_script
+    sys.exit(1) # Exit with error code
+    ~~~~~~~~^^^
+SystemExit: 1
+
+
+[2026-01-14 22:02:24.689235] Runner Started for TEST_1768408344076.py
+
+[2026-01-14 22:02:29.678283] ERROR: Critical Error: Failed to fetch Crop Master Data (Step 2). Check API connection or Token.
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 73, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768408344076.py", line 492, in run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768408344076.py", line 491, in _user_run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768408344076.py", line 392, in _user_run
+    raise Exception('Critical Error: Failed to fetch Crop Master Data (Step 2). Check API connection or Token.')
+Exception: Critical Error: Failed to fetch Crop Master Data (Step 2). Check API connection or Token.
+
+
+[2026-01-14 22:02:29.698572] CRITICAL ERROR: 1
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 73, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768408344076.py", line 492, in run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768408344076.py", line 491, in _user_run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768408344076.py", line 392, in _user_run
+    raise Exception('Critical Error: Failed to fetch Crop Master Data (Step 2). Check API connection or Token.')
+Exception: Critical Error: Failed to fetch Crop Master Data (Step 2). Check API connection or Token.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 137, in run_script
+    sys.exit(1) # Exit with error code
+    ~~~~~~~~^^^
+SystemExit: 1
+
+
+[2026-01-14 22:35:27.548154] Runner Started for TEST_1768410326930.py
+
+[2026-01-14 22:58:32.224032] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 06:16:26.415252] Runner Started for TEST_1768437986187.py
+
+[2026-01-15 07:12:04.543656] Runner Started for TEST_1768441324301.py
+
+[2026-01-15 07:52:04.068086] Runner Started for TEST_1768443723825.py
+
+[2026-01-15 08:03:09.683270] Runner Started for TEST_1768444389458.py
+
+[2026-01-15 08:15:41.631015] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 08:15:44.564174] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 11:28:12.722197] Runner Started for TEST_1768456692427.py
+
+[2026-01-15 11:28:14.644947] ERROR: Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 73, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768456692427.py", line 489, in run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768456692427.py", line 488, in _user_run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768456692427.py", line 389, in _user_run
+    raise Exception('Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.')
+Exception: Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.
+
+
+[2026-01-15 11:28:14.653732] CRITICAL ERROR: 1
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 73, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768456692427.py", line 489, in run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768456692427.py", line 488, in _user_run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768456692427.py", line 389, in _user_run
+    raise Exception('Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.')
+Exception: Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 137, in run_script
+    sys.exit(1) # Exit with error code
+    ~~~~~~~~^^^
+SystemExit: 1
+
+
+[2026-01-15 11:35:16.289802] Runner Started for TEST_1768457115611.py
+
+[2026-01-15 11:35:20.093055] ERROR: Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 73, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768457115611.py", line 489, in run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768457115611.py", line 488, in _user_run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768457115611.py", line 389, in _user_run
+    raise Exception('Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.')
+Exception: Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.
+
+
+[2026-01-15 11:35:20.114485] CRITICAL ERROR: 1
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 73, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768457115611.py", line 489, in run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768457115611.py", line 488, in _user_run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768457115611.py", line 389, in _user_run
+    raise Exception('Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.')
+Exception: Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 137, in run_script
+    sys.exit(1) # Exit with error code
+    ~~~~~~~~^^^
+SystemExit: 1
+
+
+[2026-01-15 11:42:10.185573] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 11:42:16.893076] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 16:58:19.532956] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 17:10:58.534267] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 17:11:01.589776] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 17:11:03.858513] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 17:11:06.113774] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 17:11:08.405332] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 17:11:10.727362] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 17:11:12.955222] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 17:11:15.085774] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 17:11:17.257328] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 17:11:19.397783] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 17:11:21.529101] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 17:11:23.644584] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 17:11:25.860516] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 17:11:28.002598] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 17:11:30.151866] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 17:11:32.545295] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 17:11:34.717944] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 17:11:36.857099] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 17:11:39.000040] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 17:11:41.123443] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 17:11:43.233643] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 17:11:45.364819] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 17:11:47.452287] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 17:11:49.562837] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 17:11:51.780230] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 17:11:53.950412] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 17:11:56.178656] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 18:35:47.203775] Runner Started for TEST_1768482346963.py
+
+[2026-01-15 18:38:15.216902] Runner Started for AddCropStagetoVariety.py
+
+[2026-01-15 18:38:18.759657] Runner Started for AddCropStagetoVariety.py
+
+[2026-01-15 18:40:22.129545] Runner Started for AddCropStagetoVariety.py
+
+[2026-01-15 18:40:25.644413] Runner Started for AddCropStagetoVariety.py
+
+[2026-01-15 18:42:09.149994] Runner Started for AddCropStagetoVariety.py
+
+[2026-01-15 18:42:12.697620] Runner Started for AddCropStagetoVariety.py
+
+[2026-01-15 19:11:43.562948] Runner Started for AddCropStagetoVariety.py
+
+[2026-01-15 19:14:36.829999] Runner Started for AddCropStagetoVariety.py
+
+[2026-01-15 19:25:48.830602] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 19:25:50.870560] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 19:25:52.916201] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 19:25:55.008420] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 19:25:57.011812] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 19:25:59.054336] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 19:26:01.038313] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 19:26:03.249747] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 19:26:05.330300] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 19:26:07.376991] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 19:26:09.349996] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 19:26:11.313705] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 19:26:13.342307] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 19:26:15.312052] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 19:26:17.239888] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 19:26:19.221186] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 19:26:21.204604] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 19:26:23.195974] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 19:26:25.135765] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 19:26:27.162271] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 19:26:29.065792] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 19:26:31.023678] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 19:26:32.996091] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 19:26:34.954395] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 19:26:36.915477] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 19:26:38.917719] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-15 20:21:45.966109] Runner Started for verify_fix.py
+
+[2026-01-15 20:29:44.519297] Runner Started for AddCropStagetoVariety.py
+
+[2026-01-15 20:38:49.457490] Runner Started for AddCropStagetoVariety.py
+
+[2026-01-15 23:10:26.174724] Runner Started for TEST_1768498825485.py
+
+[2026-01-15 23:10:30.952949] ERROR: Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 74, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768498825485.py", line 489, in run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768498825485.py", line 488, in _user_run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768498825485.py", line 389, in _user_run
+    raise Exception('Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.')
+Exception: Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.
+
+
+[2026-01-15 23:10:30.973990] CRITICAL ERROR: 1
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 74, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768498825485.py", line 489, in run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768498825485.py", line 488, in _user_run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768498825485.py", line 389, in _user_run
+    raise Exception('Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.')
+Exception: Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 138, in run_script
+    sys.exit(1) # Exit with error code
+    ~~~~~~~~^^^
+SystemExit: 1
+
+
+[2026-01-15 23:27:04.729432] Runner Started for TEST_1768499824027.py
+
+[2026-01-15 23:27:09.424107] ERROR: Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 74, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768499824027.py", line 483, in run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768499824027.py", line 482, in _user_run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768499824027.py", line 389, in _user_run
+    raise Exception('Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.')
+Exception: Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.
+
+
+[2026-01-15 23:27:09.445168] CRITICAL ERROR: 1
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 74, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768499824027.py", line 483, in run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768499824027.py", line 482, in _user_run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768499824027.py", line 389, in _user_run
+    raise Exception('Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.')
+Exception: Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 138, in run_script
+    sys.exit(1) # Exit with error code
+    ~~~~~~~~^^^
+SystemExit: 1
+
+
+[2026-01-15 23:33:40.633142] Runner Started for TEST_1768500220389.py
+
+[2026-01-15 23:33:41.968137] ERROR: Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 74, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768500220389.py", line 519, in run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768500220389.py", line 518, in _user_run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768500220389.py", line 425, in _user_run
+    raise Exception('Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.')
+Exception: Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.
+
+
+[2026-01-15 23:33:41.977031] CRITICAL ERROR: 1
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 74, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768500220389.py", line 519, in run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768500220389.py", line 518, in _user_run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768500220389.py", line 425, in _user_run
+    raise Exception('Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.')
+Exception: Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 138, in run_script
+    sys.exit(1) # Exit with error code
+    ~~~~~~~~^^^
+SystemExit: 1
+
+
+[2026-01-15 23:39:35.390390] Runner Started for TEST_1768500575108.py
+
+[2026-01-15 23:39:36.747085] ERROR: Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 74, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768500575108.py", line 520, in run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768500575108.py", line 519, in _user_run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768500575108.py", line 424, in _user_run
+    raise Exception('Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.')
+Exception: Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.
+
+
+[2026-01-15 23:39:36.754716] CRITICAL ERROR: 1
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 74, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768500575108.py", line 520, in run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768500575108.py", line 519, in _user_run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768500575108.py", line 424, in _user_run
+    raise Exception('Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.')
+Exception: Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 138, in run_script
+    sys.exit(1) # Exit with error code
+    ~~~~~~~~^^^
+SystemExit: 1
+
+
+[2026-01-16 00:08:48.177774] Runner Started for TEST_1768502327898.py
+
+[2026-01-16 00:08:50.001760] ERROR: Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 74, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768502327898.py", line 520, in run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768502327898.py", line 519, in _user_run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768502327898.py", line 424, in _user_run
+    raise Exception('Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.')
+Exception: Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.
+
+
+[2026-01-16 00:08:50.011143] CRITICAL ERROR: 1
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 74, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768502327898.py", line 520, in run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768502327898.py", line 519, in _user_run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768502327898.py", line 424, in _user_run
+    raise Exception('Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.')
+Exception: Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 138, in run_script
+    sys.exit(1) # Exit with error code
+    ~~~~~~~~^^^
+SystemExit: 1
+
+
+[2026-01-16 00:15:05.717355] Runner Started for TEST_1768502705402.py
+
+[2026-01-16 00:15:07.024539] ERROR: Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 74, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768502705402.py", line 520, in run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768502705402.py", line 519, in _user_run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768502705402.py", line 424, in _user_run
+    raise Exception('Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.')
+Exception: Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.
+
+
+[2026-01-16 00:15:07.032312] CRITICAL ERROR: 1
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 74, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768502705402.py", line 520, in run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768502705402.py", line 519, in _user_run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768502705402.py", line 424, in _user_run
+    raise Exception('Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.')
+Exception: Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 138, in run_script
+    sys.exit(1) # Exit with error code
+    ~~~~~~~~^^^
+SystemExit: 1
+
+
+[2026-01-16 00:16:55.724326] Runner Started for TEST_1768502815444.py
+
+[2026-01-16 00:16:56.967299] ERROR: Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 74, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768502815444.py", line 520, in run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768502815444.py", line 519, in _user_run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768502815444.py", line 424, in _user_run
+    raise Exception('Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.')
+Exception: Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.
+
+
+[2026-01-16 00:16:56.975976] CRITICAL ERROR: 1
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 74, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768502815444.py", line 520, in run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768502815444.py", line 519, in _user_run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768502815444.py", line 424, in _user_run
+    raise Exception('Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.')
+Exception: Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 138, in run_script
+    sys.exit(1) # Exit with error code
+    ~~~~~~~~^^^
+SystemExit: 1
+
+
+[2026-01-16 00:21:00.794350] Runner Started for TEST_1768503060541.py
+
+[2026-01-16 00:21:02.083798] ERROR: Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 74, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768503060541.py", line 520, in run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768503060541.py", line 519, in _user_run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768503060541.py", line 424, in _user_run
+    raise Exception('Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.')
+Exception: Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.
+
+
+[2026-01-16 00:21:02.091630] CRITICAL ERROR: 1
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 74, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768503060541.py", line 520, in run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768503060541.py", line 519, in _user_run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768503060541.py", line 424, in _user_run
+    raise Exception('Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.')
+Exception: Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 138, in run_script
+    sys.exit(1) # Exit with error code
+    ~~~~~~~~^^^
+SystemExit: 1
+
+
+[2026-01-16 19:01:12.676009] Runner Started for TEST_1768570272401.py
+
+[2026-01-16 21:04:13.009547] Runner Started for TEST_1768577652319.py
+
+[2026-01-16 21:04:18.271894] ERROR: Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 74, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768577652319.py", line 483, in run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768577652319.py", line 482, in _user_run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768577652319.py", line 384, in _user_run
+    raise Exception('Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.')
+Exception: Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.
+
+
+[2026-01-16 21:04:18.298156] CRITICAL ERROR: 1
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 74, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768577652319.py", line 483, in run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768577652319.py", line 482, in _user_run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768577652319.py", line 384, in _user_run
+    raise Exception('Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.')
+Exception: Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 138, in run_script
+    sys.exit(1) # Exit with error code
+    ~~~~~~~~^^^
+SystemExit: 1
+
+
+[2026-01-16 21:31:49.810911] Runner Started for TEST_1768579309044.py
+
+[2026-01-16 21:31:54.623191] ERROR: Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 74, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768579309044.py", line 485, in run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768579309044.py", line 484, in _user_run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768579309044.py", line 384, in _user_run
+    raise Exception('Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.')
+Exception: Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.
+
+
+[2026-01-16 21:31:54.645222] CRITICAL ERROR: 1
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 74, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768579309044.py", line 485, in run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768579309044.py", line 484, in _user_run
+    return _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1768579309044.py", line 384, in _user_run
+    raise Exception('Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.')
+Exception: Critical Error: Failed to fetch Crop Master Data. Check API connection or Token.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 138, in run_script
+    sys.exit(1) # Exit with error code
+    ~~~~~~~~^^^
+SystemExit: 1
+
+
+[2026-01-16 22:19:11.643926] Runner Started for TEST_1768582151275.py
+
+[2026-01-19 16:54:22.043895] Runner Started for TEST_1768821861679.py
+
+[2026-01-19 17:38:39.081809] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-19 17:38:43.387858] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-19 17:38:47.473497] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-19 17:46:50.212922] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-19 17:46:53.625310] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-19 17:46:55.966460] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-19 17:46:58.230239] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-19 17:47:01.164596] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-19 17:47:03.434613] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-19 17:47:05.756248] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-21 19:04:44.820898] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-21 19:04:48.123587] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-21 19:04:50.331662] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-21 19:04:53.298924] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-21 19:04:55.574809] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-21 19:04:58.267499] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-21 19:05:01.269302] Runner Started for AddVarietyWithCropStage.py
+
+[2026-01-22 11:04:06.142689] Runner Started for TEST_1769060045188.py
+
+[2026-01-22 11:04:13.825064] ERROR: No module named 'GetAuthtoken'
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 74, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1769060045188.py", line 10, in run
+    from GetAuthtoken import get_access_token
+ModuleNotFoundError: No module named 'GetAuthtoken'
+
+
+[2026-01-22 11:04:13.857969] CRITICAL ERROR: 1
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 74, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1769060045188.py", line 10, in run
+    from GetAuthtoken import get_access_token
+ModuleNotFoundError: No module named 'GetAuthtoken'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 153, in run_script
+    sys.exit(1) # Exit with error code
+    ~~~~~~~~^^^
+SystemExit: 1
+
+
+[2026-01-22 11:06:22.040815] Runner Started for TEST_1769060180710.py
+
+[2026-01-22 11:06:29.063622] ERROR: single positional indexer is out-of-bounds
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 74, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1769060180710.py", line 268, in run
+    post_data_to_api(user_api_url, farmer_api_url, token, excel_sheet, sheet_name)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1769060180710.py", line 231, in post_data_to_api
+    farmer_payload = {'status': 'DISABLE', 'data': {'mobileNumber': get_value(row.iloc[3]), 'countryCode': f'+{str(row.iloc[2]).strip()}', 'languagePreference': get_value(row.iloc[5]), 'farmeradditionl3': 'A', 'farmeradditionl4': 'A', 'farmeradditionl2': 'A'}, 'images': {}, 'declaredArea': {'enableConversion': 'true', 'unit': 'HECTARE'}, 'firstName': first_name, 'farmerCode': get_value(row.iloc[1]), 'assignedTo': user_data_list, 'gender': get_value(row.iloc[14]), 'address': {'country': get_value(row.iloc[6]), 'formattedAddress': get_value(row.iloc[7]), 'houseNo': None, 'buildingName': None, 'administrativeAreaLevel1': get_value(row.iloc[8]), 'locality': None, 'administrativeAreaLevel2': get_value(row.iloc[9]), 'sublocalityLevel1': get_value(row.iloc[10]), 'sublocalityLevel2': None, 'landmark': None, 'postalCode': get_value(row.iloc[11]), 'placeId': 'ChIJ6Yuupv8VphkRB5evs7ThIW0', 'latitude': get_value(row.iloc[12]), 'longitude': get_value(row.iloc[13])}}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                     ~~~~~~~~^^^^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\core\indexing.py", line 1191, in __getitem__
+    return self._getitem_axis(maybe_callable, axis=axis)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\core\indexing.py", line 1752, in _getitem_axis
+    self._validate_integer(key, axis)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\core\indexing.py", line 1685, in _validate_integer
+    raise IndexError("single positional indexer is out-of-bounds")
+IndexError: single positional indexer is out-of-bounds
+
+
+[2026-01-22 11:06:29.095860] CRITICAL ERROR: 1
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 74, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1769060180710.py", line 268, in run
+    post_data_to_api(user_api_url, farmer_api_url, token, excel_sheet, sheet_name)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1769060180710.py", line 231, in post_data_to_api
+    farmer_payload = {'status': 'DISABLE', 'data': {'mobileNumber': get_value(row.iloc[3]), 'countryCode': f'+{str(row.iloc[2]).strip()}', 'languagePreference': get_value(row.iloc[5]), 'farmeradditionl3': 'A', 'farmeradditionl4': 'A', 'farmeradditionl2': 'A'}, 'images': {}, 'declaredArea': {'enableConversion': 'true', 'unit': 'HECTARE'}, 'firstName': first_name, 'farmerCode': get_value(row.iloc[1]), 'assignedTo': user_data_list, 'gender': get_value(row.iloc[14]), 'address': {'country': get_value(row.iloc[6]), 'formattedAddress': get_value(row.iloc[7]), 'houseNo': None, 'buildingName': None, 'administrativeAreaLevel1': get_value(row.iloc[8]), 'locality': None, 'administrativeAreaLevel2': get_value(row.iloc[9]), 'sublocalityLevel1': get_value(row.iloc[10]), 'sublocalityLevel2': None, 'landmark': None, 'postalCode': get_value(row.iloc[11]), 'placeId': 'ChIJ6Yuupv8VphkRB5evs7ThIW0', 'latitude': get_value(row.iloc[12]), 'longitude': get_value(row.iloc[13])}}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                     ~~~~~~~~^^^^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\core\indexing.py", line 1191, in __getitem__
+    return self._getitem_axis(maybe_callable, axis=axis)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\core\indexing.py", line 1752, in _getitem_axis
+    self._validate_integer(key, axis)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\core\indexing.py", line 1685, in _validate_integer
+    raise IndexError("single positional indexer is out-of-bounds")
+IndexError: single positional indexer is out-of-bounds
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 153, in run_script
+    sys.exit(1) # Exit with error code
+    ~~~~~~~~^^^
+SystemExit: 1
+
+
+[2026-01-22 11:11:34.249328] Runner Started for TEST_1769060493931.py
+
+[2026-01-22 11:26:43.172418] Runner Started for TEST_1769061402771.py
+
+[2026-01-25 15:04:22.084996] Runner Started for TEST_1769333661852.py
+
+[2026-01-25 15:04:25.571921] ERROR: Cannot save file into a non-existent directory: 'C:\Users\rajasekhar.palleti\Downloads'
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 74, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1769333661852.py", line 259, in run
+    post_data_to_api(get_api_url, put_api_url, token, input_excel, output_excel)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1769333661852.py", line 247, in post_data_to_api
+    exdata.to_excel(output_file, index=False)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\util\_decorators.py", line 333, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\core\generic.py", line 2417, in to_excel
+    formatter.write(
+    ~~~~~~~~~~~~~~~^
+        excel_writer,
+        ^^^^^^^^^^^^^
+    ...<6 lines>...
+        engine_kwargs=engine_kwargs,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\io\formats\excel.py", line 943, in write
+    writer = ExcelWriter(
+        writer,
+    ...<2 lines>...
+        engine_kwargs=engine_kwargs,
+    )
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\io\excel\_openpyxl.py", line 61, in __init__
+    super().__init__(
+    ~~~~~~~~~~~~~~~~^
+        path,
+        ^^^^^
+    ...<3 lines>...
+        engine_kwargs=engine_kwargs,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\io\excel\_base.py", line 1246, in __init__
+    self._handles = get_handle(
+                    ~~~~~~~~~~^
+        path, mode, storage_options=storage_options, is_text=False
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\io\common.py", line 749, in get_handle
+    check_parent_directory(str(handle))
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\io\common.py", line 616, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: 'C:\Users\rajasekhar.palleti\Downloads'
+
+
+[2026-01-25 15:04:25.581918] CRITICAL ERROR: 1
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 74, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1769333661852.py", line 259, in run
+    post_data_to_api(get_api_url, put_api_url, token, input_excel, output_excel)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1769333661852.py", line 247, in post_data_to_api
+    exdata.to_excel(output_file, index=False)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\util\_decorators.py", line 333, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\core\generic.py", line 2417, in to_excel
+    formatter.write(
+    ~~~~~~~~~~~~~~~^
+        excel_writer,
+        ^^^^^^^^^^^^^
+    ...<6 lines>...
+        engine_kwargs=engine_kwargs,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\io\formats\excel.py", line 943, in write
+    writer = ExcelWriter(
+        writer,
+    ...<2 lines>...
+        engine_kwargs=engine_kwargs,
+    )
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\io\excel\_openpyxl.py", line 61, in __init__
+    super().__init__(
+    ~~~~~~~~~~~~~~~~^
+        path,
+        ^^^^^
+    ...<3 lines>...
+        engine_kwargs=engine_kwargs,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\io\excel\_base.py", line 1246, in __init__
+    self._handles = get_handle(
+                    ~~~~~~~~~~^
+        path, mode, storage_options=storage_options, is_text=False
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\io\common.py", line 749, in get_handle
+    check_parent_directory(str(handle))
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\io\common.py", line 616, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: 'C:\Users\rajasekhar.palleti\Downloads'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 153, in run_script
+    sys.exit(1) # Exit with error code
+    ~~~~~~~~^^^
+SystemExit: 1
+
+
+[2026-01-25 15:10:08.296960] Runner Started for TEST_1769334007860.py
+
+[2026-01-25 15:10:10.421327] ERROR: Cannot save file into a non-existent directory: 'C:\Users\rajasekhar.palleti\Downloads'
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 74, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1769334007860.py", line 272, in run
+    post_data_to_api(get_api_url, put_api_url, token, input_excel, output_excel)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1769334007860.py", line 260, in post_data_to_api
+    exdata.to_excel(output_file, index=False)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\util\_decorators.py", line 333, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\core\generic.py", line 2417, in to_excel
+    formatter.write(
+    ~~~~~~~~~~~~~~~^
+        excel_writer,
+        ^^^^^^^^^^^^^
+    ...<6 lines>...
+        engine_kwargs=engine_kwargs,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\io\formats\excel.py", line 943, in write
+    writer = ExcelWriter(
+        writer,
+    ...<2 lines>...
+        engine_kwargs=engine_kwargs,
+    )
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\io\excel\_openpyxl.py", line 61, in __init__
+    super().__init__(
+    ~~~~~~~~~~~~~~~~^
+        path,
+        ^^^^^
+    ...<3 lines>...
+        engine_kwargs=engine_kwargs,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\io\excel\_base.py", line 1246, in __init__
+    self._handles = get_handle(
+                    ~~~~~~~~~~^
+        path, mode, storage_options=storage_options, is_text=False
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\io\common.py", line 749, in get_handle
+    check_parent_directory(str(handle))
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\io\common.py", line 616, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: 'C:\Users\rajasekhar.palleti\Downloads'
+
+
+[2026-01-25 15:10:10.430446] CRITICAL ERROR: 1
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 74, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1769334007860.py", line 272, in run
+    post_data_to_api(get_api_url, put_api_url, token, input_excel, output_excel)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1769334007860.py", line 260, in post_data_to_api
+    exdata.to_excel(output_file, index=False)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\util\_decorators.py", line 333, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\core\generic.py", line 2417, in to_excel
+    formatter.write(
+    ~~~~~~~~~~~~~~~^
+        excel_writer,
+        ^^^^^^^^^^^^^
+    ...<6 lines>...
+        engine_kwargs=engine_kwargs,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\io\formats\excel.py", line 943, in write
+    writer = ExcelWriter(
+        writer,
+    ...<2 lines>...
+        engine_kwargs=engine_kwargs,
+    )
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\io\excel\_openpyxl.py", line 61, in __init__
+    super().__init__(
+    ~~~~~~~~~~~~~~~~^
+        path,
+        ^^^^^
+    ...<3 lines>...
+        engine_kwargs=engine_kwargs,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\io\excel\_base.py", line 1246, in __init__
+    self._handles = get_handle(
+                    ~~~~~~~~~~^
+        path, mode, storage_options=storage_options, is_text=False
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\io\common.py", line 749, in get_handle
+    check_parent_directory(str(handle))
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\io\common.py", line 616, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: 'C:\Users\rajasekhar.palleti\Downloads'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 153, in run_script
+    sys.exit(1) # Exit with error code
+    ~~~~~~~~^^^
+SystemExit: 1
+
+
+[2026-01-26 17:37:45.419919] Runner Started for TEST_1769429264936.py
+
+[2026-01-26 17:37:50.043624] ERROR: Cannot save file into a non-existent directory: 'C:\Users\rajasekhar.palleti\Downloads'
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 74, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1769429264936.py", line 272, in run
+    post_data_to_api(get_api_url, put_api_url, token, input_excel, output_excel)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1769429264936.py", line 260, in post_data_to_api
+    exdata.to_excel(output_file, index=False)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\util\_decorators.py", line 333, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\core\generic.py", line 2417, in to_excel
+    formatter.write(
+    ~~~~~~~~~~~~~~~^
+        excel_writer,
+        ^^^^^^^^^^^^^
+    ...<6 lines>...
+        engine_kwargs=engine_kwargs,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\io\formats\excel.py", line 943, in write
+    writer = ExcelWriter(
+        writer,
+    ...<2 lines>...
+        engine_kwargs=engine_kwargs,
+    )
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\io\excel\_openpyxl.py", line 61, in __init__
+    super().__init__(
+    ~~~~~~~~~~~~~~~~^
+        path,
+        ^^^^^
+    ...<3 lines>...
+        engine_kwargs=engine_kwargs,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\io\excel\_base.py", line 1246, in __init__
+    self._handles = get_handle(
+                    ~~~~~~~~~~^
+        path, mode, storage_options=storage_options, is_text=False
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\io\common.py", line 749, in get_handle
+    check_parent_directory(str(handle))
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\io\common.py", line 616, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: 'C:\Users\rajasekhar.palleti\Downloads'
+
+
+[2026-01-26 17:37:50.057848] CRITICAL ERROR: 1
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 74, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1769429264936.py", line 272, in run
+    post_data_to_api(get_api_url, put_api_url, token, input_excel, output_excel)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1769429264936.py", line 260, in post_data_to_api
+    exdata.to_excel(output_file, index=False)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\util\_decorators.py", line 333, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\core\generic.py", line 2417, in to_excel
+    formatter.write(
+    ~~~~~~~~~~~~~~~^
+        excel_writer,
+        ^^^^^^^^^^^^^
+    ...<6 lines>...
+        engine_kwargs=engine_kwargs,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\io\formats\excel.py", line 943, in write
+    writer = ExcelWriter(
+        writer,
+    ...<2 lines>...
+        engine_kwargs=engine_kwargs,
+    )
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\io\excel\_openpyxl.py", line 61, in __init__
+    super().__init__(
+    ~~~~~~~~~~~~~~~~^
+        path,
+        ^^^^^
+    ...<3 lines>...
+        engine_kwargs=engine_kwargs,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\io\excel\_base.py", line 1246, in __init__
+    self._handles = get_handle(
+                    ~~~~~~~~~~^
+        path, mode, storage_options=storage_options, is_text=False
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\io\common.py", line 749, in get_handle
+    check_parent_directory(str(handle))
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\io\common.py", line 616, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: 'C:\Users\rajasekhar.palleti\Downloads'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 153, in run_script
+    sys.exit(1) # Exit with error code
+    ~~~~~~~~^^^
+SystemExit: 1
+
+
+[2026-01-26 17:48:08.933479] Runner Started for TEST_1769429888600.py
+
+[2026-01-26 17:48:11.901042] ERROR: Cannot save file into a non-existent directory: 'C:\Users\rajasekhar.palleti\Downloads'
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 74, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1769429888600.py", line 272, in run
+    post_data_to_api(get_api_url, put_api_url, token, input_excel, output_excel)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1769429888600.py", line 260, in post_data_to_api
+    exdata.to_excel(output_file, index=False)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\util\_decorators.py", line 333, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\core\generic.py", line 2417, in to_excel
+    formatter.write(
+    ~~~~~~~~~~~~~~~^
+        excel_writer,
+        ^^^^^^^^^^^^^
+    ...<6 lines>...
+        engine_kwargs=engine_kwargs,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\io\formats\excel.py", line 943, in write
+    writer = ExcelWriter(
+        writer,
+    ...<2 lines>...
+        engine_kwargs=engine_kwargs,
+    )
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\io\excel\_openpyxl.py", line 61, in __init__
+    super().__init__(
+    ~~~~~~~~~~~~~~~~^
+        path,
+        ^^^^^
+    ...<3 lines>...
+        engine_kwargs=engine_kwargs,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\io\excel\_base.py", line 1246, in __init__
+    self._handles = get_handle(
+                    ~~~~~~~~~~^
+        path, mode, storage_options=storage_options, is_text=False
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\io\common.py", line 749, in get_handle
+    check_parent_directory(str(handle))
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\io\common.py", line 616, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: 'C:\Users\rajasekhar.palleti\Downloads'
+
+
+[2026-01-26 17:48:11.915739] CRITICAL ERROR: 1
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 74, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1769429888600.py", line 272, in run
+    post_data_to_api(get_api_url, put_api_url, token, input_excel, output_excel)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1769429888600.py", line 260, in post_data_to_api
+    exdata.to_excel(output_file, index=False)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\util\_decorators.py", line 333, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\core\generic.py", line 2417, in to_excel
+    formatter.write(
+    ~~~~~~~~~~~~~~~^
+        excel_writer,
+        ^^^^^^^^^^^^^
+    ...<6 lines>...
+        engine_kwargs=engine_kwargs,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\io\formats\excel.py", line 943, in write
+    writer = ExcelWriter(
+        writer,
+    ...<2 lines>...
+        engine_kwargs=engine_kwargs,
+    )
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\io\excel\_openpyxl.py", line 61, in __init__
+    super().__init__(
+    ~~~~~~~~~~~~~~~~^
+        path,
+        ^^^^^
+    ...<3 lines>...
+        engine_kwargs=engine_kwargs,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\io\excel\_base.py", line 1246, in __init__
+    self._handles = get_handle(
+                    ~~~~~~~~~~^
+        path, mode, storage_options=storage_options, is_text=False
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\io\common.py", line 749, in get_handle
+    check_parent_directory(str(handle))
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\io\common.py", line 616, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: 'C:\Users\rajasekhar.palleti\Downloads'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 153, in run_script
+    sys.exit(1) # Exit with error code
+    ~~~~~~~~^^^
+SystemExit: 1
+
+
+[2026-01-26 17:50:14.643711] Runner Started for TEST_1769430014290.py
+
+[2026-01-26 17:50:22.173563] ERROR: Cannot save file into a non-existent directory: 'C:\Users\rajasekhar.palleti\Downloads'
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 74, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1769430014290.py", line 272, in run
+    post_data_to_api(get_api_url, put_api_url, token, input_excel, output_excel)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1769430014290.py", line 260, in post_data_to_api
+    exdata.to_excel(output_file, index=False)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\util\_decorators.py", line 333, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\core\generic.py", line 2417, in to_excel
+    formatter.write(
+    ~~~~~~~~~~~~~~~^
+        excel_writer,
+        ^^^^^^^^^^^^^
+    ...<6 lines>...
+        engine_kwargs=engine_kwargs,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\io\formats\excel.py", line 943, in write
+    writer = ExcelWriter(
+        writer,
+    ...<2 lines>...
+        engine_kwargs=engine_kwargs,
+    )
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\io\excel\_openpyxl.py", line 61, in __init__
+    super().__init__(
+    ~~~~~~~~~~~~~~~~^
+        path,
+        ^^^^^
+    ...<3 lines>...
+        engine_kwargs=engine_kwargs,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\io\excel\_base.py", line 1246, in __init__
+    self._handles = get_handle(
+                    ~~~~~~~~~~^
+        path, mode, storage_options=storage_options, is_text=False
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\io\common.py", line 749, in get_handle
+    check_parent_directory(str(handle))
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\io\common.py", line 616, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: 'C:\Users\rajasekhar.palleti\Downloads'
+
+
+[2026-01-26 17:50:22.194792] CRITICAL ERROR: 1
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 74, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1769430014290.py", line 272, in run
+    post_data_to_api(get_api_url, put_api_url, token, input_excel, output_excel)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1769430014290.py", line 260, in post_data_to_api
+    exdata.to_excel(output_file, index=False)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\util\_decorators.py", line 333, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\core\generic.py", line 2417, in to_excel
+    formatter.write(
+    ~~~~~~~~~~~~~~~^
+        excel_writer,
+        ^^^^^^^^^^^^^
+    ...<6 lines>...
+        engine_kwargs=engine_kwargs,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\io\formats\excel.py", line 943, in write
+    writer = ExcelWriter(
+        writer,
+    ...<2 lines>...
+        engine_kwargs=engine_kwargs,
+    )
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\io\excel\_openpyxl.py", line 61, in __init__
+    super().__init__(
+    ~~~~~~~~~~~~~~~~^
+        path,
+        ^^^^^
+    ...<3 lines>...
+        engine_kwargs=engine_kwargs,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\io\excel\_base.py", line 1246, in __init__
+    self._handles = get_handle(
+                    ~~~~~~~~~~^
+        path, mode, storage_options=storage_options, is_text=False
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\io\common.py", line 749, in get_handle
+    check_parent_directory(str(handle))
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\io\common.py", line 616, in check_parent_directory
+    raise OSError(rf"Cannot save file into a non-existent directory: '{parent}'")
+OSError: Cannot save file into a non-existent directory: 'C:\Users\rajasekhar.palleti\Downloads'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 153, in run_script
+    sys.exit(1) # Exit with error code
+    ~~~~~~~~^^^
+SystemExit: 1
+
+
+[2026-01-26 19:13:00.260518] Runner Started for TEST_1769434979634.py
+
+[2026-01-26 19:17:32.161692] Runner Started for TEST_1769435251712.py
+
+[2026-01-26 19:21:20.072219] Runner Started for TEST_1769435479668.py
+
+[2026-01-26 19:23:50.746732] Runner Started for AddCropStagetoVariety.py
+
+[2026-01-26 19:23:54.062278] Runner Started for AddCropStagetoVariety.py
+
+[2026-01-26 19:23:57.332889] Runner Started for AddCropStagetoVariety.py
+
+[2026-01-26 19:24:00.585660] Runner Started for AddCropStagetoVariety.py
+
+[2026-01-26 19:24:04.037889] Runner Started for AddCropStagetoVariety.py
+
+[2026-01-26 19:24:07.353009] Runner Started for AddCropStagetoVariety.py
+
+[2026-01-26 19:24:10.799640] Runner Started for AddCropStagetoVariety.py
+
+[2026-01-26 19:25:17.797415] Runner Started for AddCropStagetoVariety.py
+
+[2026-01-26 19:25:20.952026] Runner Started for AddCropStagetoVariety.py
+
+[2026-01-26 19:25:23.975432] Runner Started for AddCropStagetoVariety.py
+
+[2026-01-26 19:25:27.380125] Runner Started for AddCropStagetoVariety.py
+
+[2026-01-26 19:25:30.781820] Runner Started for AddCropStagetoVariety.py
+
+[2026-01-26 19:25:33.715372] Runner Started for AddCropStagetoVariety.py
+
+[2026-01-26 19:25:37.149329] Runner Started for AddCropStagetoVariety.py
+
+[2026-01-26 19:36:26.082167] Runner Started for AddCropStagetoVariety.py
+
+[2026-01-26 19:36:29.325242] Runner Started for AddCropStagetoVariety.py
+
+[2026-01-26 19:36:32.571398] Runner Started for AddCropStagetoVariety.py
+
+[2026-01-26 19:36:35.541981] Runner Started for AddCropStagetoVariety.py
+
+[2026-01-26 19:36:38.855929] Runner Started for AddCropStagetoVariety.py
+
+[2026-01-26 19:36:41.902042] Runner Started for AddCropStagetoVariety.py
+
+[2026-01-26 19:36:45.147703] Runner Started for AddCropStagetoVariety.py
+
+[2026-01-27 11:44:02.793574] Runner Started for Area_Audit.py
+
+[2026-01-27 12:01:26.504290] Runner Started for TEST_1769495485885.py
+
+[2026-01-27 12:01:29.550645] ERROR: cannot access local variable 'sh' where it is not associated with a value
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 74, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1769495485885.py", line 199, in run
+    rows = sh.max_row
+           ^^
+UnboundLocalError: cannot access local variable 'sh' where it is not associated with a value
+
+
+[2026-01-27 12:01:29.563884] CRITICAL ERROR: 1
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 74, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1769495485885.py", line 199, in run
+    rows = sh.max_row
+           ^^
+UnboundLocalError: cannot access local variable 'sh' where it is not associated with a value
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 153, in run_script
+    sys.exit(1) # Exit with error code
+    ~~~~~~~~^^^
+SystemExit: 1
+
+
+[2026-01-27 12:01:38.492113] Runner Started for TEST_1769495498137.py
+
+[2026-01-27 12:01:40.505469] ERROR: cannot access local variable 'sh' where it is not associated with a value
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 74, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1769495498137.py", line 199, in run
+    rows = sh.max_row
+           ^^
+UnboundLocalError: cannot access local variable 'sh' where it is not associated with a value
+
+
+[2026-01-27 12:01:40.520212] CRITICAL ERROR: 1
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 74, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1769495498137.py", line 199, in run
+    rows = sh.max_row
+           ^^
+UnboundLocalError: cannot access local variable 'sh' where it is not associated with a value
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 153, in run_script
+    sys.exit(1) # Exit with error code
+    ~~~~~~~~^^^
+SystemExit: 1
+
+
+[2026-01-27 15:29:05.652365] Runner Started for Area_Audit.py
+
+[2026-01-27 16:12:49.732175] Runner Started for Area_Audit.py
+
+[2026-01-27 16:49:53.416465] Runner Started for Area_Audit.py
+
+[2026-01-31 14:16:00.041911] Runner Started for TEST_1769849159512.py
+
+[2026-01-31 14:26:47.577862] Runner Started for TEST_1769849807293.py
+
+[2026-01-31 14:27:47.735616] Runner Started for TEST_1769849867451.py
+
+[2026-01-31 14:28:02.271886] Runner Started for TEST_1769849882006.py
+
+[2026-01-31 14:29:46.947699] Runner Started for TEST_1769849986578.py
+
+[2026-01-31 14:32:42.306589] Runner Started for TEST_1769850161945.py
+
+[2026-01-31 14:37:31.847330] Runner Started for TEST_1769850451549.py
+
+[2026-01-31 14:58:55.825913] Runner Started for TEST_1769851735242.py
+
+[2026-01-31 15:05:59.203146] Runner Started for TEST_1769852158861.py
+
+[2026-01-31 15:13:27.471417] Runner Started for TEST_1769852607095.py
+
+[2026-01-31 15:19:03.866818] Runner Started for TEST_1769852943535.py
+
+[2026-01-31 15:25:50.904977] Runner Started for PR_Disable.py
+
+[2026-01-31 15:26:15.421575] Runner Started for PR_Disable.py
+
+[2026-01-31 15:26:38.103667] Runner Started for PR_Disable.py
+
+[2026-01-31 15:27:01.444022] Runner Started for PR_Disable.py
+
+[2026-01-31 15:28:59.559105] Runner Started for TEST_1769853539213.py
+
+[2026-01-31 16:13:50.304827] Runner Started for PR_Disable.py
+
+[2026-01-31 16:14:51.279641] Runner Started for PR_Disable.py
+
+[2026-01-31 16:15:19.496630] Runner Started for PR_Disable.py
+
+[2026-01-31 16:54:34.914279] Runner Started for TEST_1769858673910.py
+
+[2026-01-31 16:55:46.982587] Runner Started for TEST_1769858745844.py
+
+[2026-01-31 17:04:35.888532] Runner Started for PR_Disable.py
+
+[2026-01-31 17:05:15.158761] Runner Started for PR_Disable.py
+
+[2026-01-31 17:06:01.318604] Runner Started for PR_Disable.py
+
+[2026-01-31 17:06:32.249072] Runner Started for PR_Disable.py
+
+[2026-01-31 17:22:47.804575] Runner Started for PR_Disable.py
+
+[2026-01-31 17:36:04.873434] Runner Started for PR_Disable.py
+
+[2026-01-31 17:45:21.097286] Runner Started for PR_Disable.py
+
+[2026-01-31 18:04:17.411930] Runner Started for PR_Batch_Enable.py
+
+[2026-01-31 18:04:27.707369] Runner Started for PR_Batch_Enable.py
+
+[2026-01-31 18:31:44.742561] Runner Started for PR_Batch_Enable.py
+
+[2026-01-31 18:31:56.553920] Runner Started for PR_Batch_Enable.py
+
+[2026-01-31 18:43:20.341985] Runner Started for PR_Batch_Enable.py
+
+[2026-01-31 18:43:31.717231] Runner Started for PR_Batch_Enable.py
+
+[2026-01-31 18:53:47.078282] Runner Started for PR_Batch_Enable.py
+
+[2026-01-31 18:53:59.334117] Runner Started for PR_Batch_Enable.py
+
+[2026-01-31 18:56:22.984372] Runner Started for PR_Batch_Enable.py
+
+[2026-01-31 18:56:34.461094] Runner Started for PR_Batch_Enable.py
+
+[2026-01-31 18:59:00.371815] Runner Started for PR_Disable.py
+
+[2026-01-31 22:45:27.005345] Runner Started for PR_Disable.py
+
+[2026-01-31 23:43:36.174528] Runner Started for Generate_Coordinates.py
+
+[2026-01-31 23:46:46.497936] Runner Started for Area_Audit.py
+
+[2026-02-01 10:54:43.161285] Runner Started for TEST_1769923482748.py
+
+[2026-02-01 10:54:45.931926] ERROR: No module named 'geopandas'
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 74, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1769923482748.py", line 11, in run
+    import geopandas as gpd
+ModuleNotFoundError: No module named 'geopandas'
+
+
+[2026-02-01 10:54:45.952525] CRITICAL ERROR: 1
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 74, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1769923482748.py", line 11, in run
+    import geopandas as gpd
+ModuleNotFoundError: No module named 'geopandas'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 153, in run_script
+    sys.exit(1) # Exit with error code
+    ~~~~~~~~^^^
+SystemExit: 1
+
+
+[2026-02-01 11:21:13.274316] Runner Started for TEST_1769925072678.py
+
+[2026-02-01 11:21:17.243675] ERROR: No module named 'tqdm'
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 74, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1769925072678.py", line 13, in run
+    from tqdm import tqdm
+ModuleNotFoundError: No module named 'tqdm'
+
+
+[2026-02-01 11:21:17.259724] CRITICAL ERROR: 1
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 74, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1769925072678.py", line 13, in run
+    from tqdm import tqdm
+ModuleNotFoundError: No module named 'tqdm'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 153, in run_script
+    sys.exit(1) # Exit with error code
+    ~~~~~~~~^^^
+SystemExit: 1
+
+
+[2026-02-01 11:23:32.053005] Runner Started for TEST_1769925211659.py
+
+[2026-02-01 11:23:34.514618] ERROR: [WinError 5] Access is denied: 'C:\\Users\\rajasekhar.palleti'
+Traceback (most recent call last):
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\pathlib\_local.py", line 722, in mkdir
+    os.mkdir(self, mode)
+    ~~~~~~~~^^^^^^^^^^^^
+FileNotFoundError: [WinError 3] The system cannot find the path specified: 'C:\\Users\\rajasekhar.palleti\\Downloads\\ne_data'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\pathlib\_local.py", line 722, in mkdir
+    os.mkdir(self, mode)
+    ~~~~~~~~^^^^^^^^^^^^
+FileNotFoundError: [WinError 3] The system cannot find the path specified: 'C:\\Users\\rajasekhar.palleti\\Downloads'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 74, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1769925211659.py", line 333, in run
+    DOWNLOADS_DIR.mkdir(parents=True, exist_ok=True)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\pathlib\_local.py", line 726, in mkdir
+    self.parent.mkdir(parents=True, exist_ok=True)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\pathlib\_local.py", line 726, in mkdir
+    self.parent.mkdir(parents=True, exist_ok=True)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\pathlib\_local.py", line 722, in mkdir
+    os.mkdir(self, mode)
+    ~~~~~~~~^^^^^^^^^^^^
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\rajasekhar.palleti'
+
+
+[2026-02-01 11:23:34.531977] CRITICAL ERROR: 1
+Traceback (most recent call last):
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\pathlib\_local.py", line 722, in mkdir
+    os.mkdir(self, mode)
+    ~~~~~~~~^^^^^^^^^^^^
+FileNotFoundError: [WinError 3] The system cannot find the path specified: 'C:\\Users\\rajasekhar.palleti\\Downloads\\ne_data'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\pathlib\_local.py", line 722, in mkdir
+    os.mkdir(self, mode)
+    ~~~~~~~~^^^^^^^^^^^^
+FileNotFoundError: [WinError 3] The system cannot find the path specified: 'C:\\Users\\rajasekhar.palleti\\Downloads'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 74, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1769925211659.py", line 333, in run
+    DOWNLOADS_DIR.mkdir(parents=True, exist_ok=True)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\pathlib\_local.py", line 726, in mkdir
+    self.parent.mkdir(parents=True, exist_ok=True)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\pathlib\_local.py", line 726, in mkdir
+    self.parent.mkdir(parents=True, exist_ok=True)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cropin\AppData\Local\Programs\Python\Python313\Lib\pathlib\_local.py", line 722, in mkdir
+    os.mkdir(self, mode)
+    ~~~~~~~~^^^^^^^^^^^^
+PermissionError: [WinError 5] Access is denied: 'C:\\Users\\rajasekhar.palleti'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 153, in run_script
+    sys.exit(1) # Exit with error code
+    ~~~~~~~~^^^
+SystemExit: 1
+
+
+[2026-02-01 11:38:12.970649] Runner Started for TEST_1769926092394.py
+
+[2026-02-01 11:38:15.093240] ERROR: 'Missing required column: latitude'
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 74, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1769926092394.py", line 345, in run
+    process_india_check_and_area_audit_removal(INPUT_EXCEL, CA_ID_COLUMN, LATITUDE_COLUMN, LONGITUDE_COLUMN, AREA_AUDIT_DELETE_URL, token, SLEEP_BETWEEN_CALLS)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1769926092394.py", line 265, in process_india_check_and_area_audit_removal
+    raise KeyError(f'Missing required column: {col}')
+KeyError: 'Missing required column: latitude'
+
+
+[2026-02-01 11:38:15.110722] CRITICAL ERROR: 1
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 74, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1769926092394.py", line 345, in run
+    process_india_check_and_area_audit_removal(INPUT_EXCEL, CA_ID_COLUMN, LATITUDE_COLUMN, LONGITUDE_COLUMN, AREA_AUDIT_DELETE_URL, token, SLEEP_BETWEEN_CALLS)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1769926092394.py", line 265, in process_india_check_and_area_audit_removal
+    raise KeyError(f'Missing required column: {col}')
+KeyError: 'Missing required column: latitude'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 153, in run_script
+    sys.exit(1) # Exit with error code
+    ~~~~~~~~^^^
+SystemExit: 1
+
+
+[2026-02-01 11:51:38.370827] Runner Started for TEST_1769926897999.py
+
+[2026-02-01 11:51:46.641320] ERROR: run_in_parallel() got an unexpected keyword argument 'target_function'
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 74, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1769926897999.py", line 348, in run
+    res = _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1769926897999.py", line 346, in _user_run
+    return thread_utils.run_in_parallel(target_function=process_row, items_to_process=items_to_process)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: run_in_parallel() got an unexpected keyword argument 'target_function'
+
+
+[2026-02-01 11:51:46.656137] CRITICAL ERROR: 1
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 74, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1769926897999.py", line 348, in run
+    res = _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1769926897999.py", line 346, in _user_run
+    return thread_utils.run_in_parallel(target_function=process_row, items_to_process=items_to_process)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: run_in_parallel() got an unexpected keyword argument 'target_function'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 153, in run_script
+    sys.exit(1) # Exit with error code
+    ~~~~~~~~^^^
+SystemExit: 1
+
+
+[2026-02-01 12:04:52.283292] Runner Started for TEST_1769927691995.py
+
+[2026-02-01 12:38:34.573325] Runner Started for TEST_1769929714220.py
+
+[2026-02-01 13:59:46.199050] Runner Started for verify_geofence.py
+
+[2026-02-01 14:01:01.207878] Runner Started for verify_geofence.py
+
+[2026-02-01 14:04:25.731708] Runner Started for verify_geofence_final.py
+
+[2026-02-01 19:31:49.512155] Runner Started for TEST_1769954508445.py
+
+[2026-02-01 19:42:11.770788] Runner Started for TEST_1769955130896.py
+
+[2026-02-01 21:56:13.144405] Runner Started for TEST_1769963172622.py
+
+[2026-02-01 22:29:44.835482] Runner Started for TEST_1769965184018.py
+
+[2026-02-01 22:50:21.295906] Runner Started for TEST_1769966420602.py
+
+[2026-02-01 23:02:41.311399] Runner Started for TEST_1769967160630.py
+
+[2026-02-02 10:27:24.440629] Runner Started for TEST_1770008244002.py
+
+[2026-02-02 10:32:10.084398] Runner Started for CheckAndRemoveAreaAuditOutsideLocation.py
+
+[2026-02-02 10:33:24.849199] Runner Started for TEST_1770008604223.py
+
+[2026-02-02 11:55:19.289918] Runner Started for Area_Audit.py
+
+[2026-02-02 12:01:47.895110] Runner Started for Area_Audit.py
+
+[2026-02-02 12:40:08.185159] Runner Started for Area_Audit.py
+
+[2026-02-02 12:47:32.688749] Runner Started for Area_Audit.py
+
+[2026-02-02 12:50:09.043569] Runner Started for Area_Audit.py
+
+[2026-02-02 13:18:08.515930] Runner Started for Area_Audit.py
+
+[2026-02-02 13:25:14.835088] Runner Started for Area_Audit.py
+
+[2026-02-02 17:44:07.162257] Runner Started for TEST_1770034446585.py
+
+[2026-02-02 22:34:09.921131] Runner Started for TEST_1770051849057.py
+
+[2026-02-02 22:43:45.493493] Runner Started for TEST_1770052424709.py
+
+[2026-02-02 22:47:05.126366] Runner Started for TEST_1770052624250.py
+
+[2026-02-02 23:16:53.865656] Runner Started for TEST_1770054412820.py
+
+[2026-02-02 23:19:19.840957] Runner Started for TEST_1770054559033.py
+
+[2026-02-02 23:39:03.452599] Runner Started for TEST_1770055742704.py
+
+[2026-02-03 00:01:59.775549] Runner Started for CheckAndRemoveAreaAuditOutsideLocation.py
+
+[2026-02-03 00:09:30.512471] Runner Started for CheckAndRemoveAreaAuditOutsideLocation.py
+
+[2026-02-03 00:11:54.846230] Runner Started for CheckAndRemoveAreaAuditOutsideLocation.py
+
+[2026-02-03 00:14:16.029325] Runner Started for CheckAndRemoveAreaAuditOutsideLocation.py
+
+[2026-02-03 18:29:39.745042] Runner Started for TEST_1770123579302.py
+
+[2026-02-03 18:33:26.666535] Runner Started for TEST_1770123805889.py
+
+[2026-02-03 18:42:24.465479] Runner Started for TEST_1770124343966.py
+
+[2026-02-03 19:14:18.734828] Runner Started for Add_Farmer_Tag.py
+
+[2026-02-03 19:47:17.557302] Runner Started for Add_Farmer_Tag.py
+
+[2026-02-03 19:52:49.256972] Runner Started for Add_Farmer_Tag.py
+
+[2026-02-03 19:54:10.240714] Runner Started for Add_Farmer_Tag.py
+
+[2026-02-03 20:01:27.242636] Runner Started for Add_Farmer_Tag.py
+
+[2026-02-03 20:02:22.455485] Runner Started for Add_Farmer_Tag.py
+
+[2026-02-03 20:05:04.512022] Runner Started for Add_Farmer_Tag.py
+
+[2026-02-03 20:11:48.833405] Runner Started for Add_Farmer_Tag.py
+
+[2026-02-03 20:17:41.957982] Runner Started for Add_Farmer_Tag.py
+
+[2026-02-03 20:19:08.429411] Runner Started for Add_Farmer_Tag.py
+
+[2026-02-04 12:14:59.342506] Runner Started for Area_Audit.py

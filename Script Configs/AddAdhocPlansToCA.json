@@ -1,0 +1,92 @@
+{
+    "name": "AddAdhocPlansToCA.py",
+    "filename": "AddAdhocPlansToCA.py",
+    "team": "CS",
+    "description": "QA Automation Script to Fetch Plan Type and Submit Plan Details via API",
+    "expected_columns": [
+        "croppable_area_id",
+        "plan_name",
+        "plantype_id",
+        "plan_type_name",
+        "project_id",
+        "varieties",
+        "schedule_type",
+        "no_of_days",
+        "execute_when",
+        "reference_date",
+        "required_days",
+        "status",
+        "Response"
+    ],
+    "columns": [
+        {
+            "name": "croppable_area_id",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        },
+        {
+            "name": "plan_name",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        },
+        {
+            "name": "plantype_id",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        },
+        {
+            "name": "plan_type_name",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        },
+        {
+            "name": "project_id",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        },
+        {
+            "name": "varieties",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        },
+        {
+            "name": "schedule_type",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        },
+        {
+            "name": "no_of_days",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        },
+        {
+            "name": "execute_when",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        },
+        {
+            "name": "reference_date",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        },
+        {
+            "name": "required_days",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        },
+        {
+            "name": "status",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        },
+        {
+            "name": "Response",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        }
+    ],
+    "requiresLogin": true,
+    "isMultithreaded": true,
+    "batchSize": 10,
+    "groupByColumn": ""
+}

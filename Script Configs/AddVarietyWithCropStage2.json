@@ -1,0 +1,83 @@
+{
+    "name": "AddVarietyWithCropStage2",
+    "filename": "AddVarietyWithCropStage2.py",
+    "team": "QA",
+    "description": "User Script",
+    "expected_columns": [
+        "name",
+        "nickName",
+        "expectedHarvestDays",
+        "cropName",
+        "cropId",
+        "expectedYield",
+        "expectedYieldUnits",
+        "refrenceAreaUnits",
+        "cropStagename",
+        "cropStagedaysAfterSowing",
+        "cropstagedata",
+        "varietyID"
+    ],
+    "columns": [
+        {
+            "name": "name",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        },
+        {
+            "name": "nickName",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        },
+        {
+            "name": "expectedHarvestDays",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        },
+        {
+            "name": "cropName",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        },
+        {
+            "name": "cropId",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        },
+        {
+            "name": "expectedYield",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        },
+        {
+            "name": "expectedYieldUnits",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        },
+        {
+            "name": "refrenceAreaUnits",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        },
+        {
+            "name": "cropStagename",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        },
+        {
+            "name": "cropStagedaysAfterSowing",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        },
+        {
+            "name": "cropstagedata",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        },
+        {
+            "name": "varietyID",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        }
+    ],
+    "requiresLogin": true
+}

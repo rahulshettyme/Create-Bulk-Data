@@ -1,0 +1,50 @@
+{
+  "environment_urls": {
+    "QA1": "https://v2.cropin.co.in",
+    "QA2": "https://sf-v2.cropin.co.in",
+    "QA3": "https://sg-v2.cropin.co.in",
+    "QA4": "https://eu-v2.cropin.co.in",
+    "QA5": "https://af-v2.cropin.co.in",
+    "QA6": "https://ca-v2.cropin.co.in",
+    "QA7": "https://au-v2.cropin.co.in",
+    "QA8": "https://us-v2.cropin.co.in",
+    "UAT1": "https://v2uat.cropin.co.in",
+    "UAT2": "https://sf-v2uat.cropin.co.in",
+    "PROD": "https://cloud.cropin.in"
+  },
+  "sso_config": {
+    "qa_prefix": "https://v2sso-gcp.cropin.co.in/auth/realms/",
+    "uat_prefix": "https://v2sso-uat-gcp.cropin.co.in/auth/realms/",
+    "prod_prefix": "https://sso.sg.cropin.in/auth/realms/",
+    "suffix": "/protocol/openid-connect/token"
+  },
+  "environment_api_urls": {
+    "QA1": "https://v2-gcp.cropin.co.in/qa1",
+    "QA2": "https://sf-v2-gcp.cropin.co.in/qa2",
+    "QA3": "https://sg-v2-gcp.cropin.co.in/qa3",
+    "QA4": "https://eu-v2-gcp.cropin.co.in/qa4",
+    "QA5": "https://af-v2-gcp.cropin.co.in/qa5",
+    "QA6": "https://ca-v2-gcp.cropin.co.in/qa6",
+    "QA7": "https://au-v2-gcp.cropin.co.in/qa7",
+    "QA8": "https://us-v2-gcp.cropin.co.in/qa8",
+    "UAT1": "https://v2uat-gcp.cropin.co.in/uat1",
+    "UAT2": "https://sf-v2uat-gcp.cropin.co.in/uat2",
+    "Prod": "https://cloud.cropin.in"
+  },
+  "savedLocations": [
+    {
+      "name": "Karnataka",
+      "minLat": 12.9,
+      "maxLat": 16.44,
+      "minLong": 74.76,
+      "maxLong": 76.51
+    },
+    {
+      "name": "Mexico",
+      "minLat": 20.830753,
+      "maxLat": 24.39475,
+      "minLong": -105.179822,
+      "maxLong": -102.103447
+    }
+  ]
+}

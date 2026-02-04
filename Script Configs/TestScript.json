@@ -1,0 +1,10 @@
+{
+    "name": "Test Python Script",
+    "description": "Verifies the Python Runner integration.",
+    "team": "QA",
+    "expected_columns": [
+        "Farmer Code",
+        "Test Value"
+    ],
+    "filename": "TestScript.py"
+}

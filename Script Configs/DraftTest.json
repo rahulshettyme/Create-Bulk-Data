@@ -1,0 +1,8 @@
+{
+    "name": "DraftTest",
+    "filename": "DraftTest.py",
+    "team": "QA",
+    "description": "test",
+    "status": "draft",
+    "requiresLogin": true
+}

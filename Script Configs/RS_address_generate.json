@@ -1,0 +1,24 @@
+{
+    "name": "RS_address_generate.py",
+    "display_name": "Address Generator",
+    "team": "QA",
+    "requiresLogin": false,
+    "description": "Fetch addresses/lat-lng from Excel, query Google Geocode, return address JSONs.",
+    "columns": [
+        {
+            "name": "Address",
+            "type": "Optional",
+            "description": "Address text to geocode"
+        },
+        {
+            "name": "Latitude",
+            "type": "Optional",
+            "description": "Latitude for reverse geocoding"
+        },
+        {
+            "name": "Longitude",
+            "type": "Optional",
+            "description": "Longitude for reverse geocoding"
+        }
+    ]
+}

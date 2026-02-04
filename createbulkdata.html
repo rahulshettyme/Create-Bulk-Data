@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create bulk data</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="components/login_component.css">
+    <style>
+        body {
+            background-color: #ffffff !important;
+            color: #264554 !important;
+        }
+
+        .data-generate-container {
+            max-width: 100%;
+            background: #ffffff !important;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .form-section {
+            background: transparent !important;
+            border: none !important;
+            padding: 0 !important;
+        }
+
+        /* Material Design Input Styles */
+        .form-group {
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: #264554;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+            /* Bolder label */
+        }
+
+        .material-input {
+            width: 100%;
+            padding: 8px 0;
+            border: none;
+            border-bottom: 1px solid #e0e0e0;
+            background: transparent;
+            font-size: 1rem;
+            color: #264554;
+            outline: none;
+            transition: border-bottom-color 0.2s;
+            border-radius: 0;
+        }
+
+        /* Dropdown specific */
+        select.material-input {
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23264554%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0 top 50%;
+            background-size: 0.65rem auto;
+            padding-right: 1.5rem;
+        }
+
+        .material-input:focus {
+            border-bottom-color: #28a745;
+        }
+
+        .material-input option {
+            color: #264554;
+            background: #ffffff;
+        }
+
+        /* Action Rows */
+        .action-rows {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .action-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 2rem;
+        }
+
+        .action-label {
+            color: #264554;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .btn-green-action {
+            background-color: #28a745 !important;
+            /* Lime Green from screenshot */
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 0.6rem 1.2rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+            cursor: pointer;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            width: 250px;
+            /* Uniform width */
+            text-align: center;
+        }
+
+        .btn-green-action:disabled {
+            background-color: #a5d6a7 !important;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .btn-blue-action {
+            /* Previous import color or distinctive blue */
+            background-color: #28a745 !important;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 0.6rem 1.2rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+            cursor: pointer;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            width: 250px;
+            /* Uniform width */
+            text-align: center;
+        }
+
+        .btn-blue-action:disabled {
+            background-color: #a5d6a7 !important;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* Header Layout */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+            background-color: white;
+        }
+
+        header h1 {
+            color: #264554;
+            /* Screenshot header color seems dark slate */
+            font-size: 1.5rem;
+            font-weight: 400;
+            margin: 0;
+            padding-left: 0.5rem;
+            border-left: 4px solid #f1f3f4;
+            /* Subtle accent? Or just cleaner text */
+            border-left: none;
+        }
+
+        /* Save Location Row */
+        .save-location-row {
+            display: flex;
+            align-items: flex-end;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .save-location-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
+            /* Remove bottom margin to align with button */
+        }
+
+        .btn-save-small {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 0.6rem 1.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            height: 40px;
+            /* Match input height roughly */
+            margin-bottom: 2px;
+            /* Slight alignment tweak */
+        }
+
+        .btn-delete-small {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0 0.5rem;
+            opacity: 0.7;
+        }
+
+        .btn-delete-small:hover {
+            opacity: 1;
+            color: #d93025;
+        }
+
+        /* Button overrides */
+        .btn-save-header {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            /* darker green text */
+            border: none;
+            border-radius: 4px;
+            padding: 0.5rem 1.5rem;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        /* Custom Searchable Dropdown Styles */
+        .custom-dropdown {
+            position: relative;
+            width: 100%;
+        }
+
+        .dropdown-display {
+            width: 100%;
+            padding: 8px 0;
+            border-bottom: 1px solid #e0e0e0;
+            background: transparent;
+            font-size: 1rem;
+            color: #264554;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .dropdown-display::after {
+            content: '▼';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.8rem;
+            color: #264554;
+        }
+
+        .dropdown-display.disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .custom-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: none;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 4px;
+        }
+
+        .custom-menu.show {
+            display: block;
+        }
+
+        .search-box-container {
+            padding: 8px 12px;
+            border-bottom: 2px solid #76be28;
+            position: sticky;
+            top: 0;
+            background: white;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 10;
+        }
+
+        .custom-search {
+            flex: 1;
+            border: none !important;
+            outline: none;
+            font-size: 0.9rem;
+            color: #264554 !important;
+            background: transparent !important;
+            padding: 4px 0;
+            box-shadow: none !important;
+        }
+
+        .custom-search::placeholder {
+            color: #8898aa !important;
+        }
+
+        .search-icon {
+            color: #264554;
+            font-size: 1rem;
+            opacity: 0.7;
+        }
+
+        .clear-icon {
+            color: #264554;
+            font-size: 1rem;
+            cursor: pointer;
+            opacity: 0.5;
+            display: none;
+            /* Hidden by default */
+        }
+
+        .clear-icon:hover {
+            opacity: 1;
+        }
+
+        .clear-icon.visible {
+            display: block;
+        }
+
+        .custom-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .custom-item {
+            padding: 10px 12px;
+            cursor: pointer;
+            color: #264554;
+            transition: background 0.2s;
+        }
+
+        .custom-item:hover,
+        .custom-item.selected {
+            background-color: rgba(0, 0, 0, 0.12);
+        }
+
+        .custom-item.selected {
+            color: #76be28;
+            font-weight: 500;
+        }
+
+        .boundary-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        .boundary-input,
+        .material-input {
+            width: 100%;
+            padding: 8px 0;
+            border: none;
+            border-bottom: 1px solid #e0e0e0;
+            background: transparent !important;
+            font-size: 1rem;
+            color: #264554 !important;
+            outline: none;
+        }
+
+        .boundary-input::placeholder,
+        .material-input::placeholder {
+            color: #8898aa;
+        }
+
+        /* Utility */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Keep existing results styles but clean them up slightly if needed */
+        .results-section,
+        .login-section {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            background: white;
+        }
+
+        /* Progress bar */
+        .progress-bar-container {
+            width: 100%;
+            height: 4px;
+            background: #e0e0e0;
+            border-radius: 2px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: #1a73e8;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
+        /* Results Table */
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .results-table th {
+            background: #f1f3f4;
+            padding: 0.75rem;
+            text-align: left;
+            font-weight: 500;
+            border-bottom: 1px solid #dadce0;
+        }
+
+        .results-table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid #f1f3f4;
+        }
+
+        /* File Upload */
+        .file-upload-area {
+            border: 2px dashed #e0e0e0;
+            padding: 2rem;
+            text-align: center;
+            border-radius: 8px;
+            margin-top: 1.5rem;
+        }
+
+        .upload-label {
+            /* reuse blue button style or specific */
+            display: inline-block;
+            padding: 0.6rem 1.2rem;
+            background: #1976d2;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .results-stats {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status-pass {
+            color: #0f9d58;
+            font-weight: 500;
+        }
+
+        .status-fail {
+            color: #d93025;
+            font-weight: 500;
+        }
+
+        /* Remove unused styles */
+    </style>
+</head>
+
+<body>
+    <div class="container data-generate-container">
+
+
+        <header>
+            <h1>Create bulk data</h1>
+        </header>
+
+        <!-- Data Selection -->
+        <section class="form-section">
+            <div class="boundary-grid" style="margin-top: 0; margin-bottom: 1.5rem;">
+                <div class="form-group">
+                    <label for="data-needed-for">Data needed for *</label>
+                    <select id="data-needed-for" class="material-input">
+                        <option value="" disabled selected>Select Team</option>
+                        <option value="cs_team">CS Team</option>
+                        <option value="qa_team">QA Team</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="data-type-select">Select Script *</label>
+                    <div id="script-dropdown-container" class="custom-dropdown">
+                        <div id="script-display" class="dropdown-display disabled">Select Script</div>
+                        <!-- Hidden input to store value for form compatibility -->
+                        <input type="hidden" id="data-type-select" value="">
+                        <div id="script-dropdown-menu" class="custom-menu">
+                            <div class="search-box-container">
+                                <span class="search-icon">🔍</span>
+                                <input type="text" id="script-search" class="custom-search" placeholder="Search">
+                                <span id="script-search-clear" class="clear-icon">✕</span>
+                            </div>
+                            <ul id="script-list" class="custom-list">
+                                <!-- Options populated by JS -->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Script Description (New) -->
+            <div id="script-description-container" class="hidden"
+                style="margin-bottom: 1.5rem; padding: 1rem; background: #e3f2fd; border-left: 4px solid #2196f3; border-radius: 4px;">
+                <h4 style="margin: 0 0 0.5rem 0; color: #1565c0; font-size: 0.95rem;">📄 Script Description</h4>
+                <p id="script-description-text"
+                    style="margin: 0; color: #0d47a1; font-size: 0.9rem; line-height: 1.5; white-space: pre-wrap;"></p>
+            </div>
+
+            <!-- Boundary Configuration (shown for coordinates type) -->
+            <div id="boundary-config" class="boundary-config hidden">
+                <h4 style="color: var(--text-primary); margin-bottom: 0.5rem;">📍 Boundary Configuration</h4>
+                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">Define the area where
+                    1-acre polygons will be generated</p>
+
+                <!-- Saved Locations Dropdown -->
+                <div class="form-group">
+                    <label for="saved-location-select">Select Saved Location</label>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <select id="saved-location-select" style="flex: 1;" class="material-input">
+                            <option value="" selected>-- Enter values manually --</option>
+                        </select>
+                        <button id="delete-location-btn" class="btn-delete-small hidden">🗑️</button>
+                    </div>
+                </div>
+
+                <div class="boundary-grid">
+                    <div class="form-group">
+                        <label for="min-lat">Min Latitude *</label>
+                        <input type="number" step="any" id="min-lat" class="boundary-input" placeholder="e.g., 12.9">
+                    </div>
+                    <div class="form-group">
+                        <label for="max-lat">Max Latitude *</label>
+                        <input type="number" step="any" id="max-lat" class="boundary-input" placeholder="e.g., 13.1">
+                    </div>
+                    <div class="form-group">
+                        <label for="min-long">Min Longitude *</label>
+                        <input type="number" step="any" id="min-long" class="boundary-input" placeholder="e.g., 77.5">
+                    </div>
+                    <div class="form-group">
+                        <label for="max-long">Max Longitude *</label>
+                        <input type="number" step="any" id="max-long" class="boundary-input" placeholder="e.g., 77.7">
+                    </div>
+                </div>
+
+                <!-- Save Location -->
+                <div class="save-location-row">
+                    <div class="form-group">
+                        <label for="location-name">Save as (optional)</label>
+                        <input type="text" id="location-name" class="boundary-input" placeholder="e.g., Bangalore Area">
+                    </div>
+                    <button id="save-location-btn" class="btn-save-small">💾 Save</button>
+                </div>
+            </div>
+
+            <!-- Template Info (shown when type selected) -->
+            <div id="template-info" class="template-info hidden">
+                <h4>📋 Required Columns for <span id="template-type-name">-</span></h4>
+                <ul id="template-columns">
+                    <!-- Populated dynamically -->
+                </ul>
+            </div>
+
+
+            <!-- Additional Attributes Section -->
+            <div id="additional-attributes-section" class="hidden"
+                style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;">
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <label
+                        style="font-weight: 500; color: #495057; display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="checkbox" id="enable-additional-attributes">
+                        Enable Additional Attributes
+                    </label>
+                </div>
+
+                <div id="additional-attributes-input-container" class="hidden" style="margin-top: 10px;">
+                    <label class="form-label" style="font-size: 0.85em; color: #6c757d;">Enter Attribute Keys (comma
+                        separated):</label>
+                    <input type="text" id="additional-attributes-input" class="form-control"
+                        placeholder="e.g. attr1, attr2, customKey">
+                </div>
+            </div>
+
+            <!-- Target Location Section (Dynamic Geofencing) -->
+            <div id="target-location-section" class="hidden"
+                style="margin-top: 15px; padding: 10px; background: #e3f2fd; border-radius: 4px; border: 1px solid #90caf9;">
+                <label style="font-weight: 500; color: #1565c0; display: block; margin-bottom: 8px;">
+                    📍 Target Location (Dynamic Geofencing)
+                </label>
+                <input type="text" id="target-location-input" class="material-input" placeholder="e.g. Karnataka, India"
+                    style="background: white !important; padding: 8px;">
+                <p style="font-size: 0.8rem; color: #1e88e5; margin-top: 5px;">
+                    Enter a location name to dynamically validate coordinates against its boundary.
+                </p>
+            </div>
+
+            <!-- Advanced Execution Settings Removed (Automated based on Script Template) -->
+
+            <!-- GDPR Section (Specific to Farmer) -->
+            <div id="gdpr-section" class="hidden"
+                style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;">
+                <label
+                    style="font-weight: 500; color: #495057; display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                    <input type="checkbox" id="is-gdpr-tenant">
+                    Is GDPR Tenant?
+                </label>
+            </div>
+
+            <!-- Action Rows -->
+            <div class="action-rows">
+                <div class="action-row">
+                    <span class="action-label">Download the excel template to add details needed to create data in the
+                        system</span>
+                    <button id="export-btn" class="btn-green-action" disabled>
+                        Download Template
+                    </button>
+                </div>
+                <div class="action-row">
+                    <span class="action-label">Import data added excel template to create data in system</span>
+                    <button id="import-btn" class="btn-blue-action" disabled>
+                        Import Template
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Login Section (shown after Import clicked) -->
+        <section id="login-section" class="login-section hidden">
+            <!-- Login Component Container -->
+            <div id="login-component-container"></div>
+
+            <!-- Session Info (shown after login) -->
+            <div id="session-container" class="hidden">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <div>
+                        <span style="color: var(--text-secondary);">Logged in: </span>
+                        <strong id="session-info" style="color: #264554;">-</strong>
+                    </div>
+                    <button id="logout-btn"
+                        style="padding: 0.5rem 1rem; background: transparent; border: 1px solid #d93025; color: #d93025; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">
+                        Logout
+                    </button>
+                </div>
+            </div>
+
+            <!-- File Upload & Execution Area (Always visible but disabled if not logged in) -->
+            <div id="upload-workflow-container" class="disabled-area" style="opacity: 0.5; pointer-events: none;">
+                <!-- File Upload Area -->
+                <div id="file-upload-area" class="file-upload-area">
+                    <input type="file" id="file-upload" accept=".xlsx, .xls" style="display: none;">
+                    <label for="file-upload" class="upload-label">📂 Choose Excel File</label>
+                    <p id="file-name" style="margin-top: 1rem; color: var(--text-secondary);">Supported formats: .xlsx,
+                        .xls</p>
+                </div>
+
+                <!-- Execute Button -->
+                <button id="execute-btn" class="action-btn btn-import" disabled style="margin-top: 1rem; width: 100%;">
+                    🚀 Execute Data Creation
+                </button>
+            </div>
+        </section>
+
+        <!-- Results Section (shown after execution) -->
+        <section id="results-section" class="results-section hidden">
+            <h3 style="color: #264554; margin-bottom: 1rem;">📊 Execution Results</h3>
+
+            <!-- Progress -->
+            <div id="progress-container">
+                <div style="display: flex; align-items: center; margin-bottom: 0.5rem;">
+                    <span style="color: var(--text-secondary);">Progress:</span>
+                    <span id="progress-text" style="color: #264554; font-weight: bold; margin-left: 0.5rem;">0 /
+                        0</span>
+                </div>
+                <div class="progress-bar-container">
+                    <div id="progress-bar" class="progress-bar" style="width: 0%;"></div>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="results-stats">
+                <div class="stat-item success">
+                    <span>✅ Pass:</span>
+                    <strong id="pass-count">0</strong>
+                </div>
+                <div class="stat-item fail">
+                    <span>❌ Fail:</span>
+                    <strong id="fail-count">0</strong>
+                </div>
+                <div class="stat-item time">
+                    <span>⏱️ Time:</span>
+                    <strong id="execution-time">0.0s</strong>
+                </div>
+            </div>
+
+            <!-- Download Results -->
+            <button id="download-results-btn" class="action-btn btn-export hidden" style="margin-top: 1rem;">
+                📥 Download Results Excel
+            </button>
+
+            <!-- Results Table -->
+            <div style="max-height: 400px; overflow-y: auto; margin-top: 1rem;">
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th>Row</th>
+                            <th>Name</th>
+                            <th>Code</th>
+                            <th>Status</th>
+                            <th>Response</th>
+                        </tr>
+                    </thead>
+                    <tbody id="results-tbody">
+                        <!-- Populated dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <script src="System/address_utils.js"></script>
+    <script src="components/login_component.js"></script>
+    <script src="components/executor_v2.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>

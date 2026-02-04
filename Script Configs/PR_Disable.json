@@ -1,0 +1,44 @@
+{
+    "name": "PR_Disable.py",
+    "filename": "PR_Disable.py",
+    "team": "Both",
+    "description": "Scrip to Delete PR data and Stop PR processing of plots",
+    "expected_columns": [
+        "id",
+        "name",
+        "deletion response",
+        "deletion status",
+        "request id"
+    ],
+    "columns": [
+        {
+            "name": "id",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        },
+        {
+            "name": "name",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        },
+        {
+            "name": "deletion response",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        },
+        {
+            "name": "deletion status",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        },
+        {
+            "name": "request id",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        }
+    ],
+    "requiresLogin": true,
+    "isMultithreaded": true,
+    "batchSize": "10",
+    "groupByColumn": ""
+}
