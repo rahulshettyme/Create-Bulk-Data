@@ -93,47 +93,6 @@
     "requiresLogin": true
   },
   {
-    "name": "Create Farmer.py",
-    "filename": "Create_Farmer.py",
-    "team": "QA",
-    "description": "Creates farmers with automatic geocoding.",
-    "expected_columns": [
-      "Farmer Name",
-      "Farmer Code",
-      "Phone Number",
-      "Address"
-    ],
-    "columns": [
-      {
-        "name": "Farmer Name",
-        "type": "Mandatory",
-        "description": "Farmer Name"
-      },
-      {
-        "name": "Farmer Code",
-        "type": "Mandatory",
-        "description": "Unique Code"
-      },
-      {
-        "name": "Phone Number",
-        "type": "Mandatory",
-        "description": "Mobile (+CC inside or default +91)"
-      },
-      {
-        "name": "Address",
-        "type": "Optional",
-        "description": "Text address for geocoding"
-      },
-      {
-        "name": "AssignedTo",
-        "type": "Optional",
-        "description": "User ID to assign"
-      }
-    ],
-    "requiresLogin": true,
-    "allowAdditionalAttributes": true
-  },
-  {
     "name": "Generate Coordinates.py",
     "filename": "Generate_Coordinates.py",
     "team": "QA",
@@ -612,14 +571,6 @@
     "generation_prompt": "Script Name: PR_Batch_Enable\nExcel Columns: croppableAreaName, croppableAreaId, farmerId, Status, Code, API response, srPlotId\n\nStep 1 [API]:\n  - Step/Variable Name: PR_Batch\n  - Call POST /services/farm/api/croppable-areas/plot-risk/batch\n  - Payload Type: JSON\n  - Payload Example: [{\"croppableAreaId\":24111,\"farmerId\":1651},{\"croppableAreaId\":24112,\"farmerId\":1651},{\"croppableAreaId\":24113,\"farmerId\":1651}]\n  - Expected Response: {  \"srPlotDetails\" : {    \"24112\" : {      \"status\" : \"IN_PROGRESS\",      \"message\" : \"Boundary Creation Successful\",      \"plotriskEnabled\" : true,      \"features\" : [ \"PLOTRISK\" ],      \"providers\" : [ \"planet\", \"sentinel2\", \"landsat\" ],      \"srPlotId\" : \"171914493524112\"    },    \"24113\" : {      \"status\" : \"IN_PROGRESS\",      \"message\" : \"Boundary Creation Successful\",      \"plotriskEnabled\" : true,      \"features\" : [ \"PLOTRISK\" ],      \"providers\" : [ \"planet\", \"sentinel2\", \"landsat\" ],      \"srPlotId\" : \"171914493524113\"    },    \"24111\" : {      \"status\" : \"SF_VALIDATION_FAILED\",      \"error\" : \"caauditnull\",      \"message\" : \"CroppableArea not Audited\",      \"srPlotId\" : \"171914493524111\",      \"features\" : [ \"PLOTRISK\" ]    }  }}\n  - Instructions: construct payload using croppableAreaId and farmerId in excel. For each API Call, create a body with maximum of 25 croppableAreaId -farmerId combinations and then co to next API if the status code is 200, write the status for each croppableAreaId in the request as 'Success' in column 'Status' (or 'Failed' if Validation Failed) and the status code in 'Code'. From response, read 'message' attribute for each 'croppableAreaId' like in example response and add it in 'API response' column. If API failed (not status 200), write entire response for each 'croppableAreaId' in 'API response' column and 'Status' column as 'Failed' and status code in 'Code'\n\n"
   },
   {
-    "name": "Test Geofencing UI",
-    "filename": "Test_Geofencing.py",
-    "team": "QA",
-    "description": "Test script for Dynamic Geofencing UI",
-    "enableGeofencing": true,
-    "columns": []
-  },
-  {
     "name": "CheckAndRemoveAreaAuditOutsideLocation.py",
     "filename": "CheckAndRemoveAreaAuditOutsideLocation.py",
     "team": "CS",
@@ -796,5 +747,161 @@
       "isDynamicUI": true
     },
     "generation_prompt": "Script Name: Add_Farmer_Tag\nExcel Columns: Farmer Name, Farmer ID, Tag Name, Tag ID, Status, Response\n\nOUTPUT MAPPING CONFIGURATION:\n- UI Output Definition:\n- UI Column 'Farmer Name': Set to '' (Logic: from excel)\n- UI Column 'Farmer ID': Set to '' (Logic: from excel)\n- UI Column 'Tag Name': Set to '' (Logic: from excel)\n- UI Column 'Status': Set to '' (Logic: Pass if farmer update API status code is 200, else Fail)\n- Excel Output Definition:\n   - Column 'Tag ID': Set to '' (Logic: attribute 'id' from tag API response)\n   - Column 'Status': Set to '' (Logic: 'Fail' if tag not found or if status code of farmer update is not 200\n'Pass' if status of farmer update is 200)\n   - Column 'Response': Set to '' (Logic: 'Tag not found' if tag not found or \nwhole response of farmer update if status code is not 200\n'Tag updated to farmer' if farmer update response code is 200)\nIMPORTANT: Include this configuration as a comment block at the top of the generated Python script for reference.\n\nStep 1 [API]:\n  - Step/Variable Name: Fetch Master Tags\n  - Call GET /services/master/api/filter?type=FARMER\n  - Run Once: Yes (Master Data / Setup Step)\n  - Payload Type: QUERY\n  - Payload Example: {\"type\": \"FARMER\"}\n  - Expected Response: [ {  \"id\" : 3410601,  \"name\" : \"testpavan\",  \"clientId\" : \"ce804f83-95d5-4c07-8628-3f7aa60df5e7\",  \"tagType\" : \"FARMER\",  \"validFrom\" : \"2025-07-01T00:00:00Z\",  \"validTill\" : \"2026-07-09T00:00:00Z\",  \"status\" : \"Active\",  \"description\" : null}, {  \"id\" : 3591201,  \"name\" : \"RS Multi Project Farmer\",  \"clientId\" : \"783f0712-c671-455b-ad8e-81941f53b7d7\",  \"tagType\" : \"FARMER\",  \"validFrom\" : \"2025-07-01T00:00:00Z\",  \"validTill\" : \"2026-07-09T00:00:00Z\",  \"status\" : \"Active\",  \"description\" : null}, {  \"id\" : 5883651,  \"name\" : \"Raja farmer tag 01\",  \"clientId\" : \"e038b6c3-6910-4119-a723-1afc4399a356\",  \"tagType\" : \"FARMER\",  \"validFrom\" : \"2025-07-01T00:00:00Z\",  \"validTill\" : \"2025-07-31T00:00:00Z\",  \"status\" : \"Active\",  \"description\" : null}]\n  - Instructions: Fetches a map of tag names to tag IDs for 'FARMER' type. validate the response attribute 'name' with excel column 'Tag Name'. If the name matches, add the response attribute 'id' value in column 'Tag ID'. If not found, add 'Status' column as 'Fail' and add 'Response' column value as 'Tag not found' Skip the row execution if tag not found\n\nStep 2 [API]:\n  - Step/Variable Name: Fetch Farmer Details\n  - Call GET /services/farm/api/farmers/{Farmer ID}\n  - Payload Type: QUERY\n  - Expected Response: {  \"id\" : 5775643,  \"firstName\" : \"0805- bulk fill\",  \"lastName\" : null,  \"gender\" : null,  \"images\" : {    \"butterfly1770016526324.jpeg\" : \"data.profilePic\"  },  \"status\" : \"DISABLE\",  \"data\" : {    \"rajaNewAddAttr02\" : \"test2\",    \"rajaNewAddAttr03\" : 888,    \"rajaNewAddAttr01\" : \"test\",    \"countryIsoCode\" : \"IN\",    \"countryCode\" : \"+91\",    \"mobileNumber\" : \"87654678\",    \"profilePic\" : [ {      \"size\" : 7648,      \"active\" : true,      \"channel\" : \"web\",      \"feature\" : \"farmer\",      \"imageLat\" : null,      \"imageLong\" : null,      \"imageType\" : \"profile\",      \"identifier\" : \"a642eacd-c01e-47be-8d60-3018b36630ba\",      \"contentType\" : \"image/jpeg\",      \"imageSource\" : null,      \"capturedDateTime\" : null,      \"originalFileName\" : \"butterfly1770016526324.jpeg\"    } ],    \"profileImage\" : [ ],    \"tags\" : [ 5921851 ]  },  \"contractorId\" : null,  \"contractorName\" : null,  \"contractorLocation\" : null,  \"clientId\" : \"4ee03ec9-cbb2-4a85-b9b4-b6051888701d\",  \"declaredArea\" : null,  \"address\" : {    \"id\" : 5776162,    \"formattedAddress\" : \"Madhugiri, Karnataka 572132, India\",    \"postalCode\" : \"572132\",    \"locality\" : \"Madhugiri\",    \"data\" : null,    \"administrativeAreaLevel5\" : null,    \"administrativeAreaLevel4\" : null,    \"administrativeAreaLevel3\" : null,    \"administrativeAreaLevel2\" : \"Bangalore Division\",    \"administrativeAreaLevel1\" : \"Karnataka\",    \"country\" : \"India\",    \"latitude\" : 13.6643166,    \"longitude\" : 77.20889869999999,    \"placeId\" : \"ChIJsfkoVqO0sTsRLbvVqd06cTU\",    \"sublocalityLevel1\" : \"\",    \"sublocalityLevel2\" : \"\",    \"sublocalityLevel3\" : null,    \"sublocalityLevel4\" : null,    \"sublocalityLevel5\" : null,    \"houseNo\" : \"\",    \"buildingName\" : \"\",    \"landmark\" : \"\",    \"clientId\" : \"9029326d-a380-4ad8-ac29-a6b754aede64\"  },  \"farmerCode\" : \"0805- bulk fill\",  \"isDeleted\" : false,  \"email\" : null,  \"deviceToken\" : null,  \"deviceType\" : null,  \"isAcreSquareEnabled\" : null,  \"isGDPRCompliant\" : true,  \"companyId\" : 1251,  \"createdDate\" : \"2025-05-08T09:23:02.964Z\",  \"lastModifiedDate\" : \"2026-02-02T07:15:33.259Z\",  \"loginType\" : null,  \"externalId\" : null,  \"assignedTo\" : [ {    \"id\" : 1551,    \"name\" : \"Sub Admin1\",    \"data\" : {      \"geoIds\" : [ 656497 ],      \"environment\" : \"dev\",      \"countryIsoCode\" : \"IN\",      \"srRegionEnabled\" : true,      \"isExecutiveProfileEnabled\" : false,      \"isSREnabled\" : true    },    \"assignedManagersName\" : [ ],    \"conversionFactor\" : null,    \"managers\" : [ 6501, 2951, 1401, 1801 ],    \"userStatus\" : \"ACTIVE\",    \"location\" : null,    \"contactNumber\" : \"1111111111\",    \"email\" : \"Subadmin12@cropin.com\",    \"preferences\" : {      \"id\" : 1601,      \"currency\" : \"INR\",      \"language\" : \"en\",      \"timeZone\" : \"IST\",      \"areaUnits\" : \"ACRE\",      \"locale\" : \"en-IN\",      \"data\" : {        \"cropPreferences\" : [ ],        \"cropUnit\" : \"Tons\",        \"planTypePreferences\" : [ ],        \"farmerTag\" : [ ],        \"assetTag\" : [ ],        \"caTag\" : [ ],        \"precipitationUnit\" : \"Millimeters\",        \"tempratureUnit\" : \"Celsius\"      },      \"locations\" : null    },    \"address\" : null,    \"assignedTo\" : null,    \"managersName\" : null,    \"companyId\" : 1251,    \"parentCompanyId\" : null,    \"userRoleId\" : 1351,    \"userRoleName\" : \"ROLE_ADMIN\",    \"correspondingKcId\" : null,    \"resources\" : null,    \"countryCode\" : \"+91\",    \"companyStatus\" : null,    \"clientId\" : \"f146aa1e-d40b-46df-8c97-29ca50a18c18\",    \"images\" : { },    \"companyPreferences\" : null,    \"locations\" : {      \"id\" : 1501,      \"name\" : \"Bengaluru\",      \"administrativeAreaLevel5\" : null,      \"administrativeAreaLevel4\" : null,      \"administrativeAreaLevel3\" : null,      \"administrativeAreaLevel2\" : \"Bangalore Urban\",      \"administrativeAreaLevel1\" : \"Karnataka\",      \"country\" : \"India\",      \"latitude\" : null,      \"longitude\" : null,      \"sublocalityLevel1\" : null,      \"sublocalityLevel2\" : null,      \"sublocalityLevel3\" : null,      \"sublocalityLevel4\" : null,      \"sublocalityLevel5\" : null,      \"geoInfo\" : {        \"type\" : \"FeatureCollection\",        \"features\" : [ {          \"type\" : \"Feature\",          \"geometry\" : {            \"type\" : \"Polygon\",            \"coordinates\" : [ [ [ 77.37919807560223, 12.73428884772176 ], [ 77.88268086666527, 12.73428884772176 ], [ 77.88268086666527, 13.17370600858147 ], [ 77.37919807560223, 13.17370600858147 ], [ 77.37919807560223, 12.73428884772176 ] ] ]          },          \"properties\" : { }        } ]      },      \"bounds\" : {        \"southwest\" : {          \"lat\" : 12.73428884772176,          \"lng\" : 77.37919807560223        },        \"northeast\" : {          \"lat\" : 13.17370600858147,          \"lng\" : 77.88268086666527        }      },      \"placeId\" : \"ChIJbU60yXAWrjsR4E9-UejD3_g\"    },    \"enabled\" : true,    \"isAcreSquareUser\" : false,    \"isGDPRCompliant\" : true,    \"lastModifiedDate\" : \"2026-02-03T06:21:08.795Z\",    \"loginType\" : null,    \"executiveRoleUser\" : false,    \"preferredName\" : \"1234560001\",    \"deviceToken\" : \"ei_Gol0VS3mCl44FmAv2nn:APA91bGxCCpGgpy7zdvAfmbl2Z0HFKLmJDHEfPuxxASeCrd834nbAn5iaoe3pU3ljTWlDb4BMBknaUPxLLAQ3Dr-VIuYSLZ7Hw8o-wFa9B-rbgu6_QwJb1E\",    \"deviceType\" : \"samsung/a31xx/a31:12/SP1A.210812.016/A315FXXU4DWI2:user/release-keysSM-A315F\",    \"createdBy\" : \"1401\",    \"lastModifiedBy\" : \"1551\",    \"deleted\" : false  } ],  \"massUpload\" : false,  \"deleted\" : false,  \"acreSquareEnabled\" : null}\n  - Instructions: Fetches the complete details of the target farmer using the resolved farmer ID.\n\nStep 3 [LOGIC]:\n  - Logic: Extracts current tags from farmer_data['data']['tags']. If the resolved tag_id is not already present, it's added to the list of tags. Prepares the farmer_data object for the PUT request.\n\nStep 4 [API]:\n  - Step/Variable Name: Update Farmer Tags\n  - Call PUT /services/farm/api/farmers\n  - Payload Type: DTO_FILE\n  - Payload Example: {\"dto\": {\"data\": {\"tags\": [\"list of tag IDs\"]}}} | Structure: Updates nested data.data (array)\n  - Expected Response: put_resp\n  - Instructions: Sends the updated farmer_data (including new tags) to the API to update the farmer. Only executed if a new tag was added. If the response code is 200, add 'Status' column as 'Pass' and add 'Response' column value as 'Tag updated to farmer' if response is not 200, add 'Status' column as 'Fail' and add whole response in column 'Response'\n\n"
+  },
+  {
+    "name": "getLocationsForAddVariety.py",
+    "filename": "getLocationsForAddVariety.py",
+    "team": "Unassigned",
+    "description": "User Script",
+    "expected_columns": [
+      "Location",
+      "Output"
+    ],
+    "columns": [
+      {
+        "name": "Location",
+        "type": "Mandatory",
+        "description": "Auto-detected"
+      },
+      {
+        "name": "Output",
+        "type": "Mandatory",
+        "description": "Auto-detected"
+      }
+    ],
+    "requiresLogin": true,
+    "isMultithreaded": false,
+    "batchSize": "10",
+    "groupByColumn": "",
+    "enableGeofencing": false,
+    "outputConfig": {
+      "uiMapping": [],
+      "aiInstructions": "",
+      "excelMapping": [],
+      "isDynamicUI": true
+    },
+    "generation_prompt": "Script Name: getLocationsForAddVariety\nExcel Columns: Location,Output\n\nStep 1 [LOGIC]:\n  - Logic: Extracts address text from input row, case-insensitively.\n\nStep 2 [GEO]:\n  - Geo Location Logic: {\"bounds\":{\"northeast\":{\"lat\":13.63848008362668,\"lng\":74.70381258542338},\"southwest\":{\"lat\":13.60874235996243,\"lng\":74.68304165451536}},\"country\":\"India\",\"administrativeAreaLevel3\":\"Udupi\",\"administrativeAreaLevel2\":\"Mysore Division\",\"administrativeAreaLevel1\":\"Karnataka\",\"placeId\":\"ChIJcYwVewaOvDsRy73eNhezPjs\",\"latitude\":13.6235274,\"longitude\":74.6917418,\"geoInfo\":{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[74.68304165451536,13.60874235996243],[74.70381258542338,13.60874235996243],[74.70381258542338,13.63848008362668],[74.68304165451536,13.63848008362668],[74.68304165451536,13.60874235996243]]]}}]},\"name\":\"Kundapura\"}\n  - IMPORTANT: You MUST import and use 'components.geofence_utils' for this step.\n  - Usage: boundary_data = geofence_utils.get_boundary(location_name, env_config.get('google_api_key'))\n  - CRITICAL: 'boundary_data' IS the direct result object. It is NOT wrapped in 'google_response' or 'data'.\n  - 'boundary_data' structure: { \"formatted_address\": \"...\", \"geometry\": { \"location\": {...}, \"viewport\": {...}, \"bounds\": {...} }, \"place_id\": \"...\", \"address_components\": [...], \"geojson_polygon\": {...} }\n  - NOTE: 'geojson_polygon' is ALREADY a FeatureCollection. DO NOT wrap it in another FeatureCollection or check for 'Polygon' type.\n  - CRITICAL: When mapping 'bounds' and 'geoInfo', ALWAYS prioritize 'geometry.bounds' over 'geometry.viewport' if available, as 'bounds' is the strict geopolitical boundary.\n  - CRITICAL: The final Output column MUST be a JSON string. Use 'json.dumps(output_payload)' to populate the row.\n  - YOU MUST PARSE 'boundary_data' directly to extract fields required by the logic (e.g. boundary_data['formatted_address'], boundary_data['geometry']['location']).\n\n",
+    "isReusable": true
+  },
+  {
+    "name": "AddFarmer.py",
+    "filename": "AddFarmer.py",
+    "team": "Both",
+    "description": "Add farmer by searching the User using the name provided\nNote: If tenant has additional attributes, select the checkbox and mention attribute key to get column in Excel",
+    "expected_columns": [
+      "Farmer Name",
+      "Farmer Code",
+      "Phone Number",
+      "AssignedTo",
+      "UserID",
+      "Address",
+      "Address Component (non mandatory)",
+      "Status",
+      "Farmer ID",
+      "Response"
+    ],
+    "columns": [
+      {
+        "name": "Farmer Name",
+        "type": "Mandatory",
+        "description": "Farmer Name"
+      },
+      {
+        "name": "Farmer Code",
+        "type": "Mandatory",
+        "description": "Auto-detected"
+      },
+      {
+        "name": "Phone Number",
+        "type": "Mandatory",
+        "description": "Auto-detected"
+      },
+      {
+        "name": "AssignedTo",
+        "type": "Mandatory",
+        "description": "Auto-detected"
+      },
+      {
+        "name": "UserID",
+        "type": "Mandatory",
+        "description": "Auto-detected"
+      },
+      {
+        "name": "Address",
+        "type": "Mandatory",
+        "description": "Auto-detected"
+      },
+      {
+        "name": "Address Component (non mandatory)",
+        "type": "Mandatory",
+        "description": "Auto-detected"
+      },
+      {
+        "name": "Status",
+        "type": "Mandatory",
+        "description": "Auto-detected"
+      },
+      {
+        "name": "Farmer ID",
+        "type": "Mandatory",
+        "description": "Auto-detected"
+      },
+      {
+        "name": "Response",
+        "type": "Mandatory",
+        "description": "Auto-detected"
+      }
+    ],
+    "requiresLogin": true,
+    "isMultithreaded": true,
+    "batchSize": "10",
+    "groupByColumn": "",
+    "enableGeofencing": false,
+    "allowAdditionalAttributes": true,
+    "additionalAttributes": [],
+    "outputConfig": {
+      "uiMapping": [
+        {
+          "colName": "Farmer Name",
+          "value": "Farmer Name",
+          "logic": "from excel column 'Farmer Name'"
+        },
+        {
+          "colName": "Status",
+          "value": "",
+          "logic": "'Pass' if Farmer create response in 200, else 'Fail'"
+        },
+        {
+          "colName": "Farmer ID",
+          "value": "",
+          "logic": "attribute 'id' from response of farmer create if status is pass, else 'NA'"
+        }
+      ],
+      "aiInstructions": "",
+      "excelMapping": [
+        {
+          "colName": "UserID",
+          "value": "user response id",
+          "logic": "id from user fetch is user found"
+        },
+        {
+          "colName": "Status",
+          "value": "Pass or Fail",
+          "logic": "'Pass' if Farmer create response in 200, else 'Fail'"
+        },
+        {
+          "colName": "Farmer ID",
+          "value": "id",
+          "logic": "id from farmer create response if farmer created successfully"
+        },
+        {
+          "colName": "Response",
+          "value": "",
+          "logic": "'Farmer Created Successfully' if farmer creation is success\nor 'User not Found' is user find is failed\nActual response if farmer creation failed"
+        }
+      ],
+      "isDynamicUI": true
+    },
+    "generation_prompt": "Script Name: AddFarmer\nExcel Columns: Farmer Name, Farmer Code, Phone Number, AssignedTo, UserID, Address, Address Component (non mandatory), Status, Farmer ID, Response\n\nOUTPUT MAPPING CONFIGURATION:\n- UI Output Definition:\n- UI Column 'Farmer Name': Set to 'Farmer Name' (Logic: from excel column 'Farmer Name')\n- UI Column 'Status': Set to '' (Logic: 'Pass' if Farmer create response in 200, else 'Fail')\n- UI Column 'Farmer ID': Set to '' (Logic: attribute 'id' from response of farmer create if status is pass, else 'NA')\n- Excel Output Definition:\n   - Column 'UserID': Set to 'user response id' (Logic: id from user fetch is user found)\n   - Column 'Status': Set to 'Pass or Fail' (Logic: 'Pass' if Farmer create response in 200, else 'Fail')\n   - Column 'Farmer ID': Set to 'id' (Logic: id from farmer create response if farmer created successfully)\n   - Column 'Response': Set to '' (Logic: 'Farmer Created Successfully' if farmer creation is success\nor 'User not Found' is user find is failed\nActual response if farmer creation failed)\nIMPORTANT: Include this configuration as a comment block at the top of the generated Python script for reference.\n\nStep 1 [GEO]:\n  - Geo Location Logic: Create address component for each row using the column 'Address' for each row as below. Add a new column as 'Address Component (non mandatory)' to save this address. If the address is repeated in any row, use same result dont hit APIs again\n\n{\n    \"id\" : 5827070,\n    \"formattedAddress\" : \"Madhugiri, Karnataka 572132, India\",\n    \"postalCode\" : \"572132\",\n    \"locality\" : \"Madhugiri\",\n    \"data\" : null,\n    \"administrativeAreaLevel5\" : null,\n    \"administrativeAreaLevel4\" : null,\n    \"administrativeAreaLevel3\" : null,\n    \"administrativeAreaLevel2\" : \"Bangalore Division\",\n    \"administrativeAreaLevel1\" : \"Karnataka\",\n    \"country\" : \"India\",\n    \"latitude\" : 13.6643166,\n    \"longitude\" : 77.20889869999999,\n    \"placeId\" : \"ChIJsfkoVqO0sTsRLbvVqd06cTU\",\n    \"sublocalityLevel1\" : \"\",\n    \"sublocalityLevel2\" : \"\",\n    \"sublocalityLevel3\" : null,\n    \"sublocalityLevel4\" : null,\n    \"sublocalityLevel5\" : null,\n    \"houseNo\" : \"\",\n    \"buildingName\" : \"\",\n    \"landmark\" : \"\",\n    \"clientId\" : \"4b5c78b1-7579-4a59-8e8e-8bd35b738b8e\"\n  }\n  - IMPORTANT: You MUST import and use 'components.geofence_utils' for this step.\n  - Usage: boundary_data = geofence_utils.get_boundary(location_name, env_config.get('google_api_key'))\n  - CRITICAL: 'boundary_data' IS the direct result object. It is NOT wrapped in 'google_response' or 'data'.\n  - 'boundary_data' structure: { \"formatted_address\": \"...\", \"geometry\": { \"location\": {...}, \"viewport\": {...}, \"bounds\": {...} }, \"place_id\": \"...\", \"address_components\": [...], \"geojson_polygon\": {...} }\n  - NOTE: 'geojson_polygon' is ALREADY a FeatureCollection. DO NOT wrap it in another FeatureCollection or check for 'Polygon' type.\n  - CRITICAL: When mapping 'bounds' and 'geoInfo', ALWAYS prioritize 'geometry.bounds' over 'geometry.viewport' if available, as 'bounds' is the strict geopolitical boundary.\n  - CRITICAL: The final Output column MUST be a JSON string. Use 'json.dumps(output_payload)' to populate the row.\n  - YOU MUST PARSE 'boundary_data' directly to extract fields required by the logic (e.g. boundary_data['formatted_address'], boundary_data['geometry']['location']).\n\nStep 2 [MASTER]:\n  - Master Type: user\n  - Input Column: AssignedTo\n  - Output Column: UserID\n  - Lookup Path: id\n  - On Failure: Skip Row\n  - IMPORTANT: You MUST import and use 'components.master_search' for this step.\n  - The master_data_config is available in env_config, so master_search will auto-detect run_method.\n\nStep 3 [API]:\n  - Step/Variable Name: Create Farmer\n  - Call POST /services/farm/api/farmers\n  - Payload Type: DTO_FILE\n  - Payload Example: {    \"data\": {        \"mobileNumber\": \"9126050202\",        \"countryCode\": \"+91\"    },    \"firstName\": \"RS test 050202\",    \"farmerCode\": \"rstest050202\",    \"assignedTo\": [{            \"id\": 1401,            \"name\": \"RS Test Admin\"        }    ],    \"address\": {        \"country\": \"India\",        \"formattedAddress\": \"Madhugiri, Karnataka 572132, India\",        \"houseNo\": \"\",        \"buildingName\": \"\",        \"administrativeAreaLevel1\": \"Karnataka\",        \"locality\": \"Madhugiri\",        \"administrativeAreaLevel2\": \"Bangalore Division\",        \"sublocalityLevel1\": \"\",        \"sublocalityLevel2\": \"\",        \"landmark\": \"\",        \"postalCode\": \"572132\",        \"placeId\": \"ChIJsfkoVqO0sTsRLbvVqd06cTU\",        \"latitude\": 13.6643166,        \"longitude\": 77.20889869999999    }}\n  - Instructions: Create payload using excel as below 1. Attributes 'data.mobileNumber' and 'data.countryCode' using column 'Phone Number' which will have value in the format '91 7259123456' or '+91 7259123456'. If + is missing add yourself for attribute 2. Attribute 'firstName' using column 'Farmer Name' 3. attribute 'farmerCode' using column Farmer Code 4. attribute 'assignedTo.id' using user response fetched value in column 'UserID' 5. attribute 'assignedTo.name' using column 'AssignedTo' 6. attribute 'address' using parsed adress value in column 'Address Component (non mandatory)' If the response code is 400, add the attribute 'title' value in excel column 'Response'\n\n"
   }
 ]

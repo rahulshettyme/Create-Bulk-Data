@@ -478,7 +478,19 @@ def _log_req(method, url, **kwargs):
                  payload = f"[Multipart Files] Keys: {list(files.keys())}"
     
     if not payload: payload = "No Payload"
-    print(f"[API_DEBUG] 📦 PAYLOAD: {payload}")
+    
+    payload_type = "JSON" if kwargs.get('json') else "Data"
+    
+    # Check if 'Data' is actually a JSON string
+    if payload_type == "Data" and isinstance(payload, str):
+        try:
+            json.loads(payload)
+            payload_type = "Data (JSON)"
+        except: pass
+
+    if not kwargs.get('json') and not kwargs.get('data') and not payload_type == "Data (JSON)": payload_type = "Unknown/Multipart"
+
+    print(f"[API_DEBUG] 📦 PAYLOAD ({payload_type}): {payload}")
     print(f"[API_DEBUG] ----------------------------------------------------------------")
 
     try:
@@ -767,8 +779,11 @@ for idx, row in enumerate(builtins.data):
     run_body.extend(execution_nodes)
     
     if main_guard_node:
-        main_guard_node.test = ast.Constant(value=True)
-        run_body.append(main_guard_node)
+        # Only enable main guard if user did NOT provide a run function
+        # If they provided 'run', we assume 'main' is just for local testing/CLI
+        if not user_run_node:
+             main_guard_node.test = ast.Constant(value=True)
+             run_body.append(main_guard_node)
 
     # If user provided a run function, return its result
     if user_run_node:

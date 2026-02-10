@@ -1,0 +1,34 @@
+{
+    "name": "getLocationsForAddVariety.py",
+    "filename": "getLocationsForAddVariety.py",
+    "team": "Unassigned",
+    "description": "User Script",
+    "expected_columns": [
+        "Location",
+        "Output"
+    ],
+    "columns": [
+        {
+            "name": "Location",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        },
+        {
+            "name": "Output",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        }
+    ],
+    "requiresLogin": true,
+    "isMultithreaded": false,
+    "batchSize": "10",
+    "groupByColumn": "",
+    "enableGeofencing": false,
+    "outputConfig": {
+        "uiMapping": [],
+        "aiInstructions": "",
+        "excelMapping": [],
+        "isDynamicUI": true
+    },
+    "isReusable": true
+}

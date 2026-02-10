@@ -41,6 +41,35 @@ def get_gemini_api_key():
                 return data.get("gemini_api_key", "").strip()
     except: pass
     return ""
+    
+def _get_applicable_models(api_key):
+    """
+    Fetches available models from Google API and returns a prioritized list of Gemini models.
+    """
+    models = []
+    try:
+        resp = requests.get(f"https://generativelanguage.googleapis.com/v1beta/models?key={api_key}", timeout=5)
+        if resp.status_code == 200:
+            data = resp.json()
+            for m in data.get('models', []):
+                name = m['name'].replace('models/', '')
+                if 'gemini' in name.lower() and 'generateContent' in m.get('supportedGenerationMethods', []):
+                    models.append(name)
+    except: pass
+    
+    # Priority sorting
+    def priority(name):
+        n = name.lower()
+        if 'gemini-3' in n: return 0  # Priority to newer models if available
+        if '2.0-flash' in n: return 1
+        if '1.5-pro' in n: return 2
+        if '1.5-flash' in n: return 3
+        if 'pro' in n: return 4
+        if 'flash' in n: return 5
+        return 10
+
+    models.sort(key=priority)
+    return list(dict.fromkeys(models))
 
 def extract_excel_columns(code: str) -> List[str]:
     """Extract Excel column names from code comments (Priority) or usage."""
@@ -285,7 +314,10 @@ def _call_gemini_with_candidates(api_key: str, models_to_try: List[str],
                         
                 elif resp.status_code == 503 or resp.status_code == 429:
                     # Overloaded or Rate Limited, retry with backoff
-                    last_error = f"Model {model} failed with {resp.status_code} (Retries exhausted)"
+                    if resp.status_code == 429:
+                        last_error = f"Model {model} hit Rate Limit (429). If this persists after 1 min, DAILY QUOTA likely reached."
+                    else:
+                        last_error = f"Model {model} failed with {resp.status_code} (Retries exhausted)"
                     
                     sleep_time = 2 * (attempt + 1)
                     if resp.status_code == 429:
@@ -455,12 +487,17 @@ def reverse_engineer_script(code_content: str) -> Dict[str, Any]:
     script_name = extract_script_name(code_content)
     
     # Try multiple models in order of preference (using available models)
-    models_to_try = [
-        "gemini-2.5-flash",      # Fast and efficient
-        "gemini-2.5-pro",         # More capable
-        "gemini-2.0-flash-exp",   # Experimental but fast
-        "gemini-flash-latest"     # Fallback
-    ]
+    models_to_try = _get_applicable_models(api_key)
+    
+    # Fallback if discovery failed
+    if not models_to_try:
+        models_to_try = [
+            "gemini-2.0-flash-exp",   
+            "gemini-1.5-flash",       
+            "gemini-1.5-pro",         
+            "gemini-flash-latest",    
+            "gemini-pro"              
+        ]
 
     # Use concise prompt to avoid truncation
     # SANITIZATION: Remove tokens before sending to AI
@@ -530,6 +567,7 @@ def reverse_engineer_script(code_content: str) -> Dict[str, Any]:
                     "groupByColumn": group_col,
                     "isMultithreaded": threading_conf.get('isMultithreaded'),
                     "batchSize": threading_conf.get('batchSize'),
+                    "uiColumns": data.get("uiColumns", []),
                     "steps": normalize_steps(steps, code_content)
                 }
             elif "steps" in data:
@@ -537,6 +575,7 @@ def reverse_engineer_script(code_content: str) -> Dict[str, Any]:
                     "scriptName": data.get("scriptName", script_name),
                     "description": data.get("description", f"Automation script: {script_name}"),
                     "excelColumns": data.get("excelColumns", excel_columns),
+                    "uiColumns": data.get("uiColumns", []),
                     "steps": normalize_steps(data["steps"], code_content)
                 }
             else:

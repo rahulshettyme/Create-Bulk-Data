@@ -1,0 +1,90 @@
+{
+    "name": "AddFarmer.py",
+    "filename": "AddFarmer.py",
+    "team": "Both",
+    "description": "Add farmer by searching the User using the name provided\nNote: If tenant has additional attributes, select the checkbox and mention attribute key to get column in Excel",
+    "expected_columns": [
+        "Farmer Code",
+        "Phone Number",
+        "AssignedTo",
+        "Address",
+        "Address Component (non mandatory)"
+    ],
+    "columns": [
+        {
+            "name": "Farmer Code",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        },
+        {
+            "name": "Phone Number",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        },
+        {
+            "name": "AssignedTo",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        },
+        {
+            "name": "Address",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        },
+        {
+            "name": "Address Component (non mandatory)",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        }
+    ],
+    "requiresLogin": true,
+    "isMultithreaded": true,
+    "batchSize": "10",
+    "groupByColumn": "",
+    "enableGeofencing": false,
+    "allowAdditionalAttributes": true,
+    "additionalAttributes": [],
+    "outputConfig": {
+        "uiMapping": [
+            {
+                "colName": "Farmer Name",
+                "value": "Farmer Name",
+                "logic": "from excel column 'Farmer Name'"
+            },
+            {
+                "colName": "Status",
+                "value": "",
+                "logic": "'Pass' if Farmer create response in 200, else 'Fail'"
+            },
+            {
+                "colName": "Farmer ID",
+                "value": "",
+                "logic": "attribute 'id' from response of farmer create if status is pass, else 'NA'"
+            }
+        ],
+        "aiInstructions": "",
+        "excelMapping": [
+            {
+                "colName": "UserID",
+                "value": "user response id",
+                "logic": "id from user fetch is user found"
+            },
+            {
+                "colName": "Status",
+                "value": "Pass or Fail",
+                "logic": "'Pass' if Farmer create response in 200, else 'Fail'"
+            },
+            {
+                "colName": "Farmer ID",
+                "value": "id",
+                "logic": "id from farmer create response if farmer created successfully"
+            },
+            {
+                "colName": "Response",
+                "value": "",
+                "logic": "'Farmer Created Successfully' if farmer creation is success\nor 'User not Found' is user find is failed\nActual response if farmer creation failed"
+            }
+        ],
+        "isDynamicUI": true
+    }
+}

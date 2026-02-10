@@ -53,6 +53,7 @@ class ScriptExecutorV2 {
         const payload = this.preparePayload(scriptName, rows, token, envConfig, meta);
 
         if (this.debug) {
+            console.log('[ExecutorV2] Execute called with envConfig:', envConfig);
             console.log('[ExecutorV2] Payload:', payload);
         }
 

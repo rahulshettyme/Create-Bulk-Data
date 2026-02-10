@@ -31,6 +31,60 @@
     "UAT2": "https://sf-v2uat-gcp.cropin.co.in/uat2",
     "Prod": "https://cloud.cropin.in"
   },
+  "master_data_config": {
+    "user": {
+      "name": "User",
+      "api_endpoint": "/services/user/api/users/search/companies/{company_id}",
+      "run_method": "search",
+      "match_field": "name",
+      "lookup_path": "id",
+      "output_column_suffix": "_id",
+      "not_found_message": "User not found",
+      "path_variables": {
+        "company_id": {
+          "setup_api": "/services/user/api/users/user-info",
+          "extract_path": "companyId",
+          "cache_key": "user_company_id"
+        }
+      }
+    },
+    "farmer": {
+      "name": "Farmer",
+      "api_endpoint": "/services/farm/api/farmers/dropdownList?page=0&size=100&sort=lastModifiedDate,Desc",
+      "run_method": "search",
+      "match_field": "name",
+      "lookup_path": "id",
+      "output_column_suffix": "_id",
+      "not_found_message": "Farmer not found"
+    },
+    "soiltype": {
+      "name": "Soil Type",
+      "api_endpoint": "/services/farm/api/soil-types?size=5000",
+      "run_method": "once",
+      "match_field": "name",
+      "lookup_path": "id",
+      "output_column_suffix": "_id",
+      "not_found_message": "Soil type not found"
+    },
+    "irrigationtype": {
+      "name": "Irrigation Type",
+      "api_endpoint": "/services/master/api/irrigation-types?size=5000",
+      "run_method": "once",
+      "match_field": "name",
+      "lookup_path": "id",
+      "output_column_suffix": "_id",
+      "not_found_message": "Irrigation type not found"
+    },
+    "project": {
+      "name": "Project",
+      "api_endpoint": "/services/farm/api/projects/search?page=0&size=100&projectStatus=LIVE&projectStatus=PAST&projectExecutionStatus=TO_BE_STARTED&projectExecutionStatus=STARTED&projectExecutionStatus=COMPLETED&projectStatus=UPCOMING",
+      "run_method": "search",
+      "match_field": "name",
+      "lookup_path": "id",
+      "output_column_suffix": "_id",
+      "not_found_message": "Project not found"
+    }
+  },
   "savedLocations": [
     {
       "name": "Karnataka",

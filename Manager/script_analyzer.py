@@ -39,8 +39,9 @@ def analyze_script(code_content):
     # 0b. Check for Explicit UI Output Definition (Source of Truth)
     ui_columns = []
     try:
-        # Regex to find: # - UI Column 'ID' (handling various indentation/spacing)
-        explicit_ui = re.findall(r"#\s*-\s*UI Column '([^']+)'", code_content)
+        # Regex to find: - UI Column 'ID' (works in both # comments and docstrings)
+        # Made # optional to support docstrings
+        explicit_ui = re.findall(r"#?\s*-\s*UI Column '([^']+)'", code_content)
         if explicit_ui:
             ui_columns = explicit_ui
     except:

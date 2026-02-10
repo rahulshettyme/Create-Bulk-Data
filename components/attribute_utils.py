@@ -1,7 +1,19 @@
 import json
+import threading
 
+# Thread-local storage to track the "Current Row" context
+_context = threading.local()
+
+def set_current_row(row):
+    """Sets the current row in the thread-local context."""
+    _context.current_row = row
+
+def get_current_row():
+    """Gets the current row from the thread-local context."""
+    return getattr(_context, 'current_row', None)
 
 def safe_cast(val, to_type, default=None):
+# ... rest of the file ...
     try:
         return to_type(val)
     except (ValueError, TypeError):

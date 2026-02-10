@@ -40,7 +40,7 @@ const readSecrets = () => {
 // Initialize API Key from Environment > Secrets File > DB File (Legacy)
 const dbData = readDb();
 const secretsData = readSecrets();
-const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY || secretsData.gemini_api_key || dbData.gemini_api_key || "";
+const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY || secretsData.google_api_key || secretsData.gemini_api_key || dbData.google_api_key || dbData.gemini_api_key || "";
 
 
 // Helper to write DB
@@ -609,6 +609,9 @@ module.exports = function (app) {
                 });
             };
 
+
+
+
             // Step 1: Call Geo Area API
             console.log(`[Area Audit] Calling GeoAPI: ${geoAreaUrl}`);
             const geoResult = await makeRequest(geoAreaUrl, 'POST', geoPayload);
@@ -740,109 +743,18 @@ module.exports = function (app) {
         }
     });
 
-    // 4. Test Run (Convert & Execute)
-    app.post('/api/scripts/test-run', async (req, res) => {
-        const { code, rows, token, envConfig, columns } = req.body;
-        if (!code || !rows || !token) return res.status(400).json({ error: 'Missing parameters' });
-
-        const timestamp = Date.now();
-        const tempScriptName = `TEST_${timestamp}.py`;
-        const tempScriptPath = path.join(__dirname, '..', 'Converted Scripts', tempScriptName);
-        const converterPath = path.join(__dirname, '..', 'Manager', 'script_converter.py');
-        const bridgePath = path.join(__dirname, '..', 'Manager', 'runner_bridge.py');
-
-        try {
-            // STEP 1: CONVERT CODE
-            const converter = spawn('python', [converterPath], {
-                env: { ...process.env, PYTHONIOENCODING: 'utf-8' }
-            });
-
-            let convertedCode = '';
-            let converterError = '';
-
-            converter.stdout.on('data', d => convertedCode += d.toString());
-            converter.stderr.on('data', d => converterError += d.toString());
-
-            const conversionPromise = new Promise((resolve, reject) => {
-                converter.on('close', (code) => {
-                    if (code !== 0) reject(new Error(`Conversion failed: ${converterError}`));
-                    else resolve(convertedCode);
-                });
-            });
-
-            // Write input code to converter
-            converter.stdin.write(code);
-            converter.stdin.end();
-
-            await conversionPromise;
-
-            // STEP 2: WRITE TEMP SCRIPT
-            const scriptsDir = path.dirname(tempScriptPath);
-            if (!fs.existsSync(scriptsDir)) fs.mkdirSync(scriptsDir, { recursive: true });
-            fs.writeFileSync(tempScriptPath, convertedCode);
-
-            // STEP 2b: WRITE DATA TO TEMP FILE (Fix for ENAMETOOLONG)
-            const dataFileName = `data_${timestamp}_${Math.random().toString(36).substring(7)}.json`;
-            const dataFilePath = path.join(__dirname, '..', 'temp_data', dataFileName);
-            const tempDataDir = path.dirname(dataFilePath);
-            if (!fs.existsSync(tempDataDir)) fs.mkdirSync(tempDataDir, { recursive: true });
-            fs.writeFileSync(dataFilePath, JSON.stringify(rows));
-
-            // STEP 3: EXECUTE
-            const args = [
-                bridgePath,
-                "--script", tempScriptPath,
-                "--data-file", dataFilePath,
-                "--token", token,
-                "--env", JSON.stringify(envConfig || {}),
-                "--columns", JSON.stringify(columns || [])
-            ];
-
-            const runner = spawn('python', ['-u', ...args], {
-                env: {
-                    ...process.env,
-                    PYTHONIOENCODING: 'utf-8',
-                    GOOGLE_API_KEY: GOOGLE_API_KEY
-                }
-            });
-
-            let stdoutData = '';
-            let stderrData = '';
-
-            runner.stdout.on('data', d => stdoutData += d.toString());
-            runner.stderr.on('data', d => stderrData += d.toString());
-
-            runner.on('close', (code) => {
-                // Cleanup
-                try { fs.unlinkSync(tempScriptPath); } catch (e) { }
-                try { fs.unlinkSync(dataFilePath); } catch (e) { }
-
-                if (code !== 0) {
-                    return res.status(500).json({
-                        error: 'Execution failed',
-                        logs: stdoutData + "\n[STDERR]\n" + stderrData,
-                        rawOutput: stdoutData
-                    });
-                }
-
-                res.json({
-                    success: true,
-                    logs: stdoutData,
-                    rawOutput: stdoutData
-                });
-            });
-
-        } catch (e) {
-            console.error('Test Run Error:', e);
-            res.status(500).json({ error: e.message });
+    // 2. Execute Python Script
+    // --- Config Endpoints ---
+    app.get('/api/config/maps-key', (req, res) => {
+        if (GOOGLE_API_KEY) {
+            res.json({ key: GOOGLE_API_KEY });
+        } else {
+            res.status(404).json({ error: "No API Key configured" });
         }
     });
 
-
-
-    // 2. Execute Python Script
-    // 2. Execute Python Script
-    app.post('/api/scripts/execute', (req, res) => {
+    // 1. Execute Script
+    app.post('/api/scripts/execute', async (req, res) => {
         // Clear console for fresh logs per execution
         console.clear();
         console.log('\n--- NEW SCRIPT EXECUTION STARTED ---\n');
@@ -851,6 +763,17 @@ module.exports = function (app) {
 
         if (!scriptName || !rows || !token) {
             return res.status(400).json({ error: 'Missing required parameters' });
+        }
+
+        // [Fix for Parity with Test Run] Inject apiBaseUrl if missing
+        if (envConfig && envConfig.environment) {
+            console.log(`[Execute] Resolving URL for env: ${envConfig.environment}`);
+            const { apiBaseUrl } = getEnvUrls(envConfig.environment);
+            if (apiBaseUrl) {
+                envConfig.apiBaseUrl = apiBaseUrl;
+                // Also ensure 'apiurl' is set as some legacy scripts use this
+                if (!envConfig.apiurl) envConfig.apiurl = apiBaseUrl;
+            }
         }
 
         // Locate the script
@@ -906,6 +829,10 @@ module.exports = function (app) {
             "--columns", JSON.stringify(columns)
         ];
 
+        if (envConfig && envConfig.allowAdditionalAttributes) {
+            args.push("--debug");
+        }
+
         console.log(`Executing Python Script: ${scriptName}`);
         console.log(`[Execute] Env Config:`, JSON.stringify(envConfig));
 
@@ -915,8 +842,8 @@ module.exports = function (app) {
                 PYTHONIOENCODING: 'utf-8',
                 // Add components folder to PYTHONPATH so scripts can import from it
                 PYTHONPATH: process.env.PYTHONPATH
-                    ? process.env.PYTHONPATH + path.delimiter + path.join(__dirname, '..', 'components')
-                    : path.join(__dirname, '..', 'components'),
+                    ? process.env.PYTHONPATH + path.delimiter + path.join(__dirname, '..')
+                    : path.join(__dirname, '..'),
                 GOOGLE_API_KEY: GOOGLE_API_KEY
             }
         });
@@ -1150,7 +1077,7 @@ module.exports = function (app) {
 
     // Generate Script Template
     app.post('/api/scripts/generate', (req, res) => {
-        const { description, existing_code, scriptName, inputColumns, isMultithreaded, outputConfig } = req.body;
+        const { description, existing_code, scriptName, inputColumns, isMultithreaded, outputConfig, allowAdditionalAttributes, enableGeofencing } = req.body;
         if (!description) return res.status(400).json({ error: 'Missing description' });
 
         const generatorPath = path.join(__dirname, '..', 'Manager', 'script_generator.py');
@@ -1161,7 +1088,16 @@ module.exports = function (app) {
         let stdoutData = '';
         pythonProcess.stdout.on('data', d => stdoutData += d.toString());
         // Pass everything needed for update logic
-        pythonProcess.stdin.write(JSON.stringify({ description, existing_code, scriptName, inputColumns, isMultithreaded, outputConfig }));
+        pythonProcess.stdin.write(JSON.stringify({
+            description,
+            existing_code,
+            scriptName,
+            inputColumns,
+            isMultithreaded,
+            outputConfig,
+            allowAdditionalAttributes: allowAdditionalAttributes || false,
+            enableGeofencing: enableGeofencing || false
+        }));
         pythonProcess.stdin.end();
 
         pythonProcess.on('close', code => {
@@ -1247,27 +1183,49 @@ module.exports = function (app) {
     });
 
     // Delete (Discard)
+    // Delete (Discard)
     app.post('/api/scripts/delete', (req, res) => {
         const { filename } = req.body;
         if (!filename) return res.status(400).json({ error: 'Missing filename' });
 
         try {
-            // Delete files
-            const scriptPath = path.join(__dirname, '..', 'Converted Scripts', filename);
-            const configPath = path.join(__dirname, '..', 'Script Configs', filename.replace('.py', '.json'));
+            const cleanName = filename.replace('.py', '');
+            const pyName = `${cleanName}.py`;
+            const jsonName = `${cleanName}.json`;
+            const metaName = `${cleanName}.py.meta.json`;
 
-            if (fs.existsSync(scriptPath)) fs.unlinkSync(scriptPath);
-            if (fs.existsSync(configPath)) fs.unlinkSync(configPath);
-
-            // Update Registry
+            // Paths
+            const draftsDir = path.join(__dirname, '..', 'Draft Scripts');
+            const configsDir = path.join(__dirname, '..', 'Script Configs');
+            const scriptsDir = path.join(__dirname, '..', 'Converted Scripts');
+            const originalDir = path.join(__dirname, '..', 'Original Scripts');
             const registryPath = path.join(__dirname, '..', 'System', 'scripts_registry.json');
-            let registry = JSON.parse(fs.readFileSync(registryPath, 'utf8'));
-            registry = registry.filter(r => r.filename !== filename);
-            fs.writeFileSync(registryPath, JSON.stringify(registry, null, 2));
 
-            res.json({ success: true });
-            res.json({ success: true });
+            // 1. Try Delete from Drafts (Always check, even if Active, per usage)
+            if (fs.existsSync(path.join(draftsDir, pyName))) fs.unlinkSync(path.join(draftsDir, pyName));
+            if (fs.existsSync(path.join(draftsDir, metaName))) fs.unlinkSync(path.join(draftsDir, metaName));
+
+            // 2. Delete Active Files
+            if (fs.existsSync(path.join(scriptsDir, pyName))) fs.unlinkSync(path.join(scriptsDir, pyName));
+            if (fs.existsSync(path.join(configsDir, jsonName))) fs.unlinkSync(path.join(configsDir, jsonName));
+            if (fs.existsSync(path.join(originalDir, pyName.replace('.py', '_original.py')))) {
+                fs.unlinkSync(path.join(originalDir, pyName.replace('.py', '_original.py')));
+            }
+
+            // 3. Update Registry
+            if (fs.existsSync(registryPath)) {
+                let registry = JSON.parse(fs.readFileSync(registryPath, 'utf8'));
+                const originalLength = registry.length;
+                registry = registry.filter(r => r.filename !== filename && r.name !== filename);
+
+                if (registry.length !== originalLength) {
+                    fs.writeFileSync(registryPath, JSON.stringify(registry, null, 2));
+                }
+            }
+
+            res.json({ success: true, message: 'Script deleted successfully' });
         } catch (e) {
+            console.error("Delete failed:", e);
             res.status(500).json({ error: e.message });
         }
     });
@@ -1326,6 +1284,7 @@ module.exports = function (app) {
 
     // 5. Test Run (Temporary)
     app.post('/api/scripts/test-run', async (req, res) => {
+        console.log('[Test Run] Received Request.');
         const { code, rows, token, envConfig, columns } = req.body;
         if (!code || !rows || !token) return res.status(400).json({ error: 'Missing parameters' });
 
@@ -1338,8 +1297,18 @@ module.exports = function (app) {
             if (apiBaseUrl) {
                 envConfig.apiBaseUrl = apiBaseUrl;
             }
+
         } else {
             console.log('[Test Run] No environment in envConfig');
+        }
+
+        // Always inject master_data_config from DB
+        try {
+            const dbRef = readDb();
+            envConfig.master_data_config = dbRef.master_data_config || {};
+            console.log(`[Test Run] Injected master_data_config. Keys: ${Object.keys(envConfig.master_data_config).join(', ')}`);
+        } catch (e) {
+            console.error('[Test Run] Failed to read/inject master_data_config:', e);
         }
 
         // Create Temp File
@@ -1394,13 +1363,17 @@ module.exports = function (app) {
             "--data", JSON.stringify(rows),
             "--token", token,
             "--env", JSON.stringify(envConfig || {}),
-            "--columns", JSON.stringify(columns || [])
+            "--columns", JSON.stringify(columns || []),
+            "--debug" // ENABLE DEBUG LOGGING FOR TEST RUN
         ];
 
         const pythonProcess = spawn('python', args, {
             env: {
                 ...process.env,
                 PYTHONIOENCODING: 'utf-8',
+                PYTHONPATH: process.env.PYTHONPATH
+                    ? process.env.PYTHONPATH + path.delimiter + path.join(__dirname, '..')
+                    : path.join(__dirname, '..'),
                 GOOGLE_API_KEY: GOOGLE_API_KEY
             }
         });
@@ -1425,10 +1398,14 @@ module.exports = function (app) {
                     console.log('[Test Run] Script failed but Output Dump detected. Returning Partial Success.');
                     // Proceed to parsing logic below instead of returning 500
                 } else {
+                    const truncatedStderr = stderrData.length > 5000 ? stderrData.substring(0, 5000) + '... [TRUNCATED]' : stderrData;
+                    const truncatedStdout = stdoutData.length > 5000 ? stdoutData.substring(0, 5000) + '... [TRUNCATED]' : stdoutData;
+                    console.error('[Test Run] Execution ERROR. Stderr:', truncatedStderr);
+
                     return res.status(500).json({
                         error: 'Execution failed',
-                        details: stderrData,
-                        logs: stdoutData,
+                        details: truncatedStderr,
+                        logs: truncatedStdout,
                         convertedCode: cleanedCode
                     });
                 }
@@ -1643,6 +1620,8 @@ module.exports = function (app) {
                 batchSize: finalBatchSize,
                 groupByColumn: finalGroupBy,
                 enableGeofencing: req.body.enableGeofencing || false,
+                allowAdditionalAttributes: req.body.allowAdditionalAttributes || false,
+                additionalAttributes: req.body.additionalAttributes || [],
                 outputConfig: req.body.outputConfig || {}
             };
 
@@ -1886,15 +1865,31 @@ module.exports = function (app) {
 
             // Save Metadata Sidecar
             const { description, generationPrompt, inputColumns, team, groupByColumn, isMultithreaded, batchSize, outputConfig } = req.body;
+
+            // FIX: Extract inputColumns from generationPrompt if not provided
+            let finalInputColumns = inputColumns || [];
+            if ((!finalInputColumns || finalInputColumns.length === 0) && (generationPrompt || description)) {
+                const promptText = generationPrompt || description;
+                const colMatch = promptText.match(/Excel Columns:\s*([^\n]+)/);
+                if (colMatch) {
+                    // Parse comma-separated column names
+                    finalInputColumns = colMatch[1].trim().split(',').map(col => col.trim()).filter(col => col);
+                    console.log(`[Save Draft] Extracted inputColumns from prompt: ${finalInputColumns.join(', ')}`);
+                }
+            }
+
             const metaPath = path.join(draftsDir, filename + '.meta.json');
             const meta = {
                 description: description || "",
                 generationPrompt: generationPrompt || description || "", // Fallback for legacy
-                inputColumns: inputColumns || [],
+                inputColumns: finalInputColumns,
                 team: team || "Unassigned",
                 groupByColumn: groupByColumn,
                 isMultithreaded: isMultithreaded,
+                isMultithreaded: isMultithreaded,
                 enableGeofencing: req.body.enableGeofencing || false,
+                allowAdditionalAttributes: req.body.allowAdditionalAttributes || false,
+                additionalAttributes: req.body.additionalAttributes || [],
                 batchSize: batchSize || 10,
                 outputConfig: outputConfig || {},
                 mtime: Date.now()

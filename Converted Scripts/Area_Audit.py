@@ -37,20 +37,13 @@ def run(rows, token, env_config):
         else:
             comp_unit = 'acre'
 
-        # B. User Info
-        user_res = requests.get(f"{base_url}/services/user/api/users/user-info", headers=headers)
-        if user_res.status_code == 200:
-            user_data = user_res.json()
-            user_unit = user_data.get('data', {}).get('preferences', {}).get('areaUnits', 'acre').lower()
+        # B. Determine Factor
+        # Need: Convert FROM GeoAPI(Acre) TO Company Unit (Target)
+        # GeoAPI is always in Acres.
+        if comp_unit in ['ha', 'hectare']:
+            conversion_factor = 0.404686 # Acre to Hectare
         else:
-            user_unit = 'acre'
-            
-        # C. Determine Factor
-        # Need: Convert FROM Company Unit (API Result) TO User Unit (Target)
-        if (comp_unit in ['ha', 'hectare']) and user_unit == 'acre':
-            conversion_factor = 2.47105
-        elif comp_unit == 'acre' and (user_unit in ['ha', 'hectare']):
-            conversion_factor = 0.404686
+            conversion_factor = 1.0      # Acre to Acre
             
     except Exception as e:
         print(f"Warning: Failed to determine unit conversion: {e}")

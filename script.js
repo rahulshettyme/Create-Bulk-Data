@@ -1,6 +1,13 @@
 // =============================================
-// DATA GENERATE SCRIPT
+// DATA GENERATE SCRIPT (Production Environment)
 // =============================================
+/**
+ * CRITICAL ARCHITECTURE RULE:
+ * This file handles the "Bulk Execution" of scripts (Production).
+ * The Development/Test logic is located in `Data Generate/script_management_v2.js`.
+ * 
+ * Logic regarding Attributes, API URLs, and Data Injection MUST match `script_management_v2.js`.
+ */
 
 // State
 let authToken = null;
@@ -223,6 +230,7 @@ async function loadCustomScripts() {
                 filename: script.filename || script.name,
                 requiresLogin: script.requiresLogin,
                 allowAdditionalAttributes: script.allowAdditionalAttributes,
+                additionalAttributes: script.additionalAttributes || [],
                 isMultithreaded: script.isMultithreaded,
                 groupByColumn: script.groupByColumn,
                 batchSize: script.batchSize,
@@ -1135,7 +1143,26 @@ if (elements.exportBtn) {
         if (!template) return;
 
         // Create Excel Template
-        const headers = template.columns.map(c => c.header);
+        let headers = template.columns.map(c => c.header);
+
+        // Add Additional Attributes if enabled
+        if (elements.enableAdditionalAttributes && elements.enableAdditionalAttributes.checked) {
+            let extraAttrs = [];
+
+            // 1. Prioritize Input Field (User Defined)
+            if (elements.additionalAttributesInput && elements.additionalAttributesInput.value.trim()) {
+                extraAttrs = elements.additionalAttributesInput.value.split(',').map(s => s.trim()).filter(s => s);
+            }
+            // 2. Fallback to Template Definition (Legacy)
+            else if (template.additionalAttributes) {
+                extraAttrs = template.additionalAttributes.map(attr => attr.name || attr);
+            }
+
+            if (extraAttrs.length > 0) {
+                headers = [...headers, ...extraAttrs];
+            }
+        }
+
         const wb = XLSX.utils.book_new();
         const ws = XLSX.utils.json_to_sheet([], { header: headers });
 
@@ -1252,11 +1279,17 @@ if (elements.executeBtn) {
                 let pass = 0;
                 let fail = 0;
 
-                updateProgress(0, total, 0, 0);
+                // [BATCHING LOGIC START]
+                // Retrieve batchSize from template or default to 10
+                const template = TEMPLATES[selectedDataType] || {};
+                // Ensure batchSize is a valid number > 0
+                let batchSize = parseInt(template.batchSize);
+                if (isNaN(batchSize) || batchSize <= 0) batchSize = 10;
 
-                // 3. Send to Backend
-                // We send ALL rows at once now (Backend handles batch/loop if needed, or we just rely on the script)
-                // The new backend endpoint expects: { scriptName, rows, token, envConfig }
+                console.log(`[Execute] Total Rows: ${total}, Batch Size: ${batchSize}`);
+
+                executionResults = []; // Initialize accumulator
+                updateProgress(0, total, 0, 0);
 
                 // Get Env Config
                 const envData = getEnvUrls(currentEnvironment);
@@ -1275,83 +1308,152 @@ if (elements.executeBtn) {
                         maxLong: elements.maxLong ? elements.maxLong.value : '',
                         locationName: elements.locationName ? elements.locationName.value : ''
                     },
-                    targetLocation: document.getElementById('target-location-input') ? document.getElementById('target-location-input').value : ''
+                    targetLocation: document.getElementById('target-location-input') ? document.getElementById('target-location-input').value : '',
+                    allowAdditionalAttributes: elements.enableAdditionalAttributes ? elements.enableAdditionalAttributes.checked : false,
+                    additionalAttributes: (elements.enableAdditionalAttributes && elements.enableAdditionalAttributes.checked)
+                        ? (elements.additionalAttributesInput && elements.additionalAttributesInput.value ? elements.additionalAttributesInput.value.split(',').map(s => s.trim()).filter(k => k) : [])
+                        : []
                 };
 
                 try {
-                    const scriptFilename = TEMPLATES[selectedDataType] ? TEMPLATES[selectedDataType].filename : selectedDataType;
+                    const scriptFilename = template.filename || selectedDataType;
 
                     // [V2 ROUTING]
-                    // Check if we should use the new Modular Executor
-                    // We default to V2 unless it's a known Legacy script
                     const LEGACY_SCRIPTS = ['Area_Audit', 'Area Audit', 'Area_Audit.py'];
-                    const isLegacy = LEGACY_SCRIPTS.some(n => selectedDataType.includes(n)) || (TEMPLATES[selectedDataType] && TEMPLATES[selectedDataType].isLegacy);
+                    const isLegacy = LEGACY_SCRIPTS.some(n => selectedDataType.includes(n)) || (template.isLegacy);
+                    const useV2 = !isLegacy && typeof ScriptExecutorV2 !== 'undefined';
 
-                    if (!isLegacy && typeof ScriptExecutorV2 !== 'undefined') {
-                        console.log(`[Execute] Routing '${selectedDataType}' to ScriptExecutorV2...`);
-                        const executor = new ScriptExecutorV2({ apiBaseUrl: apiBaseUrl, debug: true });
+                    if (useV2) {
+                        // [V2 UPDATE] Additional Attributes Logic
+                        if (elements.additionalAttributesInput && elements.additionalAttributesInput.value.trim()) {
+                            const keysToManage = elements.additionalAttributesInput.value.split(',').map(s => s.trim()).filter(k => k);
+                            const isEnabled = elements.enableAdditionalAttributes && elements.enableAdditionalAttributes.checked;
 
-                        // Execute
-                        const v2Results = await executor.execute(scriptFilename, rows, authToken, config, config.boundary);
+                            if (!isEnabled) {
+                                console.log("[Execute] Stripping Additional Attributes (Disabled):", keysToManage);
+                                rows.forEach(row => {
+                                    keysToManage.forEach(k => {
+                                        delete row[k];
+                                    });
+                                });
+                            } else {
+                                console.log("[Execute] Allowing Additional Attributes (Enabled):", keysToManage);
+                            }
+                        }
+                    }
 
-                        // Render Results (Shared UI Logic)
-                        executionResults = v2Results;
-                        renderExecutionResults();
+                    // [GROUPING & BATCHING LOGIC]
+                    // 1. Pre-process rows into "Execution Units".
+                    //    - If Grouping: One Unit = Array of rows belonging to one key.
+                    //    - If No Grouping: One Unit = Single Row.
 
-                        // Stats
-                        pass = executionResults.filter(r => {
+                    let executionUnits = [];
+                    const groupByCol = template.groupByColumn;
+
+                    if (groupByCol && groupByCol.trim()) {
+                        console.log(`[Execute] Grouping by column: '${groupByCol}'`);
+
+                        // Group rows efficiently
+                        const groups = new Map();
+                        rows.forEach(row => {
+                            const key = row[groupByCol] || 'UNK';
+                            if (!groups.has(key)) groups.set(key, []);
+                            groups.get(key).push(row);
+                        });
+
+                        // Convert Map values to Units (Array of Arrays)
+                        executionUnits = Array.from(groups.values());
+                        console.log(`[Execute] Formed ${executionUnits.length} Groups from ${rows.length} Rows.`);
+
+                    } else {
+                        // No grouping, each row is a unit
+                        executionUnits = rows;
+                    }
+
+                    // 2. Form Batches from Units
+                    // We must NOT split a Unit across batches.
+                    // However, if a single Unit is larger than batchSize, it must stand alone in a batch (or overflow).
+
+                    const batches = [];
+                    let currentBatch = [];
+                    let currentBatchSize = 0;
+
+                    for (const unit of executionUnits) {
+                        const unitRows = Array.isArray(unit) ? unit : [unit];
+                        const unitSize = unitRows.length;
+
+                        // If adding this unit exceeds batchSize AND we already have data, push current batch
+                        if (currentBatchSize + unitSize > batchSize && currentBatchSize > 0) {
+                            batches.push(currentBatch);
+                            currentBatch = [];
+                            currentBatchSize = 0;
+                        }
+
+                        // Add unit to current batch
+                        currentBatch = currentBatch.concat(unitRows);
+                        currentBatchSize += unitSize;
+                    }
+                    if (currentBatch.length > 0) batches.push(currentBatch);
+
+                    console.log(`[Execute] Prepared ${batches.length} Batches for execution.`);
+
+                    // 3. Process Batches
+                    for (let i = 0; i < batches.length; i++) {
+                        const chunk = batches[i];
+                        console.log(`[Execute] Processing Batch ${i + 1}/${batches.length} (${chunk.length} rows)`);
+
+                        let chunkResults = [];
+
+                        if (useV2) {
+                            // Call V2 Executor for Chunk
+                            const executor = new ScriptExecutorV2({ apiBaseUrl: apiBaseUrl, debug: true });
+                            chunkResults = await executor.execute(scriptFilename, chunk, authToken, config, config.boundary);
+                        } else {
+                            // Call Legacy Endpoint for Chunk
+                            const response = await fetch('/api/scripts/execute', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    scriptName: scriptFilename,
+                                    rows: chunk,
+                                    token: authToken,
+                                    envConfig: config
+                                })
+                            });
+
+                            if (!response.ok) {
+                                const err = await response.json();
+                                chunkResults = chunk.map(r => ({ ...r, status: 'Error', response: err.error || 'Batch Execution Failed' }));
+                            } else {
+                                chunkResults = await response.json();
+                            }
+                        }
+
+                        // Accumulate Results
+                        executionResults = executionResults.concat(chunkResults);
+
+                        // Update Progress immediately
+                        const chunkPass = chunkResults.filter(r => {
                             const s = String(r.status || r.Status || '').toLowerCase();
                             return s === 'success' || s === 'pass' || s === 'passed';
                         }).length;
-                        fail = executionResults.length - pass;
-                        updateProgress(total, total, pass, fail);
+                        const chunkFail = chunkResults.length - chunkPass;
 
-                        return; // Stop here, don't run legacy block
+                        pass += chunkPass;
+                        fail += chunkFail;
+                        processed += chunk.length;
+
+                        renderExecutionResults();
+                        updateProgress(processed, total, pass, fail);
+
+                        // Small delay to allow UI to breathe
+                        await new Promise(r => setTimeout(r, 50));
                     }
 
-                    // [LEGACY BLOCK FALLTHROUGH]
-                    console.log(`[Execute] Routing '${selectedDataType}' to Legacy Executor...`);
-
-                    const response = await fetch('/api/scripts/execute', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            scriptName: scriptFilename,
-                            rows: rows,
-                            token: authToken,
-                            envConfig: config
-                        })
-                    });
-
-                    if (!response.ok) {
-                        const err = await response.json();
-                        throw new Error(err.error || 'Execution failed');
-                    }
-
-                    const resultData = await response.json();
-                    // Expected format: Array of result objects with status/response
-
-                    // 4. Render Results
-                    executionResults = resultData;
-                    renderExecutionResults();
-
-                    // Calculate Stats
-                    pass = executionResults.filter(r => {
-                        const s = String(r.status || r.Status || '').toLowerCase();
-                        return s === 'success' || s === 'pass' || s === 'passed';
-                    }).length;
-                    fail = executionResults.length - pass;
-
-                    updateProgress(total, total, pass, fail);
 
                 } catch (error) {
-                    console.error('Execution Failed:', error);
-                    alert('Execution Failed: ' + error.message);
-                    // Add dummy fail row if empty?
-                    if (executionResults.length === 0) {
-                        executionResults.push({ row: '-', status: 'Error', response: error.message });
-                        renderExecutionResults();
-                    }
+                    console.error('Execution Critical Failure:', error);
+                    alert('Execution Interrupted: ' + error.message);
                 } finally {
                     completeExecution();
                 }
