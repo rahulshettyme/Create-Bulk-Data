@@ -1,0 +1,14 @@
+{
+    "description": "Test script with farmer lookup to verify bypass logic",
+    "inputColumns": [
+        "Asset Name",
+        "Farmer Name",
+        "Farmer Name_id",
+        "Status",
+        "Response"
+    ],
+    "isMultithreaded": true,
+    "allowAdditionalAttributes": false,
+    "enableGeofencing": false,
+    "generationPrompt": "Step 1 [Master Search]: Search for farmer using 'Farmer Name' column. Output: Farmer ID. Step 2 [API]: Create asset with farmer ID."
+}

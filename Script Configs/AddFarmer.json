@@ -43,7 +43,10 @@
     "groupByColumn": "",
     "enableGeofencing": false,
     "allowAdditionalAttributes": true,
-    "additionalAttributes": [],
+    "additionalAttributes": [
+        "rsText",
+        "rsNumber"
+    ],
     "outputConfig": {
         "uiMapping": [
             {
@@ -82,7 +85,7 @@
             {
                 "colName": "Response",
                 "value": "",
-                "logic": "'Farmer Created Successfully' if farmer creation is success\nor 'User not Found' is user find is failed\nActual response if farmer creation failed"
+                "logic": "'Farmer Created Successfully' if farmer creation is success\nor 'User not Found' if user find is failed"
             }
         ],
         "isDynamicUI": true

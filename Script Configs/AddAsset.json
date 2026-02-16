@@ -1,11 +1,11 @@
 {
     "name": "AddAsset.py",
     "filename": "AddAsset.py",
-    "team": "Unassigned",
-    "description": "Add asset by searching the farmer, Soil Type, Irrigation Type using the names provided\nNote: If tenant has additional attributes, select the checkbox and mention attribute key to get column in Excel",
+    "team": "Both",
+    "description": "Add farmer by searching the farmer, Soil Type, Irrigation Type using the names provided\nNote: If tenant has additional attributes, select the checkbox and mention attribute key to get column in Excel",
     "expected_columns": [
-        "Asset Name",
         "Farmer Name",
+        "Farmer_ID",
         "Soil Type",
         "Irrigation Type",
         "Address",
@@ -13,12 +13,12 @@
     ],
     "columns": [
         {
-            "name": "Asset Name",
+            "name": "Farmer Name",
             "type": "Mandatory",
-            "description": "Asset Name"
+            "description": "Auto-detected"
         },
         {
-            "name": "Farmer Name",
+            "name": "Farmer_ID",
             "type": "Mandatory",
             "description": "Auto-detected"
         },
@@ -49,7 +49,9 @@
     "groupByColumn": "",
     "enableGeofencing": false,
     "allowAdditionalAttributes": true,
-    "additionalAttributes": [],
+    "additionalAttributes": [
+        "rajaAssetAddAttr"
+    ],
     "outputConfig": {
         "uiMapping": [
             {

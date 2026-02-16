@@ -293,7 +293,36 @@ def generate_script(description, is_multithreaded=True, input_columns=None, allo
    - Use `country_code` and `mobile_number` in your API payload.
    - Do NOT default to +91 if the format is wrong. FAIL THE ROW."""
     
-    prompt += """\n\nCRITICAL URL HANDLING: When constructing API URLs using env_config base_url, do NOT use `urljoin` with a path starting with `/`. It will destroy the path component (e.g. /qa7) of the base URL. Use f-strings like `f'{base_url}/my/api'` or ensure relative paths."""
+    prompt += """
+
+2. CRITICAL PAYLOAD HANDLING (Multipart/DTO vs JSON):
+   - CHECK if the API Step URL or Description implies a Multipart/DTO upload (vs standard JSON).
+   - Signals: "Payload Type: DTO_FILE", "Multipart", "upload", "file".
+   - IF MULTIPART/DTO:
+     - ❌ STRICTLY FORBIDDEN: DO NOT use `json=payload` or `data=json.dumps(payload)`.
+     - ❌ STRICTLY FORBIDDEN: DO NOT set `Content-Type: application/json` header manually.
+     - ✅ MUST USE `files` parameter.
+     - Code Pattern:
+       ```python
+       payload_data = { ... } # Construct dictionary
+       # Wrap in Multipart 'dto' - CRITICAL STRUCTURE
+       files = {
+           'dto': (None, json.dumps(payload_data), 'application/json')
+       }
+       # Execute
+       response = requests.post(url, headers={'Authorization': f'Bearer {builtins.token}'}, files=files)
+       ```
+   - IF STANDARD JSON:
+     - Use `requests.post(url, json=payload, ...)`
+
+3. CRITICAL SUCCESS CONDITION:
+   - APIs may return 200 (OK) or 201 (Created) for success.
+   - ALWAYS check `if response.ok:` or `if response.status_code in [200, 201]:`.
+   - ❌ DO NOT check `if response.status_code == 200:` (This causes false failures for 201)."""
+    
+    prompt += """
+
+CRITICAL URL HANDLING: When constructing API URLs using env_config base_url, do NOT use `urljoin` with a path starting with `/`. It will destroy the path component (e.g. /qa7) of the base URL. Use f-strings like `f'{base_url}/my/api'` or ensure relative paths."""
     
     # Add thread_utils requirements if multithreaded
     if is_multithreaded:
@@ -332,33 +361,75 @@ You MUST use the master_search component for ALL master data lookups.
    - 🚨 FORBIDDEN: DO NOT initialize these inside the `run()` or `process_row()` functions. They must be GLOBAL.
 
 4. LOOKUP PATTERN (inside process_row function):
-   6. MANDATORY LOGIC REPLACEMENT (SEARCH mode):
-   You MUST replace any existing 'master_search.search' call with this EXACT optimized block. 
-   Do not preserve the old logic.
+   6. MANDATORY LOGIC REPLACEMENT (SEARCH mode - ALL MASTER TYPES):
+   🚨 CRITICAL: This optimization applies to ALL search-mode master types (user, farmer, project, etc.)
+   
+   For EACH search-mode master type in your script, you MUST apply this bypass pattern:
+   
+   **STEP 1: Detect ID Column at Module Level**
+   At the start of run() function, check if the first row has the ID column.
+   The column name pattern is typically: '{MasterTypeName}_id' or '{OutputFieldName}'
+   
+   Examples:
+   - For 'user' master → Check for 'UserID' or 'AssignedTo_id' column
+   - For 'farmer' master → Check for 'Farmer Name_id' or 'FarmerID' column
+   - For 'project' master → Check for 'Project_id' or 'ProjectID' column
+   
+   **STEP 2: Apply Conditional Logic in process_row()**
    
    ```python
-   # 1. OPTIMIZATION CHECK (At start of run() function):
-   # Check if FIRST row has the ID. If yes, assume ALL rows must have it.
-   # _use_provided_ids = bool(data and data[0].get('Output Column Name'))
+   # EXAMPLE 1: User Master Type
+   # At start of run() function (MODULE LEVEL):
+   _use_provided_user_ids = bool(data and data[0].get('UserID'))
    
-   # 2. INSIDE process_row(row):
-   if _use_provided_ids:
+   # Inside process_row(row):
+   if _use_provided_user_ids:
        # STRICT MODE: Use provided ID, fail if missing.
-       user_id = row.get('Output Column Name')
+       user_id = row.get('UserID')
        if not user_id:
            row['Status'] = 'Fail'
-           row['Response'] = '<Master> ID is empty (Strict Mode)'
+           row['Response'] = 'UserID is empty (Strict Mode)'
+           print(f"[USER_LOOKUP] {assigned_to_name} → ID: Not Found (Empty in Strict Mode)")
            return row
+       print(f"[USER_LOOKUP] {assigned_to_name} → ID: {user_id} (Provided)")
    else:
        # FALLBACK MODE: Perform Search
        result = master_search.search('user', assigned_to_name, builtins.env_config, _user_cache)
        if not result['found']:
-           # Log failure and return
            row['Status'] = 'Fail'
            row['Response'] = result['message']
            return row
        user_id = result['value']
+   
+   # EXAMPLE 2: Farmer Master Type
+   # At start of run() function (MODULE LEVEL):
+   _use_provided_farmer_ids = bool(data and data[0].get('Farmer Name_id'))
+   
+   # Inside process_row(row):
+   if _use_provided_farmer_ids:
+       # STRICT MODE: Use provided ID, fail if missing.
+       farmer_id = row.get('Farmer Name_id')
+       if not farmer_id:
+           row['Status'] = 'Fail'
+           row['Response'] = 'Farmer Name_id is empty (Strict Mode)'
+           print(f"[FARMER_LOOKUP] {farmer_name} → ID: Not Found (Empty in Strict Mode)")
+           return row
+       print(f"[FARMER_LOOKUP] {farmer_name} → ID: {farmer_id} (Provided)")
+   else:
+       # FALLBACK MODE: Perform Search
+       result = master_search.search('farmer', farmer_name, builtins.env_config, _farmer_cache)
+       if not result['found']:
+           row['Status'] = 'Fail'
+           row['Response'] = result['message']
+           return row
+       farmer_id = result['value']
    ```
+   
+   🚨 CRITICAL RULES:
+   - Apply this pattern to EVERY search-mode master in your script (user, farmer, project, etc.)
+   - The bypass variable name should be: `_use_provided_{master_type}_ids`
+   - ALWAYS add the print statement for logging whether ID was provided or searched
+   - Initialize the bypass flag at the START of run() function, NOT inside process_row()
    
    For ONCE mode (soiltype, irrigationtype):
    ```python
@@ -631,33 +702,76 @@ You MUST use the master_search component for ALL master data lookups.
    ```python
    result = master_search.lookup_from_cache(_soiltype_list, 'name', row.get('SoilType'), 'id')
    ```
-6. MANDATORY LOGIC REPLACEMENT (SEARCH mode):
-   You MUST replace any existing 'master_search.search' call with this EXACT optimized block. 
-   Do not preserve the old logic.
+6. MANDATORY LOGIC REPLACEMENT (SEARCH mode - ALL MASTER TYPES):
+   🚨 CRITICAL: This optimization applies to ALL search-mode master types (user, farmer, project, etc.)
+   
+   For EACH search-mode master type in your script, you MUST apply this bypass pattern:
+   
+   **STEP 1: Detect ID Column at Module Level**
+   At the start of run() function, check if the first row has the ID column.
+   The column name pattern is typically: '{MasterTypeName}_id' or '{OutputFieldName}'
+   
+   Examples:
+   - For 'user' master → Check for 'UserID' or 'AssignedTo_id' column
+   - For 'farmer' master → Check for 'Farmer Name_id' or 'FarmerID' column
+   - For 'project' master → Check for 'Project_id' or 'ProjectID' column
+   
+   **STEP 2: Apply Conditional Logic in process_row()**
    
    ```python
-   # 1. OPTIMIZATION CHECK (At start of run() function):
-   # Check if FIRST row has the ID. If yes, assume ALL rows must have it.
-   # _use_provided_ids = bool(data and data[0].get('Output Column Name'))
+   # EXAMPLE 1: User Master Type
+   # At start of run() function (MODULE LEVEL):
+   _use_provided_user_ids = bool(data and data[0].get('UserID'))
    
-   # 2. INSIDE process_row(row):
-   if _use_provided_ids:
+   # Inside process_row(row):
+   if _use_provided_user_ids:
        # STRICT MODE: Use provided ID, fail if missing.
-       user_id = row.get('Output Column Name')
+       user_id = row.get('UserID')
        if not user_id:
            row['Status'] = 'Fail'
-           row['Response'] = '<Master> ID is empty (Strict Mode)'
+           row['Response'] = 'UserID is empty (Strict Mode)'
+           print(f"[USER_LOOKUP] {assigned_to_name} → ID: Not Found (Empty in Strict Mode)")
            return row
+       print(f"[USER_LOOKUP] {assigned_to_name} → ID: {user_id} (Provided)")
    else:
        # FALLBACK MODE: Perform Search
        result = master_search.search('user', assigned_to_name, builtins.env_config, _user_cache)
        if not result['found']:
-           # Log failure and return
            row['Status'] = 'Fail'
            row['Response'] = result['message']
            return row
        user_id = result['value']
+   
+   # EXAMPLE 2: Farmer Master Type
+   # At start of run() function (MODULE LEVEL):
+   _use_provided_farmer_ids = bool(data and data[0].get('Farmer Name_id'))
+   
+   # Inside process_row(row):
+   if _use_provided_farmer_ids:
+       # STRICT MODE: Use provided ID, fail if missing.
+       farmer_id = row.get('Farmer Name_id')
+       if not farmer_id:
+           row['Status'] = 'Fail'
+           row['Response'] = 'Farmer Name_id is empty (Strict Mode)'
+           print(f"[FARMER_LOOKUP] {farmer_name} → ID: Not Found (Empty in Strict Mode)")
+           return row
+       print(f"[FARMER_LOOKUP] {farmer_name} → ID: {farmer_id} (Provided)")
+   else:
+       # FALLBACK MODE: Perform Search
+       result = master_search.search('farmer', farmer_name, builtins.env_config, _farmer_cache)
+       if not result['found']:
+           row['Status'] = 'Fail'
+           row['Response'] = result['message']
+           return row
+       farmer_id = result['value']
    ```
+   
+   🚨 CRITICAL RULES:
+   - Apply this pattern to EVERY search-mode master in your script (user, farmer, project, etc.)
+   - The bypass variable name should be: `_use_provided_{master_type}_ids`
+   - ALWAYS add the print statement for logging whether ID was provided or searched
+   - Initialize the bypass flag at the START of run() function, NOT inside process_row()
+   
 5. REMOVE any custom /services/user/api/users or /services/authorization API calls
 6. REMOVE any requests.get() for user/farmer lookups - replace with master_search.search()
 7. master_search handles: path variables, company_id injection, query parameters, caching"""

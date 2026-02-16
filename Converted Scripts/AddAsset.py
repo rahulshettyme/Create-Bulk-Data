@@ -1,3 +1,7 @@
+# CONFIG: enableGeofencing = False
+# CONFIG: allowAdditionalAttributes = True
+# EXPECTED_INPUT_COLUMNS: Asset Name, Farmer Name, Farmer_ID, Soil Type, Irrigation Type, Address, Declared Area
+
 def run(data, token, env_config):
     import pandas as pd
     import builtins
@@ -64,8 +68,6 @@ def run(data, token, env_config):
                 pass
         if not kwargs.get('json') and (not kwargs.get('data')) and (not payload_type == 'Data (JSON)'):
             payload_type = 'Unknown/Multipart'
-        print(f'[API_DEBUG] 📦 PAYLOAD ({payload_type}): {payload}')
-        print(f'[API_DEBUG] ----------------------------------------------------------------')
         try:
             if method == 'GET':
                 resp = requests.get(url, **kwargs)
@@ -222,148 +224,181 @@ def run(data, token, env_config):
     builtins.wk = wk
     builtins.wb = wk
     wb = wk
-    global _geocode_cache, _farmer_cache, _soiltype_list, _irrigationtype_list
+    global _soiltype_list, _use_provided_farmer_ids, _geocode_cache, _farmer_cache, _irrigationtype_list
     _farmer_cache = {}
+    _soiltype_list = []
+    _irrigationtype_list = []
     _geocode_cache = {}
-    _soiltype_list = None
-    _irrigationtype_list = None
+    _use_provided_farmer_ids = False
 
     def _user_run(data, token, env_config):
         """
-    Main entry point for the script. Initializes common resources and delegates
-    row processing to `process_row` in parallel.
+    Main function to orchestrate the asset creation process.
+    Initializes builtins, master data caches, and orchestrates parallel processing.
     """
         builtins.token = token
         builtins.env_config = env_config
-        global _soiltype_list
-        global _irrigationtype_list
-        with _lock:
-            if _soiltype_list is None:
-                _soiltype_list = master_search.fetch_all('soiltype', builtins.env_config)
-                print(f'[MASTER_INIT] Soil Type master data fetched. Count: {(len(_soiltype_list) if _soiltype_list else 0)}')
-            if _irrigationtype_list is None:
-                _irrigationtype_list = master_search.fetch_all('irrigationtype', builtins.env_config)
-                print(f'[MASTER_INIT] Irrigation Type master data fetched. Count: {(len(_irrigationtype_list) if _irrigationtype_list else 0)}')
+        global _soiltype_list, _irrigationtype_list, _use_provided_farmer_ids
+        print("[MASTER_SEARCH] Fetching all 'soiltype' master data...")
+        _soiltype_list = master_search.fetch_all('soiltype', env_config)
+        print(f'[MASTER_SEARCH] Fetched {len(_soiltype_list)} soil types.')
+        print("[MASTER_SEARCH] Fetching all 'irrigationtype' master data...")
+        _irrigationtype_list = master_search.fetch_all('irrigationtype', env_config)
+        print(f'[MASTER_SEARCH] Fetched {len(_irrigationtype_list)} irrigation types.')
+        _use_provided_farmer_ids = bool(data and data[0].get('Farmer_ID'))
+        if _use_provided_farmer_ids:
+            print("[MASTER_SEARCH] 'Farmer_ID' column found in input. Using provided IDs for farmer lookup.")
+        else:
+            print("[MASTER_SEARCH] 'Farmer_ID' column not found or empty. Performing farmer search API calls.")
         return thread_utils.run_in_parallel(process_func=process_row, items=data, token=token, env_config=env_config)
 
     def process_row(row):
         """
-    Processes a single row of data from the Excel sheet.
-    Performs master data lookups, geocoding, and calls the Asset creation API.
+    Processes a single row of data from the Excel sheet to create an asset.
+    Handles master data lookups, geocoding, and the final API call.
     """
         row['Status'] = 'Fail'
         row['Asset ID'] = 'NA'
         row['Response'] = ''
-        row['Asset Name'] = row.get('Asset Name', '')
+        asset_name = row.get('Asset Name')
         farmer_name = row.get('Farmer Name')
-        if not farmer_name:
-            row['Response'] = 'Farmer Name is missing.'
-            return row
-        with _lock:
-            farmer_result = master_search.search('farmer', farmer_name, builtins.env_config, _farmer_cache)
-        print(f'[FARMER_LOOKUP] {farmer_name} -> ID: {(farmer_result['value'] if farmer_result['found'] else 'Not Found')}')
-        if not farmer_result['found']:
-            row['Response'] = farmer_result['message']
-            return row
-        row['Farmer Name_id'] = farmer_result['value']
         soil_type_name = row.get('Soil Type')
+        irrigation_type_name = row.get('Irrigation Type')
+        address_raw = row.get('Address')
+        declared_area_str = str(row.get('Declared Area')).strip()
+        if not asset_name:
+            row['Response'] = 'Asset Name is missing.'
+            print(f'[ERROR] Skipping row - Asset Name is missing.')
+            return row
+        if not farmer_name and (not _use_provided_farmer_ids):
+            row['Response'] = 'Farmer Name is missing (and Farmer_ID not provided).'
+            print(f"[ERROR] Skipping row for asset '{asset_name}' - Farmer Name is missing.")
+            return row
         if not soil_type_name:
             row['Response'] = 'Soil Type is missing.'
+            print(f"[ERROR] Skipping row for asset '{asset_name}' - Soil Type is missing.")
             return row
-        soil_type_result = master_search.lookup_from_cache(_soiltype_list, 'name', soil_type_name, 'id')
-        print(f'[SOILTYPE_LOOKUP] {soil_type_name} -> ID: {(soil_type_result['value'] if soil_type_result['found'] else 'Not Found')}')
-        if not soil_type_result['found']:
-            row['Response'] = soil_type_result['message']
-            return row
-        row['Soil Type_id'] = soil_type_result['value']
-        irrigation_type_name = row.get('Irrigation Type')
         if not irrigation_type_name:
             row['Response'] = 'Irrigation Type is missing.'
+            print(f"[ERROR] Skipping row for asset '{asset_name}' - Irrigation Type is missing.")
             return row
-        irrigation_type_result = master_search.lookup_from_cache(_irrigationtype_list, 'name', irrigation_type_name, 'id')
-        print(f'[IRRIGATIONTYPE_LOOKUP] {irrigation_type_name} -> ID: {(irrigation_type_result['value'] if irrigation_type_result['found'] else 'Not Found')}')
-        if not irrigation_type_result['found']:
-            row['Response'] = irrigation_type_result['message']
+        if not address_raw:
+            row['Response'] = 'Address is missing.'
+            print(f"[ERROR] Skipping row for asset '{asset_name}' - Address is missing.")
             return row
-        row['Irrigation Type_id'] = irrigation_type_result['value']
-        address = row.get('Address')
-        address_component_payload = None
-        if address:
-            with _lock:
-                if address in _geocode_cache:
-                    address_component = _geocode_cache[address]
-                    print(f'[GEOFENCE_CACHE] {address} -> Using cached result.')
-                else:
-                    google_api_key = builtins.env_config.get('Geocoding_api_key')
-                    if not google_api_key:
-                        row['Response'] = 'Geocoding API key not configured in environment.'
-                        return row
-                    geocode_result = geofence_utils.get_boundary(address, google_api_key)
-                    if geocode_result:
-                        address_component = geofence_utils.parse_address_component(geocode_result)
-                        _geocode_cache[address] = address_component
-                        print(f'[GEOFENCE] {address} -> lat={address_component.get('latitude', 'N/A')}, lng={address_component.get('longitude', 'N/A')}')
-                    else:
-                        row['Response'] = f'Failed to geocode address: "{address}"'
-                        return row
-            address_component_payload = {'country': address_component.get('country'), 'formattedAddress': address_component.get('formattedAddress'), 'administrativeAreaLevel1': address_component.get('administrativeAreaLevel1'), 'locality': address_component.get('locality'), 'administrativeAreaLevel2': address_component.get('administrativeAreaLevel2'), 'sublocalityLevel1': address_component.get('sublocalityLevel1'), 'sublocalityLevel2': address_component.get('sublocalityLevel2'), 'landmark': address_component.get('landmark'), 'postalCode': address_component.get('postalCode'), 'houseNo': address_component.get('houseNo'), 'buildingName': address_component.get('buildingName'), 'placeId': address_component.get('placeId'), 'latitude': address_component.get('latitude'), 'longitude': address_component.get('longitude')}
-            row['Address Component (non mandatory)'] = json.dumps(address_component_payload)
+        declared_area = None
+        try:
+            if declared_area_str:
+                declared_area = float(declared_area_str)
+            else:
+                row['Response'] = 'Declared Area is empty.'
+                print(f"[ERROR] Skipping row for asset '{asset_name}' - Declared Area is empty.")
+                return row
+        except ValueError:
+            row['Response'] = f"Invalid format for Declared Area: '{declared_area_str}'."
+            print(f"[ERROR] Skipping row for asset '{asset_name}' - Invalid Declared Area.")
+            return row
+        farmer_id = None
+        if _use_provided_farmer_ids:
+            farmer_id = row.get('Farmer_ID')
+            if not farmer_id:
+                row['Response'] = 'Farmer_ID is empty (Strict Mode: expected ID in column).'
+                print(f'[FARMER_LOOKUP] {farmer_name} → ID: Not Found (Empty in Strict Mode)')
+                return row
+            print(f'[FARMER_LOOKUP] {farmer_name} → ID: {farmer_id} (Provided)')
         else:
-            row['Response'] = 'Address column is missing for geocoding.'
+            with _farmer_cache_lock:
+                farmer_lookup_result = master_search.search('farmer', farmer_name, builtins.env_config, _farmer_cache)
+            if not farmer_lookup_result['found']:
+                row['Response'] = f'Farmer not found: {farmer_lookup_result['message']}'
+                print(f'[FARMER_LOOKUP] {farmer_name} → Result: Not Found')
+                return row
+            farmer_id = farmer_lookup_result['value']
+            row['Farmer_ID'] = farmer_id
+            print(f'[FARMER_LOOKUP] {farmer_name} → ID: {farmer_id}')
+        soil_type_id = None
+        soil_type_lookup_result = master_search.lookup_from_cache(_soiltype_list, 'name', soil_type_name, 'id')
+        if not soil_type_lookup_result['found']:
+            row['Response'] = f'Soil Type not found: {soil_type_lookup_result['message']}'
+            print(f'[SOILTYPE_LOOKUP] {soil_type_name} → Result: Not Found')
             return row
-        asset_creation_url = f'{base_url}/services/farm/api/assets'
-        declared_area_raw = row.get('Declared Area')
-        try:
-            declared_area_count = float(declared_area_raw)
-        except (ValueError, TypeError):
-            row['Response'] = 'Invalid Declared Area. Must be a numeric value.'
+        soil_type_id = soil_type_lookup_result['value']
+        row['Soil Type_id'] = soil_type_id
+        print(f'[SOILTYPE_LOOKUP] {soil_type_name} → ID: {soil_type_id}')
+        irrigation_type_id = None
+        irrigation_type_lookup_result = master_search.lookup_from_cache(_irrigationtype_list, 'name', irrigation_type_name, 'id')
+        if not irrigation_type_lookup_result['found']:
+            row['Response'] = f'Irrigation Type not found: {irrigation_type_lookup_result['message']}'
+            print(f'[IRRIGATIONTYPE_LOOKUP] {irrigation_type_name} → Result: Not Found')
             return row
-        payload = {'declaredArea': {'count': declared_area_count}, 'name': row.get('Asset Name'), 'ownerId': row['Farmer Name_id'], 'soilType': {'id': row['Soil Type_id']}, 'irrigationType': {'id': row['Irrigation Type_id']}, 'address': address_component_payload}
+        irrigation_type_id = irrigation_type_lookup_result['value']
+        row['Irrigation Type_id'] = irrigation_type_id
+        print(f'[IRRIGATIONTYPE_LOOKUP] {irrigation_type_name} → ID: {irrigation_type_id}')
+        address_component_payload = None
+        with _geocode_cache_lock:
+            if address_raw in _geocode_cache:
+                address_component_payload = _geocode_cache[address_raw]
+                lat_log_summary = f'lat={address_component_payload.get('latitude', 'N/A'):.6f}, lng={address_component_payload.get('longitude', 'N/A'):.6f}'
+                print(f'[GEOFENCE] {address_raw} → Cache Hit. {lat_log_summary}')
+            else:
+                google_api_key = builtins.env_config.get('Geocoding_api_key')
+                if not google_api_key:
+                    row['Response'] = 'Geocoding API key is missing in environment configuration.'
+                    print(f"[ERROR] Skipping row for asset '{asset_name}' - Geocoding API key missing.")
+                    return row
+                geocode_result = geofence_utils.get_boundary(address_raw, google_api_key)
+                if not geocode_result:
+                    row['Response'] = f"Geocoding failed for address: '{address_raw}'"
+                    print(f'[GEOFENCE] {address_raw} → Result: Geocoding Failed')
+                    return row
+                parsed_address = geofence_utils.parse_address_component(geocode_result)
+                address_component_payload = {'formattedAddress': parsed_address.get('formattedAddress'), 'postalCode': parsed_address.get('postalCode'), 'locality': parsed_address.get('locality'), 'data': None, 'administrativeAreaLevel5': parsed_address.get('administrativeAreaLevel5'), 'administrativeAreaLevel4': parsed_address.get('administrativeAreaLevel4'), 'administrativeAreaLevel3': parsed_address.get('administrativeAreaLevel3'), 'administrativeAreaLevel2': parsed_address.get('administrativeAreaLevel2'), 'administrativeAreaLevel1': parsed_address.get('administrativeAreaLevel1'), 'country': parsed_address.get('country'), 'latitude': parsed_address.get('latitude'), 'longitude': parsed_address.get('longitude'), 'placeId': parsed_address.get('placeId'), 'sublocalityLevel1': parsed_address.get('sublocalityLevel1'), 'sublocalityLevel2': parsed_address.get('sublocalityLevel2'), 'sublocalityLevel3': parsed_address.get('sublocalityLevel3'), 'sublocalityLevel4': parsed_address.get('sublocalityLevel4'), 'sublocalityLevel5': parsed_address.get('sublocalityLevel5'), 'houseNo': parsed_address.get('houseNo'), 'buildingName': parsed_address.get('buildingName'), 'landmark': parsed_address.get('landmark')}
+                _geocode_cache[address_raw] = address_component_payload
+                lat_log_summary = f'lat={address_component_payload.get('latitude', 'N/A'):.6f}, lng={address_component_payload.get('longitude', 'N/A'):.6f}'
+                print(f'[GEOFENCE] {address_raw} → {lat_log_summary}')
+        row['Address Component (non mandatory)'] = json.dumps(address_component_payload)
+        api_url = f'{base_url}/services/farm/api/assets'
+        headers = {'Authorization': f'Bearer {builtins.token}'}
+        payload = {'declaredArea': {'count': declared_area}, 'name': asset_name, 'ownerId': farmer_id, 'soilType': {'id': soil_type_id}, 'irrigationType': {'id': irrigation_type_id}, 'address': address_component_payload}
         files = {'dto': (None, json.dumps(payload), 'application/json')}
-        api_headers = {'Authorization': f'Bearer {builtins.token}'}
         try:
-            response = _log_post(asset_creation_url, headers=api_headers, files=files)
-            response_json = {}
-            try:
-                response_json = response.json()
-            except json.JSONDecodeError:
-                pass
+            response = _log_post(api_url, headers=headers, files=files)
+            response.raise_for_status()
+            response_json = response.json()
             if response.status_code in [200, 201]:
-                row['Status'] = 'Pass'
                 asset_id = response_json.get('id')
+                row['Status'] = 'Pass'
                 row['Asset ID'] = asset_id
                 row['Response'] = 'Asset Created Successfully'
+                print(f"[API] Asset '{asset_name}' created successfully. ID: {asset_id}")
             else:
-                row['Status'] = 'Fail'
-                if response.status_code == 400:
-                    row['Response'] = response_json.get('title', f'Bad Request: {response.text}')
-                else:
-                    row['Response'] = f'API Error: {response.status_code} - {response_json.get('message', response.text)}'
-                row['Asset ID'] = 'NA'
+                row['Response'] = f'Asset creation failed with unexpected status {response.status_code}: {response.text}'
+                print(f"[API] Asset '{asset_name}' creation failed. Status: {response.status_code}, Response: {response.text}")
         except requests.exceptions.HTTPError as e:
-            row['Status'] = 'Fail'
-            error_response_json = {}
-            try:
-                if e.response:
-                    error_response_json = e.response.json()
-            except json.JSONDecodeError:
-                pass
-            row['Response'] = f'HTTP Error: {e.response.status_code} - {error_response_json.get('message', e.response.text if e.response else str(e))}'
+            status_code = e.response.status_code
+            error_message = e.response.text
             row['Asset ID'] = 'NA'
-        except requests.exceptions.ConnectionError as e:
-            row['Status'] = 'Fail'
-            row['Response'] = f'Network Error: Could not connect to API - {e}'
+            if status_code == 400:
+                try:
+                    error_json = e.response.json()
+                    error_title = error_json.get('title', error_message)
+                    row['Response'] = error_title
+                except json.JSONDecodeError:
+                    row['Response'] = f'Asset creation failed (400 Bad Request): {error_message}'
+            else:
+                row['Response'] = f'Asset creation failed (HTTP Error {status_code}): {error_message}'
+            print(f"[API] Asset '{asset_name}' creation failed. HTTP Status: {status_code}, Error: {row['Response']}")
+        except requests.exceptions.RequestException as e:
+            row['Response'] = f'Network or request error during asset creation: {e}'
             row['Asset ID'] = 'NA'
-        except requests.exceptions.Timeout as e:
-            row['Status'] = 'Fail'
-            row['Response'] = f'Request Timeout: API did not respond in time - {e}'
-            row['Asset ID'] = 'NA'
+            print(f"[API] Asset '{asset_name}' creation failed. Request Exception: {e}")
         except Exception as e:
-            row['Status'] = 'Fail'
             row['Response'] = f'An unexpected error occurred: {e}'
             row['Asset ID'] = 'NA'
+            print(f"[API] Asset '{asset_name}' creation failed. Unexpected Error: {e}")
         return row
-    _lock = thread_utils.create_lock()
+    _farmer_cache_lock = thread_utils.create_lock()
+    _geocode_cache_lock = thread_utils.create_lock()
     res = _user_run(data, token, env_config)
     try:
         if res is None and hasattr(builtins, 'data_df'):
