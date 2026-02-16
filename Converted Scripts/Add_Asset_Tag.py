@@ -4,12 +4,8 @@ def run(data, token, env_config):
     import concurrent.futures
     import requests
     import json
-    import thread_utils
-    import attribute_utils
 
     def _log_req(method, url, **kwargs):
-        import requests
-        import json
 
         def _debug_jwt(token_str):
             try:
@@ -39,8 +35,30 @@ def run(data, token, env_config):
         print(f'[API_DEBUG] ----------------------------------------------------------------')
         print(f'[API_DEBUG] 🚀 REQUEST: {method} {url}')
         print(f'[API_DEBUG] 🔑 TOKEN META: {token_meta}')
-        payload = kwargs.get('json') or kwargs.get('data') or 'No Payload'
-        print(f'[API_DEBUG] 📦 PAYLOAD: {payload}')
+        payload = kwargs.get('json') or kwargs.get('data')
+        if not payload:
+            files = kwargs.get('files')
+            if files and isinstance(files, dict):
+                if 'dto' in files:
+                    val = files['dto']
+                    if isinstance(val, (list, tuple)) and len(val) > 1:
+                        payload = f'[Multipart DTO] {val[1]}'
+                    else:
+                        payload = f'[Multipart DTO] {val}'
+                else:
+                    payload = f'[Multipart Files] Keys: {list(files.keys())}'
+        if not payload:
+            payload = 'No Payload'
+        payload_type = 'JSON' if kwargs.get('json') else 'Data'
+        if payload_type == 'Data' and isinstance(payload, str):
+            try:
+                json.loads(payload)
+                payload_type = 'Data (JSON)'
+            except:
+                pass
+        if not kwargs.get('json') and (not kwargs.get('data')) and (not payload_type == 'Data (JSON)'):
+            payload_type = 'Unknown/Multipart'
+        print(f'[API_DEBUG] 📦 PAYLOAD ({payload_type}): {payload}')
         print(f'[API_DEBUG] ----------------------------------------------------------------')
         try:
             if method == 'GET':
@@ -49,15 +67,25 @@ def run(data, token, env_config):
                 resp = requests.post(url, **kwargs)
             elif method == 'PUT':
                 resp = requests.put(url, **kwargs)
+            elif method == 'DELETE':
+                resp = requests.delete(url, **kwargs)
             else:
                 resp = requests.request(method, url, **kwargs)
+            body_preview = 'Binary/No Content'
             try:
-                body_preview = resp.text[:1000].replace('\n', ' ').replace('\r', '')
+                if not resp.text or not resp.text.strip():
+                    body_preview = '[Empty Response]'
+                else:
+                    try:
+                        json_obj = resp.json()
+                        body_preview = json.dumps(json_obj, indent=2)
+                    except:
+                        body_preview = resp.text[:4000]
             except:
-                body_preview = 'Binary/No Content'
+                pass
             status_icon = '✅' if 200 <= resp.status_code < 300 else '❌'
             print(f'[API_DEBUG] {status_icon} RESPONSE [{resp.status_code}]')
-            print(f'[API_DEBUG] 📄 BODY: {body_preview}')
+            print(f'[API_DEBUG] 📄 BODY:\n{body_preview}')
             print(f'[API_DEBUG] ----------------------------------------------------------------\n')
             return resp
         except Exception as e:
@@ -73,6 +101,25 @@ def run(data, token, env_config):
 
     def _log_put(url, **kwargs):
         return _log_req('PUT', url, **kwargs)
+
+    def _log_delete(url, **kwargs):
+        return _log_req('DELETE', url, **kwargs)
+
+    def _safe_iloc(row, idx):
+        try:
+            if isinstance(row, dict):
+                keys = list(row.keys())
+                if 0 <= idx < len(keys):
+                    val = row[keys[idx]]
+                    return val.strip() if isinstance(val, str) else val
+                return None
+            elif isinstance(row, list):
+                if 0 <= idx < len(row):
+                    return row[idx]
+                return None
+            return row.iloc[idx]
+        except:
+            return None
     import sys
     sys.argv = [sys.argv[0]]
     builtins.data = data
@@ -171,124 +218,340 @@ def run(data, token, env_config):
     wb = wk
 
     def _user_run(data, token, env_config):
-        """
-    Executes the automation script to add an asset tag to assets from Excel data.
+        import pandas as pd
+        import builtins
+        import concurrent.futures
+        import requests
+        import json
+        import requests
+        import json
+        import thread_utils
+        import builtins
+        import components.master_search as master_search
 
-    Args:
-        data (list of dict): A list of dictionaries, where each dictionary represents a row
-                             from the Excel sheet. Expected keys: 'Asset Name', 'Asset ID',
-                             'Tag', 'Tag ID', 'Status', 'API_Response'.
-        token (str): The authorization token for API calls.
-        env_config (dict): A dictionary containing environment-specific configurations,
-                           including 'apiBaseUrl'.
+        def _log_req(method, url, **kwargs):
 
-    Returns:
-        list of dict: The updated list of dictionaries with 'Status' and 'API_Response'
-                      for each row.
+            def _debug_jwt(token_str):
+                try:
+                    if not token_str or len(token_str) < 10:
+                        return 'Invalid/Empty Token'
+                    if token_str.startswith('Bearer '):
+                        token_str = token_str.replace('Bearer ', '')
+                    parts = token_str.split('.')
+                    if len(parts) < 2:
+                        return 'Not a JWT'
+                    payload = parts[1]
+                    pad = len(payload) % 4
+                    if pad:
+                        payload += '=' * (4 - pad)
+                    import base64
+                    decoded = base64.urlsafe_b64decode(payload).decode('utf-8')
+                    claims = json.loads(decoded)
+                    user = claims.get('preferred_username') or claims.get('sub')
+                    iss = claims.get('iss', '')
+                    tenant = iss.split('/')[-1] if '/' in iss else 'Unknown'
+                    return f'User: {user} | Tenant: {tenant}'
+                except Exception as e:
+                    return f'Decode Error: {e}'
+            headers = kwargs.get('headers', {})
+            auth_header = headers.get('Authorization', 'None')
+            token_meta = _debug_jwt(auth_header)
+            print(f'[API_DEBUG] ----------------------------------------------------------------')
+            print(f'[API_DEBUG] 🚀 REQUEST: {method} {url}')
+            print(f'[API_DEBUG] 🔑 TOKEN META: {token_meta}')
+            payload = kwargs.get('json') or kwargs.get('data')
+            if not payload:
+                files = kwargs.get('files')
+                if files and isinstance(files, dict):
+                    if 'dto' in files:
+                        val = files['dto']
+                        if isinstance(val, (list, tuple)) and len(val) > 1:
+                            payload = f'[Multipart DTO] {val[1]}'
+                        else:
+                            payload = f'[Multipart DTO] {val}'
+                    else:
+                        payload = f'[Multipart Files] Keys: {list(files.keys())}'
+            if not payload:
+                payload = 'No Payload'
+            payload_type = 'JSON' if kwargs.get('json') else 'Data'
+            if payload_type == 'Data' and isinstance(payload, str):
+                try:
+                    json.loads(payload)
+                    payload_type = 'Data (JSON)'
+                except:
+                    pass
+            if not kwargs.get('json') and (not kwargs.get('data')) and (not payload_type == 'Data (JSON)'):
+                payload_type = 'Unknown/Multipart'
+            print(f'[API_DEBUG] 📦 PAYLOAD ({payload_type}): {payload}')
+            print(f'[API_DEBUG] ----------------------------------------------------------------')
+            try:
+                if method == 'GET':
+                    resp = requests.get(url, **kwargs)
+                elif method == 'POST':
+                    resp = requests.post(url, **kwargs)
+                elif method == 'PUT':
+                    resp = requests.put(url, **kwargs)
+                elif method == 'DELETE':
+                    resp = requests.delete(url, **kwargs)
+                else:
+                    resp = requests.request(method, url, **kwargs)
+                body_preview = 'Binary/No Content'
+                try:
+                    if not resp.text or not resp.text.strip():
+                        body_preview = '[Empty Response]'
+                    else:
+                        try:
+                            json_obj = resp.json()
+                            body_preview = json.dumps(json_obj, indent=2)
+                        except:
+                            body_preview = resp.text[:4000]
+                except:
+                    pass
+                status_icon = '✅' if 200 <= resp.status_code < 300 else '❌'
+                print(f'[API_DEBUG] {status_icon} RESPONSE [{resp.status_code}]')
+                print(f'[API_DEBUG] 📄 BODY:\n{body_preview}')
+                print(f'[API_DEBUG] ----------------------------------------------------------------\n')
+                return resp
+            except Exception as e:
+                print(f'[API_DEBUG] ❌ EXCEPTION: {e}')
+                print(f'[API_DEBUG] ----------------------------------------------------------------\n')
+                raise e
+
+        def _log_get(url, **kwargs):
+            return _log_req('GET', url, **kwargs)
+
+        def _log_post(url, **kwargs):
+            return _log_req('POST', url, **kwargs)
+
+        def _log_put(url, **kwargs):
+            return _log_req('PUT', url, **kwargs)
+
+        def _log_delete(url, **kwargs):
+            return _log_req('DELETE', url, **kwargs)
+
+        def _safe_iloc(row, idx):
+            try:
+                if isinstance(row, dict):
+                    keys = list(row.keys())
+                    if 0 <= idx < len(keys):
+                        val = row[keys[idx]]
+                        return val.strip() if isinstance(val, str) else val
+                    return None
+                elif isinstance(row, list):
+                    if 0 <= idx < len(row):
+                        return row[idx]
+                    return None
+                return _safe_iloc(row, idx)
+            except:
+                return None
+        import sys
+        sys.argv = [sys.argv[0]]
+        builtins.data = data
+        builtins.data_df = pd.DataFrame(data)
+        import os
+        valid_token_path = os.path.join(os.getcwd(), 'valid_token.txt')
+        if os.path.exists(valid_token_path):
+            try:
+                with open(valid_token_path, 'r') as f:
+                    forced_token = f.read().strip()
+                if len(forced_token) > 10:
+                    print(f'[API_DEBUG] ⚠️ OVERRIDE: Using token from valid_token.txt')
+            except Exception:
+                pass
+        builtins.token = token
+        builtins.base_url = env_config.get('apiBaseUrl')
+        builtins.file_path = file_path
+        env_url = base_url
+        builtins.env_url = base_url
+
+        class MockCell:
+
+            def __init__(self, row_data, key):
+                self.row_data = row_data
+                self.key = key
+
+            @property
+            def value(self):
+                return self.row_data.get(self.key)
+
+            @value.setter
+            def value(self, val):
+                self.row_data[self.key] = val
+
+        class MockSheet:
+
+            def __init__(self, data):
+                self.data = data
+
+            def cell(self, row, column, value=None):
+                idx = row - 2
+                if not 0 <= idx < len(self.data):
+                    return MockCell({}, 'dummy')
+                row_data = self.data[idx]
+                keys = list(row_data.keys())
+                if 1 <= column <= len(keys):
+                    key = keys[column - 1]
+                elif 'output_columns' in dir(builtins) and 0 <= column - 1 < len(builtins.output_columns):
+                    key = builtins.output_columns[column - 1]
+                else:
+                    key = f'Column_{column}'
+                cell = MockCell(row_data, key)
+                if value is not None:
+                    cell.value = value
+                return cell
+
+            @property
+            def max_row(self):
+                return len(self.data) + 1
+
+        class MockWorkbook:
+
+            def __init__(self, data_or_builtins):
+                if hasattr(data_or_builtins, 'data'):
+                    self.data = data_or_builtins.data
+                else:
+                    self.data = data_or_builtins
+
+            def __getitem__(self, key):
+                return MockSheet(self.data)
+
+            @property
+            def sheetnames(self):
+                return ['Sheet1', 'Environment_Details', 'Plot_details', 'Sheet']
+
+            def save(self, path):
+                import json
+                print(f'[MOCK] Excel saved to {path}')
+                try:
+                    print('[OUTPUT_DATA_DUMP]')
+                    print(json.dumps(self.data))
+                    print('[/OUTPUT_DATA_DUMP]')
+                except:
+                    pass
+
+            @property
+            def active(self):
+                return MockSheet(self.data)
+        wk = MockWorkbook(builtins)
+        builtins.wk = wk
+        builtins.wb = wk
+        wb = wk
+
+        def _user_run(data, token, env_config):
+            """
+    Main function to orchestrate the asset tagging process.
+    Initializes builtins for thread_utils and fetches 'Run Once' master data.
     """
-        cache = {'asset_tags': None}
+            builtins.token = token
+            builtins.env_config = env_config
+            if builtins._assettag_cache is None:
+                print('[ASSETTAG_MASTER_LOOKUP] Fetching all asset tags (Run Once cache)...')
+                try:
+                    builtins._assettag_cache = master_search.fetch_all('assettag', builtins.env_config)
+                    print(f'[ASSETTAG_MASTER_LOOKUP] Fetched {len(builtins._assettag_cache)} asset tags for caching.')
+                except Exception as e:
+                    print(f'[ASSETTAG_MASTER_LOOKUP] Error fetching asset tags: {e}. Subsequent lookups may fail.')
+                    builtins._assettag_cache = []
+            return thread_utils.run_in_parallel(process_func=process_row, items=data, token=token, env_config=env_config)
 
         def process_row(row):
             """
-        Processes a single row of Excel data to add an asset tag.
-
-        Args:
-            row (dict): A dictionary representing a single row from the Excel sheet.
-
-        Returns:
-            dict: The updated row dictionary with processing status and API response.
-        """
-            api_base_url = env_config['apiBaseUrl']
-            headers = {'Authorization': f'Bearer {token}'}
-            asset_tag_name = row.get('Tag')
-            if not asset_tag_name:
-                row['Status'] = 'Fail'
-                row['API_Response'] = 'Excel column "Tag" is empty.'
+    Processes a single row of data from the Excel sheet to add an asset tag.
+    """
+            row['Status'] = 'Fail'
+            row['Response'] = ''
+            row['Tag ID'] = ''
+            asset_name = row.get('Asset Name')
+            asset_id = row.get('Asset ID')
+            tag_name = row.get('Tag Name')
+            row['Asset Name'] = asset_name
+            row['Asset ID'] = asset_id
+            row['Tag Name'] = tag_name
+            if not asset_id:
+                row['Response'] = 'Asset ID is missing.'
+                print(f'[VALIDATION] Skipping row due to missing Asset ID for Asset Name: {asset_name}')
                 return row
-            asset_tag_id = None
-            asset_tags_list = cache['asset_tags']
-            if asset_tags_list is None:
-                asset_tags_url = f'{api_base_url}/services/master/api/filter'
-                asset_tags_params = {'type': 'ASSET', 'size': 5000}
+            if not tag_name:
+                row['Response'] = 'Tag Name is missing.'
+                print(f'[VALIDATION] Skipping row due to missing Tag Name for Asset ID: {asset_id}')
+                return row
+            tag_lookup_result = master_search.lookup_from_cache(builtins._assettag_cache, 'name', tag_name, 'id')
+            print(f"[ASSETTAG_MASTER_LOOKUP] Tag Name: '{tag_name}' → Result: {('ID: ' + str(tag_lookup_result['value']) if tag_lookup_result['found'] else 'Not Found')}")
+            if not tag_lookup_result['found']:
+                row['Response'] = tag_lookup_result['message'] or 'Tag not found.'
+                return row
+            tag_id = tag_lookup_result['value']
+            row['Tag ID'] = tag_id
+            headers = {'Authorization': f'Bearer {builtins.token}'}
+            fetch_asset_url = f'{base_url}/services/farm/api/assets/{asset_id}'
+            asset_data = None
+            try:
+                fetch_resp = _log_get(fetch_asset_url, headers=headers)
+                fetch_resp.raise_for_status()
+                asset_data = fetch_resp.json()
+                print(f'[API_FETCH_ASSET] Asset ID: {asset_id} → Status: {fetch_resp.status_code}')
+            except requests.exceptions.HTTPError as e:
+                row['Response'] = f'Failed to fetch asset details (Status: {fetch_resp.status_code}). Response: {fetch_resp.text}'
+                print(f'[API_FETCH_ASSET] Error fetching Asset ID {asset_id}: {e}')
+                return row
+            except json.JSONDecodeError:
+                row['Response'] = f'Failed to decode JSON response for asset details. Response: {fetch_resp.text}'
+                print(f'[API_FETCH_ASSET] JSON decode error for Asset ID {asset_id}')
+                return row
+            except requests.exceptions.RequestException as e:
+                row['Response'] = f'Network error fetching asset details: {e}'
+                print(f'[API_FETCH_ASSET] Network error for Asset ID {asset_id}: {e}')
+                return row
+            tag_added = False
+            if 'data' not in asset_data or asset_data['data'] is None:
+                asset_data['data'] = {}
+            if 'tags' not in asset_data['data'] or asset_data['data']['tags'] is None:
+                asset_data['data']['tags'] = []
+            tag_id_int = int(tag_id)
+            if tag_id_int not in asset_data['data']['tags']:
+                asset_data['data']['tags'].append(tag_id_int)
+                tag_added = True
+                print(f"[LOGIC] Tag {tag_id_int} added to asset {asset_id}'s tag list internally.")
+            else:
+                row['Status'] = 'Pass'
+                row['Response'] = 'Tag already updated to asset'
+                print(f'[LOGIC] Tag {tag_id_int} already present for asset {asset_id}. No API update required.')
+                return row
+            if tag_added:
+                update_asset_url = f'{base_url}/services/farm/api/assets'
+                updated_asset_dto = asset_data
+                files = {'dto': (None, json.dumps(updated_asset_dto), 'application/json')}
                 try:
-                    asset_tags_resp = _log_get(asset_tags_url, headers=headers, params=asset_tags_params)
-                    asset_tags_resp.raise_for_status()
-                    asset_tags_list = asset_tags_resp.json()
-                    cache['asset_tags'] = asset_tags_list
+                    put_resp = _log_put(update_asset_url, headers=headers, files=files)
+                    if put_resp.status_code in [200, 201]:
+                        row['Status'] = 'Pass'
+                        row['Response'] = 'Tag updated to asset'
+                        print(f'[API_UPDATE_ASSET] Asset ID: {asset_id} → Status: {put_resp.status_code}, Response: Tag updated successfully.')
+                    else:
+                        row['Status'] = 'Fail'
+                        row['Response'] = f'Failed to update asset tags (Status: {put_resp.status_code}). Response: {put_resp.text}'
+                        print(f'[API_UPDATE_ASSET] Error updating Asset ID {asset_id}: Status {put_resp.status_code}, Response: {put_resp.text}')
                 except requests.exceptions.RequestException as e:
                     row['Status'] = 'Fail'
-                    row['API_Response'] = f'Step 1 API call (Asset Tag) failed: {e}'
-                    return row
-                except json.JSONDecodeError:
-                    row['Status'] = 'Fail'
-                    row['API_Response'] = f'Step 1 API (Asset Tag) returned invalid JSON: {asset_tags_resp.text}'
-                    return row
-            found_tag_data = None
-            if asset_tags_list:
-                for tag in asset_tags_list:
-                    if tag.get('name') == asset_tag_name:
-                        found_tag_data = tag
-                        break
-            if found_tag_data:
-                asset_tag_id = found_tag_data.get('id')
-                row['Tag ID'] = asset_tag_id
-            else:
-                row['Status'] = 'Fail'
-                row['API_Response'] = 'Tag not Found'
-                return row
-            asset_id = row.get('Asset ID')
-            if not asset_id:
-                row['Status'] = 'Fail'
-                row['API_Response'] = 'Excel column "Asset ID" is empty.'
-                return row
-            asset_details_url = f'{api_base_url}/services/farm/api/assets/{asset_id}'
-            asset_details_response = None
-            try:
-                asset_details_resp = _log_get(asset_details_url, headers=headers)
-                asset_details_resp.raise_for_status()
-                asset_details_response = asset_details_resp.json()
-                row['_asset_details_response'] = asset_details_response
-            except requests.exceptions.RequestException as e:
-                row['Status'] = 'Fail'
-                row['API_Response'] = f'Step 2 API call (Asset Details) failed: {e}'
-                return row
-            except json.JSONDecodeError:
-                row['Status'] = 'Fail'
-                row['API_Response'] = f'Step 2 API (Asset Details) returned invalid JSON: {asset_details_resp.text}'
-                return row
-            if not asset_details_response:
-                row['Status'] = 'Fail'
-                row['API_Response'] = 'Asset not Found or empty response from Step 2 API.'
-                return row
-            asset_update_url = f'{api_base_url}/services/farm/api/assets'
-            payload = row['_asset_details_response'].copy()
-            if 'data' not in payload or payload['data'] is None:
-                payload['data'] = {}
-            elif not isinstance(payload['data'], dict):
-                payload['data'] = {}
-            if 'tags' not in payload['data'] or payload['data']['tags'] is None:
-                payload['data']['tags'] = []
-            elif not isinstance(payload['data']['tags'], list):
-                payload['data']['tags'] = [payload['data']['tags']] if payload['data']['tags'] else []
-            if asset_tag_id is not None and asset_tag_id not in payload['data']['tags']:
-                payload['data']['tags'].append(asset_tag_id)
-            payload = attribute_utils.add_attributes_to_payload(row, payload, env_config, target_key='data')
-            update_headers = headers.copy()
-            if 'Content-Type' in update_headers:
-                del update_headers['Content-Type']
-            files = {'dto': (None, json.dumps(payload), 'application/json')}
-            try:
-                asset_update_resp = _log_put(asset_update_url, headers=update_headers, files=files)
-                asset_update_resp.raise_for_status()
-                update_response_json = asset_update_resp.json()
-                row['Status'] = 'Success'
-                row['API_Response'] = json.dumps(update_response_json)
-            except requests.exceptions.RequestException as e:
-                row['Status'] = 'Fail'
-                row['API_Response'] = f'Step 3 API call (Asset Update) failed: {e}'
-            except json.JSONDecodeError:
-                row['Status'] = 'Fail'
-                row['API_Response'] = f'Step 3 API (Asset Update) returned invalid JSON: {asset_update_resp.text}'
+                    row['Response'] = f'Network error updating asset: {e}'
+                    print(f'[API_UPDATE_ASSET] Network error updating Asset ID {asset_id}: {e}')
             return row
-        return thread_utils.run_in_parallel(process_row, data)
-    return _user_run(data, token, env_config)
+        builtins._assettag_cache = None
+        res = _user_run(data, token, env_config)
+        try:
+            if res is None and hasattr(builtins, 'data_df'):
+                import pandas as pd
+                if isinstance(builtins.data_df, pd.DataFrame):
+                    res = builtins.data_df.where(pd.notnull(builtins.data_df), None).to_dict(orient='records')
+        except Exception as e:
+            print(f'[Warn] Failed to sync data_df to result: {e}')
+        return res
+    res = _user_run(data, token, env_config)
+    try:
+        if res is None and hasattr(builtins, 'data_df'):
+            import pandas as pd
+            if isinstance(builtins.data_df, pd.DataFrame):
+                res = builtins.data_df.where(pd.notnull(builtins.data_df), None).to_dict(orient='records')
+    except Exception as e:
+        print(f'[Warn] Failed to sync data_df to result: {e}')
+    return res

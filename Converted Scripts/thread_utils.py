@@ -61,3 +61,11 @@ def run_in_parallel(process_func, items, max_workers=10, token=None, env_config=
                 results[index] = err_res
                 
     return results
+
+def create_lock():
+    """
+    Creates and returns a new threading.Lock object.
+    Useful for ensuring thread-safe operations in AI generated scripts.
+    """
+    import threading
+    return threading.Lock()

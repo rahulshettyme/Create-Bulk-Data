@@ -1,8 +1,58 @@
 {
-    "name": "Add Asset Tag.py",
+    "name": "Add_Asset_Tag.py",
     "filename": "Add_Asset_Tag.py",
     "team": "Unassigned",
-    "description": "User Script",
+    "description": "Add tags to Assets. \nNote: This script will update tag in excel to existing tags. It wont delete the existing tag.",
     "expected_columns": [],
-    "requiresLogin": true
+    "columns": [],
+    "requiresLogin": true,
+    "isMultithreaded": true,
+    "batchSize": "10",
+    "groupByColumn": "",
+    "enableGeofencing": false,
+    "allowAdditionalAttributes": false,
+    "additionalAttributes": [],
+    "outputConfig": {
+        "uiMapping": [
+            {
+                "colName": "Asset Name",
+                "value": "",
+                "logic": "from excel"
+            },
+            {
+                "colName": "Asset ID",
+                "value": "",
+                "logic": "from excel"
+            },
+            {
+                "colName": "Tag Name",
+                "value": "",
+                "logic": "from excel"
+            },
+            {
+                "colName": "Status",
+                "value": "",
+                "logic": "Pass if asset update API status code is 200 or 201, else Fail"
+            }
+        ],
+        "aiInstructions": "",
+        "excelMapping": [
+            {
+                "colName": "Tag ID",
+                "value": "",
+                "logic": "attribute 'id' from asset tag API response"
+            },
+            {
+                "colName": "Status",
+                "value": "",
+                "logic": "'Fail' if tag not found or if status code of asset update is not 200 or 201\n'Pass' if status of asset update is 200 or 201"
+            },
+            {
+                "colName": "Response",
+                "value": "",
+                "logic": "'Tag not found' if tag not found or \nwhole response of asset update if status code is not 200 or 201\n'Tag updated to asset' if asset update response code is 200 or 201"
+            }
+        ],
+        "isDynamicUI": true
+    }
 }

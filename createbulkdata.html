@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create bulk data</title>
+    <title>QA-Ops Workbench</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -472,8 +472,21 @@
     <div class="container data-generate-container">
 
 
-        <header>
-            <h1>Create bulk data</h1>
+        <header style="border-bottom: 2px solid #f0f0f0; padding-bottom: 1.25rem;">
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <img src="logo.png" alt="Cropin Logo" style="height: 42px;">
+                <div style="width: 1px; height: 32px; background-color: #d0d0d0;"></div>
+                <div style="display: flex; flex-direction: column; justify-content: center;">
+                    <h1
+                        style="font-family: 'Inter', sans-serif; font-size: 1.35rem; margin: 0; line-height: 1.2; letter-spacing: -0.02em; color: #264554; border: none; padding: 0;">
+                        <span style="font-weight: 800; color: #0091d2;">QA-Ops</span>
+                        <span style="font-weight: 500; color: #5f7d8c;">Workbench</span>
+                    </h1>
+                    <span
+                        style="font-size: 0.75rem; color: #78909c; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; margin-top: 2px;">Automation
+                        Console</span>
+                </div>
+            </div>
         </header>
 
         <!-- Data Selection -->
@@ -520,6 +533,41 @@
                 <h4 style="color: var(--text-primary); margin-bottom: 0.5rem;">📍 Boundary Configuration</h4>
                 <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">Define the area where
                     1-acre polygons will be generated</p>
+
+                <!-- Area Audit V2 Specific Inputs -->
+                <div id="v2-specific-config" class="hidden"
+                    style="margin-bottom: 1.5rem; padding: 1rem; background: #e8f5e9; border: 1px solid #c8e6c9; border-radius: 4px;">
+                    <h5 style="margin: 0 0 1rem 0; color: #2e7d32;">📏 Area Audit Configuration</h5>
+
+                    <div class="boundary-grid" style="margin-top: 0; margin-bottom: 1rem;">
+                        <div class="form-group">
+                            <label for="v2-area-size">Area Size</label>
+                            <input type="number" id="v2-area-size" class="boundary-input" value="1" min="0.1"
+                                step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label for="v2-area-unit">Unit</label>
+                            <select id="v2-area-unit" class="material-input">
+                                <option value="Acre">Acre</option>
+                                <option value="Hectare">Hectare</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="v2-location-name">Target Location (for Boundary)</label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" id="v2-location-name" class="boundary-input"
+                                placeholder="e.g. Bangalore">
+                            <button type="button" id="v2-resolve-btn" class="btn-secondary"
+                                style="background: #2e7d32; color: white; border: none; padding: 0 1rem; border-radius: 4px; cursor: pointer;">
+                                📍 Resolve
+                            </button>
+                        </div>
+                        <small style="color: #666;">Clicking Resolve will update the Min/Max Lat/Long fields
+                            below.</small>
+                    </div>
+                </div>
 
                 <!-- Saved Locations Dropdown -->
                 <div class="form-group">
@@ -644,10 +692,7 @@
                         <span style="color: var(--text-secondary);">Logged in: </span>
                         <strong id="session-info" style="color: #264554;">-</strong>
                     </div>
-                    <button id="logout-btn"
-                        style="padding: 0.5rem 1rem; background: transparent; border: 1px solid #d93025; color: #d93025; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">
-                        Logout
-                    </button>
+
                 </div>
             </div>
 

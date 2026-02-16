@@ -1,12 +1,10 @@
 {
-    "name": "Generate Coordinates.py",
-    "filename": "Generate_Coordinates.py",
-    "team": "Unassigned",
-    "description": "Generates 1-acre square coordinates within the configured boundary.",
+    "description": "Performs area audit with dynamic area size and boundary resolution (V2).",
     "expected_columns": [
         "CAName",
         "CA_ID"
     ],
+    "target_script": "Area_Audit_V2.py",
     "columns": [
         {
             "name": "CAName",
@@ -17,8 +15,12 @@
             "name": "CA_ID",
             "type": "Mandatory",
             "description": "Croppable Area ID"
+        },
+        {
+            "name": "Coordinates",
+            "type": "Optional",
+            "description": "Existing Coords (JSON)"
         }
     ],
-    "requiresLogin": false,
-    "isReusable": true
+    "team": "Both"
 }

@@ -406,6 +406,14 @@ def convert_code(code, no_threading=False):
         sys.stderr.write(f"Conversion Syntax Error: {e}")
         sys.exit(1)
 
+    # PRESERVE HEADERS (Comments are lost in AST)
+    preserved_headers = []
+    for line in code.split('\n'):
+        stripped = line.strip()
+        if stripped.startswith('# EXPECTED_INPUT_COLUMNS:') or stripped.startswith('# CONFIG:'):
+            preserved_headers.append(stripped)
+
+
     cleaner = ScriptCleaner()
     cleaned_tree = cleaner.visit(tree)
     
@@ -490,8 +498,8 @@ def _log_req(method, url, **kwargs):
 
     if not kwargs.get('json') and not kwargs.get('data') and not payload_type == "Data (JSON)": payload_type = "Unknown/Multipart"
 
-    print(f"[API_DEBUG] 📦 PAYLOAD ({payload_type}): {payload}")
-    print(f"[API_DEBUG] ----------------------------------------------------------------")
+    # print(f"[API_DEBUG] 📦 PAYLOAD ({payload_type}): {payload}")
+    # print(f"[API_DEBUG] ----------------------------------------------------------------")
 
     try:
         if method == 'GET': resp = requests.get(url, **kwargs)
@@ -764,6 +772,18 @@ for idx, row in enumerate(builtins.data):
     run_body.extend(import_nodes)
     run_body.extend(wrapper_nodes)
     run_body.extend(setup_nodes)
+
+    # [FIX]: Make "Constant" assignments GLOBAL so nested functions can access them via 'global' keyword
+    global_names = set()
+    for node in constant_nodes:
+        if isinstance(node, ast.Assign):
+            for target in node.targets:
+                if isinstance(target, ast.Name):
+                    global_names.add(target.id)
+    
+    if global_names:
+        run_body.append(ast.Global(names=list(global_names)))
+
     run_body.extend(constant_nodes)
     
     # Check if user defined a 'run' function
@@ -844,7 +864,15 @@ except Exception as e:
     
     final_module = ast.Module(body=[run_func], type_ignores=[])
     ast.fix_missing_locations(final_module)
-    return ast.unparse(final_module)
+    
+    generated_code = ast.unparse(final_module)
+    
+    # [FIX] Prepend Headers
+    if preserved_headers:
+        header_block = '\n'.join(preserved_headers)
+        generated_code = f"{header_block}\n\n{generated_code}"
+
+    return generated_code
 
 if __name__ == "__main__":
 

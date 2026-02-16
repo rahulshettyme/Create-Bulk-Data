@@ -51,17 +51,37 @@ def run(rows, token, env_config):
     # --- 3. COORDINATE UTILS ---
     ACRE_M2 = 4046.8564224
     
+    # Dynamic Area Config
+    try:
+        user_area = float(env_config.get('area_size', 1.0))
+    except:
+        user_area = 1.0
+        
+    user_unit = str(env_config.get('area_unit', 'Acre')).lower()
+    
+    # Calculate target area in Square Meters
+    # 1 Acre = 4046.8564 sqm
+    # 1 Hectare = 10000 sqm
+    
+    target_area_m2 = ACRE_M2 # Default 1 acre
+    
+    if user_unit in ['hectare', 'ha']:
+        target_area_m2 = user_area * 10000.0
+    else:
+        target_area_m2 = user_area * ACRE_M2
+
     def meters_per_degree(lat_deg):
         lat = lat_deg * math.pi / 180
         m_per_deg_lat = 111132.92 - 559.82 * math.cos(2 * lat) + 1.175 * math.cos(4 * lat) - 0.0023 * math.cos(6 * lat)
         m_per_deg_lon = 111412.84 * math.cos(lat) - 93.5 * math.cos(3 * lat) + 0.118 * math.cos(5 * lat)
         return m_per_deg_lat, m_per_deg_lon
 
-    def generate_square_one_acre(min_lon, min_lat, max_lon, max_lat):
+    def generate_square_polygon(min_lon, min_lat, max_lon, max_lat):
         if min_lon is None: return None
         c_lon = min_lon + random.random() * (max_lon - min_lon)
         c_lat = min_lat + random.random() * (max_lat - min_lat)
-        side_m = math.sqrt(ACRE_M2)
+        
+        side_m = math.sqrt(target_area_m2) # Use dynamic area
         m_lat, m_lon = meters_per_degree(c_lat)
         half_dx = (side_m / m_lon) / 2
         half_dy = (side_m / m_lat) / 2
@@ -117,7 +137,7 @@ def run(rows, token, env_config):
             
             if not coords:
                 if min_lat is not None:
-                    coords = generate_square_one_acre(min_long, min_lat, max_long, max_lat)
+                    coords = generate_square_polygon(min_long, min_lat, max_long, max_lat)
                 else:
                     new_row['Status'] = 'Fail'
                     new_row['Response'] = 'No Coordinates provided and no Boundary set'
@@ -208,4 +228,3 @@ def run(rows, token, env_config):
         return new_row
 
     return thread_utils.run_in_parallel(process_row, rows)
-

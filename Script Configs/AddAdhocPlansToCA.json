@@ -1,7 +1,7 @@
 {
     "name": "AddAdhocPlansToCA.py",
     "filename": "AddAdhocPlansToCA.py",
-    "team": "CS",
+    "team": "Unassigned",
     "description": "QA Automation Script to Fetch Plan Type and Submit Plan Details via API",
     "expected_columns": [
         "croppable_area_id",

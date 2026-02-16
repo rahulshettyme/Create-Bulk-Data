@@ -1,0 +1,86 @@
+{
+    "name": "AddAsset.py",
+    "filename": "AddAsset.py",
+    "team": "Unassigned",
+    "description": "Add asset by searching the farmer, Soil Type, Irrigation Type using the names provided\nNote: If tenant has additional attributes, select the checkbox and mention attribute key to get column in Excel",
+    "expected_columns": [
+        "Asset Name",
+        "Farmer Name",
+        "Soil Type",
+        "Irrigation Type",
+        "Address",
+        "Declared Area"
+    ],
+    "columns": [
+        {
+            "name": "Asset Name",
+            "type": "Mandatory",
+            "description": "Asset Name"
+        },
+        {
+            "name": "Farmer Name",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        },
+        {
+            "name": "Soil Type",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        },
+        {
+            "name": "Irrigation Type",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        },
+        {
+            "name": "Address",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        },
+        {
+            "name": "Declared Area",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        }
+    ],
+    "requiresLogin": true,
+    "isMultithreaded": true,
+    "batchSize": "10",
+    "groupByColumn": "",
+    "enableGeofencing": false,
+    "allowAdditionalAttributes": true,
+    "additionalAttributes": [],
+    "outputConfig": {
+        "uiMapping": [
+            {
+                "colName": "Asset Name",
+                "value": "Asset Name",
+                "logic": "from excel column 'Asset Name'"
+            },
+            {
+                "colName": "Status",
+                "value": "",
+                "logic": "'Pass' if Asset create response in 200 or 201, else 'Fail'"
+            },
+            {
+                "colName": "Asset ID",
+                "value": "",
+                "logic": "attribute 'id' from response of asset create if status is pass, else 'NA'"
+            }
+        ],
+        "aiInstructions": "",
+        "excelMapping": [
+            {
+                "colName": "Asset ID",
+                "value": "id",
+                "logic": "attribute 'id' from response of asset create if status is pass, else 'NA'"
+            },
+            {
+                "colName": "Response",
+                "value": "",
+                "logic": "'Asset Created Successfully' if asset creation is success\nor 'Farmer not Found' if farmer find is failed\nActual response if asset creation failed"
+            }
+        ],
+        "isDynamicUI": true
+    }
+}

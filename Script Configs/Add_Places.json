@@ -1,13 +1,13 @@
 {
-  "name": "Add Places",
-  "team": "QA",
-  "expected_columns": [
-    "name",
-    "type",
-    "latitude",
-    "longitude",
-    "address"
-  ],
-  "description": "### 🔄 Execution Flow Analysis\n\n1. **Setup & Context**:\n   - User uploads the Excel template after login.\n   - System generates an auth token from credentials to be used by the script.\n2. **Data Ingestion**:\n   - Script reads row data, specifically expecting: `name`, `type`, `latitude`, `longitude`, `address`.\n3. **Address Handling (Address Generator)**:\n   - **Method**: Imports and calls `get_location_details` from `RS_address_generate`.\n   - **Logic**: Uses Google Geocoding API (via helper script) to resolve Latitude/Longitude/Address.\n   - **Outcome**: Updates row with standardized address fields.\n4. **API Interaction (POST)**:\n   - **Target**: Hits endpoint `{env_url.rstrip('/')}/services/farm/api/place`\n   - **Payload**: Uses row data/config as JSON payload.\n   - **Response**: Validates status code (e.g. 200 OK).\n5. **Failure Handling**:\n   - **Try/Catch**: Wraps logic to catch API or Data errors.\n6. **Completion**:\n   - Returns the processed row sequence.\n   - User can download the final result Excel file.\n",
-  "filename": "Add_Places.py"
+    "name": "Add Places",
+    "team": "Unassigned",
+    "expected_columns": [
+        "name",
+        "type",
+        "latitude",
+        "longitude",
+        "address"
+    ],
+    "description": "### 🔄 Execution Flow Analysis\n\n1. **Setup & Context**:\n   - User uploads the Excel template after login.\n   - System generates an auth token from credentials to be used by the script.\n2. **Data Ingestion**:\n   - Script reads row data, specifically expecting: `name`, `type`, `latitude`, `longitude`, `address`.\n3. **Address Handling (Address Generator)**:\n   - **Method**: Imports and calls `get_location_details` from `RS_address_generate`.\n   - **Logic**: Uses Google Geocoding API (via helper script) to resolve Latitude/Longitude/Address.\n   - **Outcome**: Updates row with standardized address fields.\n4. **API Interaction (POST)**:\n   - **Target**: Hits endpoint `{env_url.rstrip('/')}/services/farm/api/place`\n   - **Payload**: Uses row data/config as JSON payload.\n   - **Response**: Validates status code (e.g. 200 OK).\n5. **Failure Handling**:\n   - **Try/Catch**: Wraps logic to catch API or Data errors.\n6. **Completion**:\n   - Returns the processed row sequence.\n   - User can download the final result Excel file.\n",
+    "filename": "Add_Places.py"
 }

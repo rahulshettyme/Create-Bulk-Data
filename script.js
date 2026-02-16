@@ -34,6 +34,7 @@ async function loadEnvUrls() {
     }
 }
 
+
 // Helper to get URLs for environment
 function getEnvUrls(environment) {
     let apiBaseUrl = null;
@@ -137,7 +138,7 @@ const elements = {
     // Login elements replaced by component but we keep session container
     sessionContainer: document.getElementById('session-container'),
     sessionInfo: document.getElementById('session-info'),
-    logoutBtn: document.getElementById('logout-btn'),
+
     fileUploadArea: document.getElementById('file-upload-area'),
     fileUpload: document.getElementById('file-upload'),
     fileName: document.getElementById('file-name'),
@@ -187,7 +188,14 @@ const elements = {
 
     // Script Description
     scriptDescriptionContainer: document.getElementById('script-description-container'),
-    scriptDescriptionText: document.getElementById('script-description-text')
+    scriptDescriptionText: document.getElementById('script-description-text'),
+
+    // Area Audit V2 Elements
+    v2SpecificConfig: document.getElementById('v2-specific-config'),
+    v2AreaSize: document.getElementById('v2-area-size'),
+    v2AreaUnit: document.getElementById('v2-area-unit'),
+    v2LocationName: document.getElementById('v2-location-name'),
+    v2ResolveBtn: document.getElementById('v2-resolve-btn')
 };
 
 // =============================================
@@ -500,9 +508,21 @@ if (elements.enableAdditionalAttributes) {
     });
 }
 
-function handleScriptSelection(value) {
+async function handleScriptSelection(value) {
     resetState();
     selectedDataType = value;
+
+    // REFACTOR: Sync with Live Metadata first
+    try {
+        // Resolve Filename from Template if possible
+        let filenameForSync = value;
+        const potentialTemplate = TEMPLATES[value];
+        if (potentialTemplate && potentialTemplate.filename) {
+            filenameForSync = potentialTemplate.filename;
+        }
+        await syncTemplateWithLiveMeta(filenameForSync);
+    } catch (e) { console.warn("Live Sync failed, falling back to registry.", e); }
+
     const template = TEMPLATES[selectedDataType];
 
     // Show Description
@@ -520,7 +540,14 @@ function handleScriptSelection(value) {
 
     // Show/hide boundary config based on type
     // Updated to match filename-derived keys (underscores) and remove team restriction
-    const needsBoundary = (selectedDataType === 'Generate_Coordinates' || selectedDataType === 'Area_Audit' || selectedDataType === 'Generate Coordinates' || selectedDataType === 'Area Audit'); // Check both just in case
+    const needsBoundary = (
+        selectedDataType === 'Generate_Coordinates' ||
+        selectedDataType === 'Area_Audit' ||
+        selectedDataType === 'Generate Coordinates' ||
+        selectedDataType === 'Area Audit' ||
+        selectedDataType === 'Area Audit V2' ||
+        selectedDataType === 'Area_Audit_V2.py'
+    );
 
     if (needsBoundary) {
         elements.boundaryConfig.classList.remove('hidden');
@@ -569,6 +596,24 @@ function handleScriptSelection(value) {
         } else {
             targetLocationSection.classList.add('hidden');
             targetLocationSection.style.display = 'none';
+        }
+    }
+
+    // --- AREA AUDIT V2 VISIBILITY ---
+    if (elements.v2SpecificConfig) {
+        // Check filename or friendly name
+        const isV2 = value === 'Area_Audit_V2.py' || (template && template.name === 'Area Audit V2');
+
+        if (isV2) {
+            elements.v2SpecificConfig.classList.remove('hidden');
+            // Ensure parent boundary config is visible
+            elements.boundaryConfig.classList.remove('hidden');
+
+            // Hide standard geofence wrapper if it exists (but likely overlaps with boundaryConfig)
+            // If targetLocationSection is distinct, hide it. 
+            // In our case, boundaryConfig IS the container for inputs.
+        } else {
+            elements.v2SpecificConfig.classList.add('hidden');
         }
     }
 
@@ -1126,6 +1171,60 @@ if (elements.confirmImportBtn) {
         }
     });
 }
+// --------------------------------------------------------------------------
+// REFACTOR: Dynamic Template Generation
+// --------------------------------------------------------------------------
+// When a script is selected, we fetch its LIVE metadata to ensure Template is accurate.
+async function syncTemplateWithLiveMeta(scriptName) {
+    if (!scriptName) return;
+    // Ensure .py extension is present
+    if (!scriptName.endsWith('.py')) {
+        scriptName += '.py';
+    }
+    try {
+        console.log(`[Template Sync] Fetching live metadata for ${scriptName}...`);
+        const res = await fetch(`/api/scripts/content?filename=${scriptName}`);
+        if (!res.ok) throw new Error("Failed to fetch script content");
+
+        const data = await res.json();
+        const meta = data.meta;
+
+        if (meta && (meta.columns || meta.inputColumns || meta.expected_columns)) {
+            // Determine best source for columns
+            // 1. meta.columns (Full object)
+            // 2. meta.inputColumns (Alias)
+            // 3. meta.expected_columns (String array -> mapping)
+
+            let cols = meta.columns || meta.inputColumns;
+
+            // If cols is just strings (e.g. expected_columns), convert to objects
+            if (!cols && meta.expected_columns) {
+                cols = meta.expected_columns.map(c => ({ name: c, type: 'Data', description: 'Auto-detected' }));
+            }
+
+            if (cols && cols.length > 0) {
+                const currentTemplate = TEMPLATES[scriptName.replace('.py', '')] || TEMPLATES[scriptName];
+                if (currentTemplate) {
+                    console.log(`[Template Sync] Overriding registry columns with live metadata (${cols.length} cols).`);
+                    // Map to template format: { header: 'Name', key: 'Name' }
+                    currentTemplate.columns = cols.map(c => ({
+                        header: c.name || c,
+                        key: c.name || c,
+                        width: 20
+                    }));
+
+                    // Also sync other config if present
+                    if (meta.batchSize) currentTemplate.batchSize = meta.batchSize;
+                    if (meta.groupByColumn) currentTemplate.groupByColumn = meta.groupByColumn;
+                    if (meta.additionalAttributes) currentTemplate.additionalAttributes = meta.additionalAttributes;
+                }
+            }
+        }
+    } catch (e) {
+        console.warn("[Template Sync] Failed to sync with live metadata", e);
+    }
+}
+// --------------------------------------------------------------------------
 
 // =============================================
 // EXECUTE CUSTOM SCRIPT
@@ -1233,16 +1332,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Logout Hook
-    if (elements.logoutBtn) {
-        elements.logoutBtn.addEventListener('click', () => {
-            // Trigger logout in component if possible, or just local fullLogout
-            // Component usually handles its own UI, but we have external logout btn too?
-            // The component has its own internal state.
-            // If we access the instance 'loginComponent', we can call logout.
-            // But we didn't assign the instance to a global var in the snippet above.
-            // Let's fix that.
-        });
-    }
+
 });
 
 
@@ -1308,7 +1398,9 @@ if (elements.executeBtn) {
                         maxLong: elements.maxLong ? elements.maxLong.value : '',
                         locationName: elements.locationName ? elements.locationName.value : ''
                     },
-                    targetLocation: document.getElementById('target-location-input') ? document.getElementById('target-location-input').value : '',
+                    targetLocation: (elements.v2LocationName && elements.v2LocationName.value) ? elements.v2LocationName.value : (document.getElementById('target-location-input') ? document.getElementById('target-location-input').value : ""),
+                    area_size: (elements.v2AreaSize && !elements.v2SpecificConfig.classList.contains('hidden')) ? elements.v2AreaSize.value : undefined,
+                    area_unit: (elements.v2AreaUnit && !elements.v2SpecificConfig.classList.contains('hidden')) ? elements.v2AreaUnit.value : undefined,
                     allowAdditionalAttributes: elements.enableAdditionalAttributes ? elements.enableAdditionalAttributes.checked : false,
                     additionalAttributes: (elements.enableAdditionalAttributes && elements.enableAdditionalAttributes.checked)
                         ? (elements.additionalAttributesInput && elements.additionalAttributesInput.value ? elements.additionalAttributesInput.value.split(',').map(s => s.trim()).filter(k => k) : [])
@@ -1406,7 +1498,7 @@ if (elements.executeBtn) {
 
                         if (useV2) {
                             // Call V2 Executor for Chunk
-                            const executor = new ScriptExecutorV2({ apiBaseUrl: apiBaseUrl, debug: true });
+                            const executor = new ScriptExecutorV2({ apiBaseUrl: apiBaseUrl, debug: false });
                             chunkResults = await executor.execute(scriptFilename, chunk, authToken, config, config.boundary);
                         } else {
                             // Call Legacy Endpoint for Chunk
@@ -1466,6 +1558,77 @@ if (elements.executeBtn) {
         };
         reader.readAsArrayBuffer(file);
     });
+}
+
+// =============================================
+// AREA AUDIT V2 LOGIC
+// =============================================
+if (elements.v2ResolveBtn) {
+    console.log("[Init] V2 Resolve Button Found");
+    elements.v2ResolveBtn.addEventListener('click', async () => {
+        console.log("[V2] Resolve Clicked");
+        const locName = elements.v2LocationName.value.trim();
+        if (!locName) return alert("Please enter a location name.");
+
+        const btn = elements.v2ResolveBtn;
+        const originalText = btn.innerText;
+        btn.innerText = "⏳";
+        btn.disabled = true;
+
+        try {
+            // Use Backend Proxy (Server-Side Geocoding)
+            // This avoids loading the heavy Google Maps Client Library
+            const response = await fetch('/api/geocode', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ address: locName })
+            });
+
+            const data = await response.json();
+
+            btn.innerText = "📍 Resolve";
+            btn.disabled = false;
+
+            // Handle Proxy Response (Single Object with geometry) OR Raw Google Response (Array)
+            const geometry = data.geometry || (data.results && data.results[0] ? data.results[0].geometry : null);
+
+            if (geometry) {
+                console.log("[V2] Geocode Success:", data);
+
+                const bounds = geometry.bounds;
+                const viewport = geometry.viewport;
+                const finalBounds = bounds || viewport;
+
+                if (finalBounds) {
+                    // Google API returns { northeast: {lat, lng}, southwest: {lat, lng} }
+                    const ne = finalBounds.northeast;
+                    const sw = finalBounds.southwest;
+
+                    elements.maxLat.value = ne.lat;
+                    elements.maxLong.value = ne.lng;
+                    elements.minLat.value = sw.lat;
+                    elements.minLong.value = sw.lng;
+
+                    if (elements.boundaryConfig) elements.boundaryConfig.classList.remove('hidden');
+                } else {
+                    alert("Location found, but no boundary bounds returned.");
+                }
+            } else {
+                console.error("[V2] Geocode Failed:", data);
+                // Try to extract error message from raw google error if passed through
+                const errMsg = data.error_message || data.status || (data.error ? data.error : 'Unknown error');
+                alert('Geocode failed: ' + errMsg);
+            }
+
+        } catch (e) {
+            console.error("[V2] Error resolving boundary", e);
+            alert("Error resolving boundary: " + e.message);
+            btn.innerText = originalText;
+            btn.disabled = false;
+        }
+    });
+} else {
+    console.warn("[Init] V2 Resolve Button NOT Found");
 }
 
 

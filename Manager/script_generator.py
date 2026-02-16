@@ -105,6 +105,13 @@ def clean_ai_headers(script_content):
             if sl.startswith(("# ai generated", "# ai updated", "# ai generation failed", "# ai update failed", "# original code:", "EXPECTED_INPUT_COLUMNS")): continue
             if s.startswith(('import ', 'from ', 'def ', 'class ', '@', 'if ', 'try:', 'print(')): stripping = False
             else: continue
+        
+        # AGGRESSIVE CLEANUP: Remove detected legacy logging wrappers
+        if "def _log_req" in s or "def _log_get" in s or "def _log_post" in s or "def _log_put" in s:
+            continue
+        if "[API_DEBUG]" in s and "print(" in s:
+            continue
+            
         cleaned_lines.append(line)
     return "\n".join(cleaned_lines)
 
@@ -200,9 +207,13 @@ def generate_script(description, is_multithreaded=True, input_columns=None, allo
         prompt += "\nimport thread_utils  # Direct import, NOT 'from components import thread_utils'"
         prompt += "\nimport builtins  # Required for accessing token/env_config"
     if enable_geofencing:
-        prompt += "\nimport components.geofence_utils as geofence_utils"
+        prompt += "\nimport components.geofence_utils_v2 as geofence_utils  # CRITICAL: Use V2, NOT V1"
+        prompt += "\n# FORBIDDEN: Do NOT use 'import components.geofence_utils' - MUST use geofence_utils_v2"
     if has_master_search:
         prompt += "\nimport components.master_search as master_search  # NOT 'from components import master_search'"
+    
+    if is_multithreaded:
+        prompt += "\n\nCRITICAL THREAD SAFETY: If you use module-level caches (e.g., _geocode_cache = {}), YOU MUST USE A LOCK for thread-safe access to PREVENT data corruption and runtime errors. Use 'thread_utils.create_lock()' at the module level to create a lock. Example: `_lock = thread_utils.create_lock()`. Then pulse 'with _lock:' whenever you read/write to the cache dict inside process_row."
     
     if output_config and output_config.get('isDynamicUI'):
         ui_mapping = output_config.get('uiMapping', [])
@@ -311,26 +322,48 @@ You MUST use the master_search component for ALL master data lookups.
    - 'irrigationtype' - Irrigation type lookups
    - ANY other master data mentioned in db.json master_data_config
 
-3. INITIALIZE CACHES (at module level, before process_row):
+3. INITIALIZE CACHES (🚨 MODULE LEVEL ONLY - OUTSIDE ALL FUNCTIONS):
+   - You MUST define these at the very top of your script, after imports.
    - For "search" mode masters (user, farmer): Create empty cache dict
      Example: _user_cache = {}
    - For "once" mode masters (soiltype, irrigationtype): Fetch all data
-     Example: _soil_types = master_search.fetch_all('soiltype', builtins.env_config)
+     CRITICAL: Use a consistent naming pattern: `_{master_type}_list`
+     Example: _soiltype_list = master_search.fetch_all('soiltype', builtins.env_config)
+   - 🚨 FORBIDDEN: DO NOT initialize these inside the `run()` or `process_row()` functions. They must be GLOBAL.
 
 4. LOOKUP PATTERN (inside process_row function):
-   For SEARCH mode (user, farmer):
+   6. MANDATORY LOGIC REPLACEMENT (SEARCH mode):
+   You MUST replace any existing 'master_search.search' call with this EXACT optimized block. 
+   Do not preserve the old logic.
+   
    ```python
-   result = master_search.search('user', row.get('AssignedTo'), builtins.env_config, _user_cache)
-   if not result['found']:
-       row['Status'] = 'Fail'
-       row['Response'] = result['message']
-       return row  # Skip further processing
-   user_id = result['value']  # This is the extracted ID
+   # 1. OPTIMIZATION CHECK (At start of run() function):
+   # Check if FIRST row has the ID. If yes, assume ALL rows must have it.
+   # _use_provided_ids = bool(data and data[0].get('Output Column Name'))
+   
+   # 2. INSIDE process_row(row):
+   if _use_provided_ids:
+       # STRICT MODE: Use provided ID, fail if missing.
+       user_id = row.get('Output Column Name')
+       if not user_id:
+           row['Status'] = 'Fail'
+           row['Response'] = '<Master> ID is empty (Strict Mode)'
+           return row
+   else:
+       # FALLBACK MODE: Perform Search
+       result = master_search.search('user', assigned_to_name, builtins.env_config, _user_cache)
+       if not result['found']:
+           # Log failure and return
+           row['Status'] = 'Fail'
+           row['Response'] = result['message']
+           return row
+       user_id = result['value']
    ```
    
    For ONCE mode (soiltype, irrigationtype):
    ```python
-   result = master_search.lookup_from_cache(_soil_types, 'name', row.get('SoilType'), 'id')
+   # Use the exact variable name defined at module level (e.g. _soiltype_list)
+   result = master_search.lookup_from_cache(_soiltype_list, 'name', row.get('SoilType'), 'id')
    if not result['found']:
        row['Status'] = 'Fail'
        row['Response'] = result['message']
@@ -346,9 +379,14 @@ You MUST use the master_search component for ALL master data lookups.
    - search() returns: {'found': bool, 'value': extracted_value, 'message': str}
 
 6. EXAMPLE - User Lookup:
-   ❌ WRONG:
-            user_id = result['value']
-   ```"""
+   ❌ WRONG: `user_id = result['value']` (outside the 'if found' block)
+   ✅ RIGHT: Ensure variables are only accessed if `result['found']` is True.
+   
+7. CRITICAL VARIABLE NAMING:
+   - 🚨 🚨 DO NOT hallucinate variable names like `_soil_types_data` or `_irrigation_data`.
+   - ALWAYS use the name YOU defined at the module level.
+   - For "once" mode, the recommended pattern is `_{master_type}_list`.
+"""
     
     # Add GEO Step instructions
     prompt += """\n\nCRITICAL GEO STEP REQUIREMENTS:
@@ -455,7 +493,17 @@ When the user specifies a GEO Step (address geocoding/geofencing), follow these 
             'thread_utils.run_in_parallel(process_func='
         )
     
-    return f"{_get_ist_header('AI Generated')}\n{content}" if success else f"# error: {err}\n{generate_heuristic_script(description)}"
+    header = _get_ist_header('AI Generated')
+    
+    # [CONFIG INJECTION]
+    header += f"\n# CONFIG: enableGeofencing = {str(enable_geofencing)}"
+    header += f"\n# CONFIG: allowAdditionalAttributes = {str(allow_additional_attributes)}"
+
+    if input_columns:
+        col_str = ', '.join(input_columns) if isinstance(input_columns, list) else str(input_columns)
+        header += f"\n# EXPECTED_INPUT_COLUMNS: {col_str}"
+    
+    return f"{header}\n{content}" if success else f"# error: {err}\n{generate_heuristic_script(description)}"
 
 def update_script_with_ai(existing_code, description, is_multithreaded=True, input_columns=None, allow_additional_attributes=False, enable_geofencing=False, output_config=None):
     api_key = get_gemini_api_key()
@@ -511,13 +559,13 @@ def update_script_with_ai(existing_code, description, is_multithreaded=True, inp
    - CHECK if the API Step URL or Description implies a Multipart/DTO upload (vs standard JSON).
    - Signals: "Payload Type: DTO_FILE", "Multipart", "upload", "file".
    - IF MULTIPART/DTO:
-     - ❌ DO NOT use `json=payload` or `data=json.dumps(payload)`.
-     - ❌ DO NOT set `Content-Type: application/json` header manually.
-     - ✅ USE `files` parameter.
+     - ❌ STRICTLY FORBIDDEN: DO NOT use `json=payload` or `data=json.dumps(payload)`.
+     - ❌ STRICTLY FORBIDDEN: DO NOT set `Content-Type: application/json` header manually.
+     - ✅ MUST USE `files` parameter.
      - Code Pattern:
        ```python
-       payload_data = { ... } # Construct your dictionary as usual
-       # Wrap in Multipart 'dto' part
+       payload_data = { ... } # Construct dictionary
+       # Wrap in Multipart 'dto' - CRITICAL STRUCTURE
        files = {
            'dto': (None, json.dumps(payload_data), 'application/json')
        }
@@ -566,7 +614,8 @@ def update_script_with_ai(existing_code, description, is_multithreaded=True, inp
 2. ACCESSING TOKEN/ENV_CONFIG: Use builtins.token and builtins.env_config (injected by thread_utils).
 3. RUN FUNCTION: return thread_utils.run_in_parallel(process_func=process_row, items=data, token=token, env_config=env_config)
 4. IMPORT: Ensure 'import builtins' is at the top.
-5. REMOVE any (row, token, env_config) signatures - use (row) only."""
+5. REMOVE any (row, token, env_config) signatures - use (row) only.
+6. THREAD SAFETY: Use '_lock = thread_utils.create_lock()' for shared caches."""
     
     # ALWAYS add Master Search instructions - CRITICAL for any data lookup
     prompt += """\n\nCRITICAL MASTER SEARCH UPDATE:
@@ -574,21 +623,53 @@ def update_script_with_ai(existing_code, description, is_multithreaded=True, inp
 You MUST use the master_search component for ALL master data lookups.
 
 1. IMPORT: Ensure 'import components.master_search as master_search' is at the top
-2. MASTER TYPES: user, farmer, soiltype, irrigationtype - ALL require master_search
-3. INITIALIZE CACHES: _user_cache = {} for search mode, _soil_types = master_search.fetch_all('soiltype', builtins.env_config) for once mode
-4. LOOKUP PATTERN:
+3. INITIALIZE CACHES (🚨 MODULE LEVEL ONLY - TOP OF SCRIPT):
+   - ❌ WRONG: `def run(...): _soiltype_list = ...`
+   - ✅ RIGHT: `_soiltype_list = ...` (at top of script)
+   - _user_cache = {} for search mode, _soiltype_list = master_search.fetch_all('soiltype', builtins.env_config) for once mode
+4. LOOKUP PATTERN (ONCE mode):
    ```python
-   result = master_search.search('user', assigned_to_name, builtins.env_config, _user_cache)
-   if result['found']:
-       user_id = result['value']
+   result = master_search.lookup_from_cache(_soiltype_list, 'name', row.get('SoilType'), 'id')
+   ```
+6. MANDATORY LOGIC REPLACEMENT (SEARCH mode):
+   You MUST replace any existing 'master_search.search' call with this EXACT optimized block. 
+   Do not preserve the old logic.
+   
+   ```python
+   # 1. OPTIMIZATION CHECK (At start of run() function):
+   # Check if FIRST row has the ID. If yes, assume ALL rows must have it.
+   # _use_provided_ids = bool(data and data[0].get('Output Column Name'))
+   
+   # 2. INSIDE process_row(row):
+   if _use_provided_ids:
+       # STRICT MODE: Use provided ID, fail if missing.
+       user_id = row.get('Output Column Name')
+       if not user_id:
+           row['Status'] = 'Fail'
+           row['Response'] = '<Master> ID is empty (Strict Mode)'
+           return row
    else:
-       row['Status'] = 'Fail'
-       row['Response'] = result['message']
-       return row
+       # FALLBACK MODE: Perform Search
+       result = master_search.search('user', assigned_to_name, builtins.env_config, _user_cache)
+       if not result['found']:
+           # Log failure and return
+           row['Status'] = 'Fail'
+           row['Response'] = result['message']
+           return row
+       user_id = result['value']
    ```
 5. REMOVE any custom /services/user/api/users or /services/authorization API calls
 6. REMOVE any requests.get() for user/farmer lookups - replace with master_search.search()
 7. master_search handles: path variables, company_id injection, query parameters, caching"""
+
+    # DYNAMIC PROMPT INJECTION FOR DTO
+    if "DTO_FILE" in description or "multitype" in description.lower():
+         prompt += "\n\n🚨🚨🚨 SPECIAL OVERRIDE: DTO_FILE PAYLOAD DETECTED 🚨🚨🚨"
+         prompt += "\nOne of your API steps requires 'DTO_FILE'."
+         prompt += "\nYou MUST use `requests.post(..., files={'dto': (None, json.dumps(payload), 'application/json')})`."
+         prompt += "\nDO NOT use `json=payload`. This will fail the request."
+         prompt += "\nThis is the MOST IMPORTANT requirement for this script."
+
     
     models = _get_applicable_models(api_key)
     success, content, err = _call_gemini_with_candidates(api_key, models, {"contents": [{"parts": [{"text": prompt}]}]})
@@ -612,7 +693,17 @@ You MUST use the master_search component for ALL master data lookups.
             'env_config.get("Geocoding_api_key")'
         )
     
-    return f"{_get_ist_header('AI Updated')}\n{content}" if success else f"# update error: {err}\n# Original:\n{existing_code}"
+    header = _get_ist_header('AI Updated')
+    
+    # [CONFIG INJECTION]
+    header += f"\n# CONFIG: enableGeofencing = {str(enable_geofencing)}"
+    header += f"\n# CONFIG: allowAdditionalAttributes = {str(allow_additional_attributes)}"
+    
+    if input_columns:
+        col_str = ', '.join(input_columns) if isinstance(input_columns, list) else str(input_columns)
+        header += f"\n# EXPECTED_INPUT_COLUMNS: {col_str}"
+
+    return f"{header}\n{content}" if success else f"# update error: {err}\n# Original:\n{existing_code}"
 
 if __name__ == "__main__":
     try:
@@ -620,7 +711,7 @@ if __name__ == "__main__":
         if not raw_data.strip():
             sys.exit(0)
         data = json.loads(raw_data)
-        desc = data.get('description', '')
+        desc = data.get('generationPrompt', data.get('description', ''))
         ex_code = data.get('existing_code', '')
         cols = data.get('inputColumns', '')
         mt = data.get('isMultithreaded', True)

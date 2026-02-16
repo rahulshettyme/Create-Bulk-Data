@@ -105,11 +105,11 @@ class LoginComponent {
                     <div style="font-size: 1.2rem; color: #10b981; font-weight: bold; margin-bottom: 0.5rem;">
                          Logged In Successfully ✅
                     </div>
-                    <div style="color: #064e3b; font-size: 0.9rem; margin-bottom: 0.2rem;">
-                        User: <strong id="lc-display-user" style="color: #064e3b;">-</strong>
+                     <div style="color: #cbd5e1; font-size: 0.9rem; margin-bottom: 0.2rem;">
+                        Environment: <strong id="lc-display-env" style="color: #6ee7b7;">-</strong>
                     </div>
-                     <div style="color: #064e3b; font-size: 0.9rem;">
-                        Environment: <strong id="lc-display-env" style="color: #064e3b;">-</strong>
+                    <div style="color: #cbd5e1; font-size: 0.9rem;">
+                        User: <strong id="lc-display-user" style="color: #fca5a5;">-</strong>
                     </div>
                  </div>
                  <button id="lc-logout-btn" class="lc-btn" style="background: #ef4444;">Logout / Switch Account</button>

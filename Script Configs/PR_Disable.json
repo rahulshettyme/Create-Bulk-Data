@@ -1,7 +1,7 @@
 {
     "name": "PR_Disable.py",
     "filename": "PR_Disable.py",
-    "team": "Both",
+    "team": "Unassigned",
     "description": "Scrip to Delete PR data and Stop PR processing of plots",
     "expected_columns": [
         "id",

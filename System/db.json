@@ -52,14 +52,14 @@
       "name": "Farmer",
       "api_endpoint": "/services/farm/api/farmers/dropdownList?page=0&size=100&sort=lastModifiedDate,Desc",
       "run_method": "search",
-      "match_field": "name",
+      "match_field": "firstName",
       "lookup_path": "id",
       "output_column_suffix": "_id",
       "not_found_message": "Farmer not found"
     },
     "soiltype": {
       "name": "Soil Type",
-      "api_endpoint": "/services/farm/api/soil-types?size=5000",
+      "api_endpoint": "/services/farm/api/soil-types",
       "run_method": "once",
       "match_field": "name",
       "lookup_path": "id",
@@ -68,7 +68,7 @@
     },
     "irrigationtype": {
       "name": "Irrigation Type",
-      "api_endpoint": "/services/master/api/irrigation-types?size=5000",
+      "api_endpoint": "/services/master/api/irrigation-types",
       "run_method": "once",
       "match_field": "name",
       "lookup_path": "id",
@@ -83,6 +83,24 @@
       "lookup_path": "id",
       "output_column_suffix": "_id",
       "not_found_message": "Project not found"
+    },
+    "farmertag": {
+      "name": "Farmer Tag",
+      "api_endpoint": "/services/master/api/filter?type=FARMER&size=5000",
+      "run_method": "once",
+      "match_field": "name",
+      "lookup_path": "id",
+      "output_column_suffix": "_id",
+      "not_found_message": "Farmer tag not found"
+    },
+    "assettag": {
+      "name": "Asset Tag",
+      "api_endpoint": "/services/master/api/filter?type=ASSET&size=5000",
+      "run_method": "once",
+      "match_field": "name",
+      "lookup_path": "id",
+      "output_column_suffix": "_id",
+      "not_found_message": "Asset tag not found"
     }
   },
   "savedLocations": [

@@ -2812,3 +2812,179 @@ TypeError: run_in_parallel() got an unexpected keyword argument 'process_row'. D
 [2026-02-10 23:09:19.994584] Runner Started for AddFarmer.py
 
 [2026-02-10 23:15:03.319433] Runner Started for AddFarmer.py
+
+[2026-02-11 10:53:34.021067] Runner Started for TEST_1770787411434.py
+
+[2026-02-11 10:56:41.369627] Runner Started for TEST_1770787599200.py
+
+[2026-02-11 10:59:29.234894] Runner Started for AddFarmer.py
+
+[2026-02-11 12:38:50.023065] Runner Started for AddFarmer.py
+
+[2026-02-11 12:39:52.551609] Runner Started for AddFarmer.py
+
+[2026-02-11 12:41:21.658095] Runner Started for AddFarmer.py
+
+[2026-02-11 12:41:24.118485] Runner Started for AddFarmer.py
+
+[2026-02-11 12:43:19.362705] Runner Started for AddFarmer.py
+
+[2026-02-11 12:43:25.191905] Runner Started for AddFarmer.py
+
+[2026-02-11 16:42:14.545083] Runner Started for AddFarmer.py
+
+[2026-02-11 16:42:26.200450] Runner Started for AddFarmer.py
+
+[2026-02-11 20:04:11.755522] Runner Started for TEST_1770820449676.py
+
+[2026-02-11 20:34:45.909220] Runner Started for TEST_1770822283509.py
+
+[2026-02-11 20:34:47.788992] ERROR: 'str' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 111, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1770822283509.py", line 145, in run
+    builtins.base_url = env_config.get('apiBaseUrl')
+                        ^^^^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'get'
+
+
+[2026-02-11 20:36:38.953175] Runner Started for TEST_1770822397095.py
+
+[2026-02-11 20:36:39.896055] ERROR: module 'thread_utils' has no attribute 'create_lock'
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 111, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1770822397095.py", line 338, in run
+    _soil_types_lock = thread_utils.create_lock()
+                       ^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'thread_utils' has no attribute 'create_lock'
+
+
+[2026-02-11 20:37:16.628921] Runner Started for TEST_1770822434701.py
+
+[2026-02-11 20:37:17.572528] ERROR: module 'thread_utils' has no attribute 'create_lock'
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 111, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1770822434701.py", line 338, in run
+    _soil_types_lock = thread_utils.create_lock()
+                       ^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'thread_utils' has no attribute 'create_lock'
+
+
+[2026-02-11 20:56:29.008550] Runner Started for TEST_1770823586993.py
+
+[2026-02-11 20:56:31.146187] ERROR: name '_soil_types_data' is not defined
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 111, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1770823586993.py", line 367, in run
+    res = _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1770823586993.py", line 238, in _user_run
+    if _soil_types_data is None:
+       ^^^^^^^^^^^^^^^^
+NameError: name '_soil_types_data' is not defined
+
+
+[2026-02-11 21:12:51.751732] Runner Started for TEST_1770824567540.py
+
+[2026-02-11 21:12:54.713547] ERROR: name '_soiltype_list' is not defined
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 110, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1770824567540.py", line 383, in run
+    res = _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1770824567540.py", line 240, in _user_run
+    if not _soiltype_list:
+           ^^^^^^^^^^^^^^
+NameError: name '_soiltype_list' is not defined
+
+
+[2026-02-11 21:25:24.843089] Runner Started for TEST_1770825320260.py
+
+[2026-02-11 21:25:26.786246] ERROR: name '_soiltype_list' is not defined
+Traceback (most recent call last):
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Manager\runner_bridge.py", line 110, in run_script
+    results = module.run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1770825320260.py", line 355, in run
+    res = _user_run(data, token, env_config)
+  File "C:\Users\cropin\Documents\Important\AntiGravity\Data Generate\Converted Scripts\TEST_1770825320260.py", line 239, in _user_run
+    if _soiltype_list is None:
+       ^^^^^^^^^^^^^^
+NameError: name '_soiltype_list' is not defined
+
+
+[2026-02-11 21:42:40.605200] Runner Started for TEST_1770826356414.py
+
+[2026-02-11 21:51:17.188009] Runner Started for TEST_1770826873049.py
+
+[2026-02-11 21:55:13.157843] Runner Started for TEST_1770827108490.py
+
+[2026-02-11 22:53:42.472367] Runner Started for TEST_1770830620372.py
+
+[2026-02-11 22:55:36.491941] Runner Started for TEST_1770830734593.py
+
+[2026-02-11 22:56:57.842672] Runner Started for TEST_1770830815931.py
+
+[2026-02-12 13:05:36.699048] Runner Started for Area_Audit.py
+
+[2026-02-12 14:16:11.254055] Runner Started for TEST_1770885969237.py
+
+[2026-02-12 14:22:59.437866] Runner Started for TEST_1770886377069.py
+
+[2026-02-12 18:20:38.882572] Runner Started for TEST_1770900637235.py
+
+[2026-02-12 19:07:58.194972] Runner Started for AddFarmer.py
+
+[2026-02-12 19:09:52.960718] Runner Started for AddFarmer.py
+
+[2026-02-12 19:13:46.288220] Runner Started for AddFarmer.py
+
+[2026-02-12 19:59:13.650030] Runner Started for AddAsset.py
+
+[2026-02-12 20:00:29.123051] Runner Started for AddAsset.py
+
+[2026-02-13 11:11:23.166940] Runner Started for Area_Audit.py
+
+[2026-02-13 13:23:13.250439] Runner Started for Area_Audit.py
+
+[2026-02-13 13:23:18.805127] Runner Started for Area_Audit.py
+
+[2026-02-13 13:37:55.985621] Runner Started for Area_Audit.py
+
+[2026-02-13 18:42:35.471823] Runner Started for Area_Audit.py
+
+[2026-02-13 18:50:10.807425] Runner Started for Area_Audit.py
+
+[2026-02-13 19:03:46.342803] Runner Started for Area_Audit.py
+
+[2026-02-13 19:32:29.566169] Runner Started for Area_Audit.py
+
+[2026-02-14 17:55:15.067197] Runner Started for Add_Farmer_Tag.py
+
+[2026-02-14 19:06:48.200303] Runner Started for TEST_1771076207149.py
+
+[2026-02-14 19:38:11.136676] Runner Started for TEST_1771078089730.py
+
+[2026-02-14 19:52:50.529180] Runner Started for TEST_1771078969495.py
+
+[2026-02-14 22:25:00.345335] Runner Started for TEST_1771088098288.py
+
+[2026-02-15 11:23:05.170602] Runner Started for Area_Audit.py
+
+[2026-02-15 15:18:42.188131] Runner Started for Area_Audit_V2.py
+
+[2026-02-15 15:21:16.470594] Runner Started for Area_Audit_V2.py
+
+[2026-02-15 20:51:03.079209] Runner Started for Area_Audit_V2.py
+
+[2026-02-15 21:02:49.519714] Runner Started for AddFarmer.py
+
+[2026-02-15 21:08:02.271080] Runner Started for AddFarmer.py
+
+[2026-02-15 21:30:10.576501] Runner Started for AddFarmer.py
+
+[2026-02-15 21:31:33.271974] Runner Started for AddFarmer.py
+
+[2026-02-15 21:43:47.810660] Runner Started for AddFarmer.py

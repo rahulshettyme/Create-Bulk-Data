@@ -12,7 +12,46 @@ import datetime
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
 
-def run_script(target_script, data, token, env_config_json):
+def load_config_and_secrets(env_config):
+    """
+    Loads secrets/db and injects keys into env_config.
+    """
+    geocoding_key = None
+    gemini_key = None
+    
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    
+    # Load secrets/db to find keys AND master_data_config
+    try:
+        for filename in ["System/secrets.json", "System/db.json"]:
+            path = os.path.join(base_dir, filename)
+            if os.path.exists(path):
+                with open(path, 'r', encoding='utf-8') as f:
+                    data_json = json.load(f)
+                    
+                    # Read keys if not already found
+                    if not geocoding_key:
+                        geocoding_key = data_json.get("Geocoding_api_key", "").strip()
+                    
+                    if not gemini_key:
+                        gemini_key = data_json.get("google_api_key", "").strip() or data_json.get("gemini_api_key", "").strip()
+                    
+                    # ALWAYS load master_data_config if missing
+                    if "master_data_config" in data_json and "master_data_config" not in env_config:
+                        env_config["master_data_config"] = data_json["master_data_config"]
+    except Exception as e:
+        print(f"Warning: Failed to load secrets: {e}")
+        
+    # Assign found keys to env_config
+    if geocoding_key and 'Geocoding_api_key' not in env_config:
+        env_config['Geocoding_api_key'] = geocoding_key
+        
+    if gemini_key and 'google_api_key' not in env_config:
+        env_config['google_api_key'] = gemini_key
+    
+    return env_config
+
+def run_script(target_script, data, token, env_config):
     # FILE LOGGING FOR DEBUGGING
     try:
         debug_path = os.path.join(os.path.dirname(target_script), 'runner_debug.txt')
@@ -21,51 +60,8 @@ def run_script(target_script, data, token, env_config_json):
     except: pass
 
     print("DEBUG: Runner Loaded", flush=True)
-    print(f"DEBUG: ARGS: {sys.argv}", flush=True)
 
-    try:
-        # 1. Parse Inputs
-        # data is already a list/dict passed from main
-        env_config = json.loads(env_config_json)
-        
-        # Initialize API keys
-        geocoding_key = None
-        gemini_key = None
-        
-        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        
-        # Load secrets/db to find keys AND master_data_config
-        try:
-            for filename in ["System/secrets.json", "System/db.json"]:
-                path = os.path.join(base_dir, filename)
-                if os.path.exists(path):
-                    with open(path, 'r', encoding='utf-8') as f:
-                        data_json = json.load(f)
-                        
-                        # Read keys if not already found
-                        if not geocoding_key:
-                            geocoding_key = data_json.get("Geocoding_api_key", "").strip()
-                        
-                        if not gemini_key:
-                            gemini_key = data_json.get("google_api_key", "").strip() or data_json.get("gemini_api_key", "").strip()
-                        
-                        # ALWAYS load master_data_config if missing
-                        if "master_data_config" in data_json and "master_data_config" not in env_config:
-                            env_config["master_data_config"] = data_json["master_data_config"]
-                            print("DEBUG: Loaded master_data_config from file", flush=True)
-                        
-                        # We continue loop to ensure we find master_data_config even if keys found in first file
-        except: pass
-        
-        # Assign found keys to env_config
-        if geocoding_key and 'Geocoding_api_key' not in env_config:
-            env_config['Geocoding_api_key'] = geocoding_key
-            
-        if gemini_key and 'google_api_key' not in env_config:
-            env_config['google_api_key'] = gemini_key
-            
-    except Exception as e:
-        print(f"Warning: Failed to load secrets: {e}")
+    # env_config is now passed as a fully loaded dict from __main__
         
     # 2. Load User Script
     script_dir = os.path.dirname(target_script)
@@ -234,7 +230,11 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    # Load Data
+    def truncate_str(s, max_len=100):
+        if not s: return s
+        return (s[:max_len] + '...') if len(s) > max_len else s
+
+    # 1. Load Initial Data
     data = []
     if args.data_file and os.path.exists(args.data_file):
         try:
@@ -245,21 +245,71 @@ if __name__ == "__main__":
             sys.exit(1)
     elif args.data:
         data = json.loads(args.data)
-    else:
-        # It's possible to run with empty data (though unlikely for this use case)
-        data = []
 
+    # 2. Load Env Config & Secrets IMMEDIATELY
     env_config = json.loads(args.env) if args.env else {}
     if args.token and 'token' not in env_config:
         env_config['token'] = args.token
+    
+    # Load secrets/db BEFORE interceptor setup or builtin injection
+    env_config = load_config_and_secrets(env_config)
+    
     output_columns = json.loads(args.columns) if args.columns else []
 
-    # Inject builtins
+    # 3. Inject builtins (Global and Complete Config)
     builtins.data = data
     builtins.token = args.token
     builtins.env_config = env_config
     builtins.output_columns = output_columns
     builtins.DEBUG_MODE = args.debug # Set global debug flag
+    
+    # Pretty-print ARGS for display (Smart Masking)
+    display_args = []
+    
+    # We iterate manually to handle flag + value pairs
+    i = 0
+    raw_args = sys.argv
+    while i < len(raw_args):
+        arg = raw_args[i]
+        
+        if arg == '--token':
+            display_args.append('--token')
+            display_args.append('[SECRET_TOKEN]')
+            i += 1
+        elif arg == '--data':
+            display_args.append('--data')
+            try:
+                row_count = len(json.loads(raw_args[i+1]))
+                display_args.append(f'[JSON_DATA: {row_count} rows]')
+            except: display_args.append('[JSON_DATA: Error parsing]')
+            i += 1
+        elif arg == '--env':
+            display_args.append('--env')
+            try:
+                env_obj = json.loads(raw_args[i+1])
+                env_name = env_obj.get('environment', 'Unknown')
+                master_count = len(env_obj.get('master_data_config', {}))
+                display_args.append(f'[ENV: {env_name}, Master Data System: {master_count} types available]')
+            except: display_args.append('[ENV: Error parsing]')
+            i += 1
+        elif arg == '--columns':
+            display_args.append('--columns')
+            try:
+                cols = json.loads(raw_args[i+1])
+                display_args.append(f'[COLUMNS: {len(cols)}]')
+            except: display_args.append('[COLUMNS: Error parsing]')
+            i += 1
+        else:
+            # For other args (like --script), use standard truncation
+            display_args.append(truncate_str(arg, 150))
+            
+        i += 1
+    
+    print("\n" + "="*60)
+    print(f"🚀 RUNNER STARTING: {os.path.basename(args.script)}")
+    print(f"📅 Time: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"📝 Args: {' '.join(display_args)}")
+    print("="*60 + "\n")
     
     # [MONKEY-PATCH] Global API Interceptor & Debug Logging
     try:
@@ -276,33 +326,34 @@ if __name__ == "__main__":
         
         # Determine if we should automate attribute injection
         auto_inject = env_config.get('allowAdditionalAttributes', False)
-        print(f"DEBUG: API Interceptor Setup. Auto-Inject: {auto_inject}", flush=True)
-        print(f"DEBUG: Env Config Keys: {list(env_config.keys())}", flush=True)
-        if auto_inject:
-             print(f"DEBUG: Additional Attributes Configured: {env_config.get('additionalAttributes', [])}", flush=True)
+        print(f"⚙️  API Interceptor Setup. Auto-Inject: {auto_inject}", flush=True)
+        # print(f"DEBUG: Env Config Keys: {list(env_config.keys())}", flush=True)
         
         original_request = requests.Session.request
         
         def intercepted_request(self, method, url, *args, **kwargs):
             # 1. Debug logging if enabled
             if getattr(builtins, 'DEBUG_MODE', False) or auto_inject: # Force logs if injection active
-                 print(f"\n[INTERCEPTOR] Catching: {method} {url}", flush=True)
-                 if 'json' in kwargs:
-                     print(f"[INTERCEPTOR] Original Payload (JSON): {json.dumps(kwargs['json'])}", flush=True)
-                 elif 'files' in kwargs and 'dto' in kwargs['files']:
-                     print(f"[INTERCEPTOR] Original Payload (DTO): {kwargs['files']['dto'][1][:500]}...", flush=True)
+                 print(f"\n📡 [INTERCEPTOR] {method.upper()} {url}", flush=True)
+                 # Fix: Check for truthy json to avoid 'Payload: null' when files are used
+                 # Use Final DTO only as requested
+                 # if kwargs.get('json'):
+                 #     print(f"   📤 Original Payload: {truncate_str(json.dumps(kwargs['json']), 200)}", flush=True)
+                 # elif 'files' in kwargs and 'dto' in kwargs['files']:
+                 #     # DTO is usually (filename, content, content_type)
+                 #     dto_content = kwargs['files']['dto'][1]
+                 #     print(f"   📤 Original DTO: {truncate_str(dto_content, 200)}", flush=True)
 
             # 2. GLOBAL ATTRIBUTE INJECTION
             if auto_inject:
                 row = attribute_utils.get_current_row()
-                print(f"[INTERCEPTOR] Current Row Context Keys: {list(row.keys()) if row else 'None'}", flush=True)
                 if row:
                     # Case A: JSON Payload
-                    if 'json' in kwargs and kwargs['json']:
-                        target_key = 'data' if 'data' in kwargs['json'] else None
+                    if kwargs.get('json'):
+                        target_key = 'data'
                         attribute_utils.add_attributes_to_payload(row, kwargs['json'], env_config, target_key=target_key)
                         if getattr(builtins, 'DEBUG_MODE', False):
-                             print(f"[INTERCEPTOR] Injected Attributes into JSON. Keys now: {list(kwargs['json'].get('data', kwargs['json']).keys())}", flush=True)
+                             print(f"   ✨ Injected Attributes into JSON.", flush=True)
                     
                     # Case B: DTO Payload (multipart/form-data)
                     elif 'files' in kwargs and 'dto' in kwargs['files']:
@@ -310,7 +361,7 @@ if __name__ == "__main__":
                         if isinstance(dto_entry, tuple) and len(dto_entry) >= 2:
                             try:
                                 dto_json = json.loads(dto_entry[1])
-                                target_key = 'data' if 'data' in dto_json else None
+                                target_key = 'data'
                                 attribute_utils.add_attributes_to_payload(row, dto_json, env_config, target_key=target_key)
                                 
                                 # Re-package the DTO
@@ -319,28 +370,33 @@ if __name__ == "__main__":
                                 new_list[1] = new_dto_content
                                 kwargs['files']['dto'] = tuple(new_list)
                                 if getattr(builtins, 'DEBUG_MODE', False):
-                                     print(f"[INTERCEPTOR] Injected Attributes into DTO. Keys now: {list(dto_json.get('data', dto_json).keys())}", flush=True)
+                                     print(f"   ✨ Injected Attributes into DTO.", flush=True)
                             except: pass
-                else:
-                    if getattr(builtins, 'DEBUG_MODE', False):
-                        print("[INTERCEPTOR] Warning: Current Row Context is MISSING!", flush=True)
-            
-            # 3. Execute original
+
+            # 3. Log FINAL Payload (Post-Injection) to verify changes
+            if getattr(builtins, 'DEBUG_MODE', False) or auto_inject:
+                if kwargs.get('json'):
+                     print(f"   📦 Final Payload: {json.dumps(kwargs['json'])}", flush=True)
+                elif 'files' in kwargs and 'dto' in kwargs['files']:
+                     print(f"   📦 Final DTO: {kwargs['files']['dto'][1]}", flush=True)
+
+            # 4. Execute original
             response = original_request(self, method, url, *args, **kwargs)
             
             # 4. Debug response logging
             if getattr(builtins, 'DEBUG_MODE', False):
-                print(f"[INTERCEPTOR] Response Status: {response.status_code}", flush=True)
-                try:
-                    preview = response.text[:1000] if response.text else ""
-                    print(f"[INTERCEPTOR] Response Body: {preview}", flush=True)
-                except: pass
+                print(f"📥 [INTERCEPTOR] Response: {response.status_code}", flush=True)
+                if response.status_code >= 400:
+                    try:
+                        preview = response.text[:200] if response.text else ""
+                        print(f"   ⚠️ Error: {preview}", flush=True)
+                    except: pass
                     
             return response
 
         requests.Session.request = intercepted_request
-        print(f"DEBUG: API Interceptor Active.", flush=True)
+        print(f"✅ API Interceptor Active.", flush=True)
     except Exception as e:
-        print(f"DEBUG: Failed to setup API interceptor: {e}", flush=True)
+        print(f"❌ Failed to setup API interceptor: {e}", flush=True)
 
-    run_script(args.script, data, args.token, json.dumps(env_config))
+    run_script(args.script, data, args.token, env_config)

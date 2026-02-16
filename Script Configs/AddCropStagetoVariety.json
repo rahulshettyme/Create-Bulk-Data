@@ -1,7 +1,7 @@
 {
     "name": "AddCropStagetoVariety.py",
     "filename": "AddCropStagetoVariety.py",
-    "team": "CS",
+    "team": "Unassigned",
     "description": "Script to add or update variety to existing varieties. Note: This will not delete existing crop stages, it will only updated values and adds new if not existed before",
     "expected_columns": [
         "Varietyname",

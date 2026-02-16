@@ -1,7 +1,7 @@
 {
     "name": "Add_Farmer_Tag.py",
     "filename": "Add_Farmer_Tag.py",
-    "team": "Both",
+    "team": "Unassigned",
     "description": "Add tags to farmers. \nNote: This script will update tag in excel to existing tags. It wont delete the existing tag.",
     "expected_columns": [
         "Tag ID",

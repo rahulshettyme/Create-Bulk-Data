@@ -13,7 +13,8 @@ def register_scripts():
     print(f"Scanning for scripts in: {ORIGINAL_DIR}")
     
     if not os.path.exists(ORIGINAL_DIR):
-        print("Original Scripts directory not found!")
+        print(f"Original Scripts directory not found at {ORIGINAL_DIR}")
+        print("Note: 'Original Scripts' functionality is deprecated. Focusing on Converted/Draft scripts.")
         return
 
     if not os.path.exists(CONVERTED_DIR):

@@ -123,7 +123,7 @@ def _resolve_path_variables(endpoint, path_variables_config, env_config, cache=N
         
         try:
             setup_url = f"{base_url}{setup_api}"
-            print(f"[MASTER_SEARCH] INFO - Resolving {{{var_name}}} via {setup_url}...", flush=True)
+            print(f"🔍 [MASTER_SEARCH] Resolving {{{var_name}}} via {setup_url}...", flush=True)
             
             response = requests.get(setup_url, headers=headers, timeout=30)
             
@@ -144,11 +144,11 @@ def _resolve_path_variables(endpoint, path_variables_config, env_config, cache=N
             
             # Replace placeholder
             resolved_endpoint = resolved_endpoint.replace(placeholder, str(value))
-            print(f"[MASTER_SEARCH] OK - Resolved {{{var_name}}} -> {value}", flush=True)
+            print(f"✅ [MASTER_SEARCH] Resolved {{{var_name}}} -> {value}", flush=True)
             
         except Exception as e:
             # CRITICAL: Re-raise to stop execution
-            print(f"[MASTER_SEARCH] X Failed to resolve path variable '{var_name}': {e}", flush=True)
+            print(f"❌ [MASTER_SEARCH] Failed to resolve path variable '{var_name}': {e}", flush=True)
             raise e
     
     return resolved_endpoint
@@ -168,7 +168,7 @@ def fetch_all(master_type, env_config):
     master_config = env_config.get('master_data_config', {}).get(master_type)
     
     if not master_config:
-        print(f"[MASTER_SEARCH] ✗ Config not found for master type: {master_type}")
+        print(f"❌ [MASTER_SEARCH] Config not found for master type: {master_type}")
         return []
     
     base_url = env_config.get('apiBaseUrl', '')
@@ -180,7 +180,7 @@ def fetch_all(master_type, env_config):
         if path_variables:
             endpoint = _resolve_path_variables(endpoint, path_variables, env_config)
     except Exception as e:
-        print(f"[MASTER_SEARCH] STOP - Aborting fetch_all for '{master_type}' due to resolution failure: {e}", flush=True)
+        print(f"🛑 [MASTER_SEARCH] Aborting fetch_all for '{master_type}' due to resolution failure: {e}", flush=True)
         return []
     
     url = f"{base_url}{endpoint}"
@@ -205,11 +205,11 @@ def fetch_all(master_type, env_config):
         else:
             items = []
         
-        print(f"[MASTER_SEARCH] OK - Fetched {len(items)} items for '{master_type}'", flush=True)
+        print(f"✅ [MASTER_SEARCH] Fetched {len(items)} items for '{master_type}'", flush=True)
         return items
     
     except Exception as e:
-        print(f"[MASTER_SEARCH] X Failed to fetch '{master_type}': {e}", flush=True)
+        print(f"❌ [MASTER_SEARCH] Failed to fetch '{master_type}': {e}", flush=True)
         return []
 
 
@@ -247,12 +247,11 @@ def search(master_type, query_value, env_config, cache=None):
             'message': f"Config not found for master type: {master_type}"
         }
     
-    # Check cache first
     cache_key = f"{master_type}:{str(query_value).strip().lower()}"
     if cache is not None and cache_key in cache:
         cached = cache[cache_key]
         if cached['found']:
-            print(f"[MASTER_SEARCH] * Cache hit: {master_type} '{query_value}' -> {cached['value']}")
+            print(f"⚡ [MASTER_SEARCH] Cache hit: {master_type} '{query_value}' -> {cached['value']}", flush=True)
         return cached
     
     # Query API - All search APIs use 'query' parameter
@@ -273,7 +272,7 @@ def search(master_type, query_value, env_config, cache=None):
             'value': None,
             'message': f"Path Resolution Failed: {str(e)}"
         }
-         print(f"[MASTER_SEARCH] STOP - Aborting search for '{master_type}' due to resolution failure.", flush=True)
+         print(f"🛑 [MASTER_SEARCH] Aborting search for '{master_type}' due to resolution failure.", flush=True)
          return result
 
     url = f"{base_url}{endpoint}"
@@ -293,8 +292,6 @@ def search(master_type, query_value, env_config, cache=None):
         # Check if URL already has params
         separator = '&' if '?' in url else '?'
         final_url = f"{url}{separator}query={encoded_query}"
-        
-        # print(f"[MASTER_SEARCH] ? Querying: {final_url}", flush=True)
         
         response = requests.get(final_url, headers=headers, timeout=30)
         response.raise_for_status()
@@ -330,7 +327,7 @@ def search(master_type, query_value, env_config, cache=None):
                 'value': None,
                 'message': master_config.get('not_found_message', f"{master_config.get('name', master_type)} not found")
             }
-            # print(f"[MASTER_SEARCH] Search: {master_type} - '{query_value}' | Result: Not Found (Field: '{match_field}')", flush=True)
+            print(f"ℹ️ [MASTER_SEARCH] Search: {master_type} - '{query_value}' | Result: Not Found (Field: '{match_field}')", flush=True)
         else:
             # Extract value using lookup_path
             lookup_path = master_config.get('lookup_path', 'id')
@@ -342,7 +339,7 @@ def search(master_type, query_value, env_config, cache=None):
                 'message': 'Success',
                 'full_data': matched_item
             }
-            # print(f"[MASTER_SEARCH] Search: {master_type} - '{query_value}' | Result: Found | Value: {extracted_value} (Path: {lookup_path})", flush=True)
+            print(f"✅ [MASTER_SEARCH] Search: {master_type} - '{query_value}' | Result: Found | Value: {extracted_value}", flush=True)
         
         # Cache result
         if cache is not None:
@@ -402,7 +399,7 @@ def lookup_from_cache(cache_data, match_field, lookup_value, return_path='id'):
         if item_value and str(item_value).strip().lower() == normalized_lookup:
             # Found match
             extracted_value = _get_nested_value(item, return_path)
-            print(f"[MASTER_SEARCH] Search: {match_field} - '{lookup_value}' | Result: Found | Value: {extracted_value} (Path: {return_path})", flush=True)
+            print(f"✅ [MASTER_SEARCH] Search: {match_field} - '{lookup_value}' -> Found: {extracted_value}", flush=True)
             return {
                 'found': True,
                 'value': extracted_value,
@@ -411,7 +408,7 @@ def lookup_from_cache(cache_data, match_field, lookup_value, return_path='id'):
             }
     
     # Not found
-    print(f"[MASTER_SEARCH] Search: {match_field} - '{lookup_value}' | Result: Not Found (Cache Size: {len(cache_data)})", flush=True)
+    print(f"ℹ️ [MASTER_SEARCH] Search: {match_field} - '{lookup_value}' -> Not Found", flush=True)
     return {
         'found': False,
         'value': None,

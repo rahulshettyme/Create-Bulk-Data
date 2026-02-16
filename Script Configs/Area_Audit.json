@@ -1,7 +1,7 @@
 {
     "name": "Area Audit.py",
     "filename": "Area_Audit.py",
-    "team": "Both",
+    "team": "QA",
     "description": "Performs area audit for plots, generating coordinates if needed.",
     "expected_columns": [
         "CAName",
