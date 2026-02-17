@@ -7,7 +7,7 @@
     "columns": [],
     "requiresLogin": true,
     "isMultithreaded": true,
-    "batchSize": "5",
+    "batchSize": "2",
     "groupByColumn": "",
     "enableGeofencing": false,
     "allowAdditionalAttributes": false,

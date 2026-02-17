@@ -101,6 +101,15 @@
       "lookup_path": "id",
       "output_column_suffix": "_id",
       "not_found_message": "Asset tag not found"
+    },
+    "plottag": {
+      "name": "Plot Tag",
+      "api_endpoint": "/services/master/api/filter?type=CA&size=5000",
+      "run_method": "once",
+      "match_field": "name",
+      "lookup_path": "id",
+      "output_column_suffix": "_id",
+      "not_found_message": "Plot tag not found"
     }
   },
   "savedLocations": [

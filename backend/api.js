@@ -1401,6 +1401,10 @@ module.exports = function (app) {
             "--debug" // ENABLE DEBUG LOGGING FOR TEST RUN
         ];
 
+        console.log('[Test Run] Spawning Python process with args:', args.map((a, i) => 
+            i === 0 ? a : (args[i-1] === '--token' ? '[REDACTED]' : (args[i-1] === '--data' ? '[DATA]' : a))
+        ).join(' '));
+
         const pythonProcess = spawn('python', args, {
             env: {
                 ...process.env,
@@ -1412,19 +1416,79 @@ module.exports = function (app) {
             }
         });
 
-
+        // Set a timeout to prevent indefinite hanging (90 seconds)
+        const TIMEOUT_MS = 90000;
+        let processCompleted = false;
+        let timeoutHandle = setTimeout(() => {
+            if (!processCompleted) {
+                console.error('[Test Run] TIMEOUT: Process exceeded 90 seconds. Killing process.');
+                pythonProcess.kill('SIGTERM');
+                
+                // Give it 2 seconds to cleanup, then force kill
+                setTimeout(() => {
+                    if (!processCompleted) {
+                        console.error('[Test Run] Force killing process.');
+                        pythonProcess.kill('SIGKILL');
+                    }
+                }, 2000);
+                
+                // Cleanup temp file
+                try { if (fs.existsSync(tempPath)) fs.unlinkSync(tempPath); } catch (e) { }
+                
+                return res.status(500).json({
+                    error: 'Test run timeout',
+                    details: 'The script execution exceeded 90 seconds and was terminated. This may indicate an infinite loop, deadlock, or network issue.',
+                    logs: stdoutData,
+                    stderr: stderrData,
+                    convertedCode: cleanedCode
+                });
+            }
+        }, TIMEOUT_MS);
 
         let stdoutData = '';
         let stderrData = '';
 
-        pythonProcess.stdout.on('data', d => stdoutData += d.toString());
-        pythonProcess.stderr.on('data', d => stderrData += d.toString());
+        pythonProcess.stdout.on('data', d => {
+            const chunk = d.toString();
+            stdoutData += chunk;
+            // Log stdout in real-time for debugging
+            if (chunk.includes('DEBUG:') || chunk.includes('ERROR') || chunk.includes('RUNNER STARTING')) {
+                console.log('[Test Run] Python stdout:', chunk.substring(0, 200));
+            }
+        });
+
+        pythonProcess.stderr.on('data', d => {
+            const chunk = d.toString();
+            stderrData += chunk;
+            // Log stderr immediately for debugging
+            console.error('[Test Run] Python stderr:', chunk.substring(0, 500));
+        });
+
+        pythonProcess.on('error', (err) => {
+            processCompleted = true;
+            clearTimeout(timeoutHandle);
+            console.error('[Test Run] Process error:', err);
+            
+            // Cleanup
+            try { if (fs.existsSync(tempPath)) fs.unlinkSync(tempPath); } catch (e) { }
+            
+            return res.status(500).json({
+                error: 'Failed to spawn Python process',
+                details: err.message,
+                hint: 'Make sure Python is installed and accessible in PATH'
+            });
+        });
 
         pythonProcess.on('close', (code) => {
+            processCompleted = true;
+            clearTimeout(timeoutHandle);
+            
+            console.log(`[Test Run] Process closed with code: ${code}`);
+            
             // Cleanup
             try { if (fs.existsSync(tempPath)) fs.unlinkSync(tempPath); } catch (e) { }
 
-            if (code !== 0) {
+            if (code !== 0 && code !== null) {
                 // PARTIAL SUCCESS CHECK:
                 // If the script crashed/failed but still managed to print [OUTPUT_DATA_DUMP], 
                 // we should allow the user to download the partial result.
@@ -1438,7 +1502,7 @@ module.exports = function (app) {
 
                     return res.status(500).json({
                         error: 'Execution failed',
-                        details: truncatedStderr,
+                        details: truncatedStderr || 'Process exited with error code',
                         logs: truncatedStdout,
                         convertedCode: cleanedCode
                     });
@@ -1452,7 +1516,9 @@ module.exports = function (app) {
                 const jsonStr = parts.length > 1 ? parts[parts.length - 1].trim() : "{}";
 
                 let resultData = {};
-                try { resultData = JSON.parse(jsonStr); } catch (e) { }
+                try { resultData = JSON.parse(jsonStr); } catch (e) { 
+                    console.error('[Test Run] Failed to parse JSON result:', e.message);
+                }
 
                 res.json({
                     logs: logs,
@@ -1461,10 +1527,9 @@ module.exports = function (app) {
                     convertedCode: cleanedCode // DEBUG: Show what was actually run
                 });
             } catch (e) {
+                console.error('[Test Run] Output parsing error:', e);
                 res.status(500).json({ error: 'Output parsing failed', raw: stdoutData });
             }
-
-
         });
     });
 

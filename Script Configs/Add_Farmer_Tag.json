@@ -1,29 +1,17 @@
 {
     "name": "Add_Farmer_Tag.py",
     "filename": "Add_Farmer_Tag.py",
-    "team": "Unassigned",
+    "team": "Both",
     "description": "Add tags to farmers. \nNote: This script will update tag in excel to existing tags. It wont delete the existing tag.",
-    "expected_columns": [
-        "Tag ID",
-        "Response"
-    ],
-    "columns": [
-        {
-            "name": "Tag ID",
-            "type": "Mandatory",
-            "description": "Auto-detected"
-        },
-        {
-            "name": "Response",
-            "type": "Mandatory",
-            "description": "Auto-detected"
-        }
-    ],
+    "expected_columns": [],
+    "columns": [],
     "requiresLogin": true,
     "isMultithreaded": true,
-    "batchSize": "10",
+    "batchSize": "2",
     "groupByColumn": "",
     "enableGeofencing": false,
+    "allowAdditionalAttributes": false,
+    "additionalAttributes": [],
     "outputConfig": {
         "uiMapping": [
             {
@@ -44,7 +32,7 @@
             {
                 "colName": "Status",
                 "value": "",
-                "logic": "Pass if farmer update API status code is 200, else Fail"
+                "logic": "Pass if farmer update API status code is 200 or 201, else Fail"
             }
         ],
         "aiInstructions": "",
@@ -57,12 +45,12 @@
             {
                 "colName": "Status",
                 "value": "",
-                "logic": "'Fail' if tag not found or if status code of farmer update is not 200\n'Pass' if status of farmer update is 200"
+                "logic": "'Fail' if tag not found or if status code of farmer update is not 200\n'Pass' if status of farmer update is 200 or 201"
             },
             {
                 "colName": "Response",
                 "value": "",
-                "logic": "'Tag not found' if tag not found or \nwhole response of farmer update if status code is not 200\n'Tag updated to farmer' if farmer update response code is 200"
+                "logic": "'Tag not found' if tag not found or \nwhole response of farmer update if status code is not 200\n'Tag updated to farmer' if farmer update response code is 200 or 201"
             }
         ],
         "isDynamicUI": true

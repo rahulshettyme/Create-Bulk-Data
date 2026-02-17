@@ -689,22 +689,31 @@ function renderSavedLocations() {
     });
 }
 
+// Track the last rendered index to enable progressive rendering
+let lastRenderedIndex = 0;
+
 function renderExecutionResults() {
     const table = document.querySelector('.results-table');
     const thead = table.querySelector('thead');
     const tbody = elements.resultsTbody;
 
-    // Clear Body
-    tbody.innerHTML = '';
-
     if (executionResults.length === 0) {
+        tbody.innerHTML = '';
         thead.innerHTML = `<tr><th>Row</th><th>Name</th><th>Code</th><th>Status</th><th>Response</th></tr>`;
+        lastRenderedIndex = 0;
         return;
     }
 
     // Check if Dynamic UI is enabled for this script
     const template = TEMPLATES[selectedDataType];
     const isDynamic = template && template.outputConfig && template.outputConfig.isDynamicUI;
+
+    // Only render new results (from lastRenderedIndex onwards)
+    const newResults = executionResults.slice(lastRenderedIndex);
+
+    if (newResults.length === 0) {
+        return; // Nothing new to render
+    }
 
     if (isDynamic) {
         // --- DYNAMIC MODE (New Scripts) ---
@@ -725,18 +734,22 @@ function renderExecutionResults() {
             );
         }
 
-        // Build Header
-        let headerHTML = '<tr><th>Row</th>';
-        dataKeys.forEach(k => headerHTML += `<th>${k}</th>`);
-        headerHTML += '</tr>';
-        thead.innerHTML = headerHTML;
+        // Build Header (only if first batch)
+        if (lastRenderedIndex === 0) {
+            let headerHTML = '<tr><th>Row</th>';
+            dataKeys.forEach(k => headerHTML += `<th>${k}</th>`);
+            headerHTML += '</tr>';
+            thead.innerHTML = headerHTML;
+        }
 
-        executionResults.forEach((row, index) => {
+        // Render only NEW results
+        newResults.forEach((row, relativeIndex) => {
+            const absoluteIndex = lastRenderedIndex + relativeIndex;
             const tr = document.createElement('tr');
 
             // 1. Row
             const tdIndex = document.createElement('td');
-            tdIndex.textContent = row.row || (index + 1);
+            tdIndex.textContent = row.row || (absoluteIndex + 1);
             tr.appendChild(tdIndex);
 
             // 2. Data Columns (Dynamic)
@@ -774,17 +787,19 @@ function renderExecutionResults() {
 
     } else {
         // --- LEGACY MODE (Old Scripts) ---
-        thead.innerHTML = `<tr><th>Row</th><th>Name</th><th>Code</th><th>Status</th><th>Response</th></tr>`;
 
-        const seenNames = new Set();
+        // Build Header (only if first batch)
+        if (lastRenderedIndex === 0) {
+            thead.innerHTML = `<tr><th>Row</th><th>Name</th><th>Code</th><th>Status</th><th>Response</th></tr>`;
+        }
 
-        executionResults.forEach((row, index) => {
+        // Render only NEW results
+        newResults.forEach((row, relativeIndex) => {
+            const absoluteIndex = lastRenderedIndex + relativeIndex;
             const tr = document.createElement('tr');
 
-            if (row.name) seenNames.add(String(row.name).trim().toLowerCase());
-
             const tdIndex = document.createElement('td');
-            tdIndex.textContent = row.row || (index + 1);
+            tdIndex.textContent = row.row || (absoluteIndex + 1);
             tr.appendChild(tdIndex);
 
             const tdName = document.createElement('td');
@@ -817,6 +832,9 @@ function renderExecutionResults() {
             tbody.appendChild(tr);
         });
     }
+
+    // Update the last rendered index
+    lastRenderedIndex = executionResults.length;
 }
 
 // Saved location selection
@@ -1020,6 +1038,7 @@ function startExecution(buttonText = '⏳ Processing...') {
     elements.failCount.textContent = '0';
     elements.executionTime.textContent = '0.0s';
     executionResults = [];
+    lastRenderedIndex = 0; // Reset progressive rendering tracker
 
     // Start live timer update
     if (executionTimerInterval) clearInterval(executionTimerInterval);
@@ -1370,11 +1389,11 @@ if (elements.executeBtn) {
                 let fail = 0;
 
                 // [BATCHING LOGIC START]
-                // Retrieve batchSize from template or default to 10
+                // Retrieve batchSize from template or default to 1 (no threading)
                 const template = TEMPLATES[selectedDataType] || {};
                 // Ensure batchSize is a valid number > 0
                 let batchSize = parseInt(template.batchSize);
-                if (isNaN(batchSize) || batchSize <= 0) batchSize = 10;
+                if (isNaN(batchSize) || batchSize <= 0) batchSize = 1;
 
                 console.log(`[Execute] Total Rows: ${total}, Batch Size: ${batchSize}`);
 

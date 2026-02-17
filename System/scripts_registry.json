@@ -1,18 +1,5 @@
 [
   {
-    "name": "Add Places",
-    "team": "Unassigned",
-    "expected_columns": [
-      "name",
-      "type",
-      "latitude",
-      "longitude",
-      "address"
-    ],
-    "description": "### 🔄 Execution Flow Analysis\n\n1. **Setup & Context**:\n   - User uploads the Excel template after login.\n   - System generates an auth token from credentials to be used by the script.\n2. **Data Ingestion**:\n   - Script reads row data, specifically expecting: `name`, `type`, `latitude`, `longitude`, `address`.\n3. **Address Handling (Address Generator)**:\n   - **Method**: Imports and calls `get_location_details` from `RS_address_generate`.\n   - **Logic**: Uses Google Geocoding API (via helper script) to resolve Latitude/Longitude/Address.\n   - **Outcome**: Updates row with standardized address fields.\n4. **API Interaction (POST)**:\n   - **Target**: Hits endpoint `{env_url.rstrip('/')}/services/farm/api/place`\n   - **Payload**: Uses row data/config as JSON payload.\n   - **Response**: Validates status code (e.g. 200 OK).\n5. **Failure Handling**:\n   - **Try/Catch**: Wraps logic to catch API or Data errors.\n6. **Completion**:\n   - Returns the processed row sequence.\n   - User can download the final result Excel file.\n",
-    "filename": "Add_Places.py"
-  },
-  {
     "name": "Area Audit.py",
     "filename": "Area_Audit.py",
     "team": "QA",
@@ -146,34 +133,6 @@
     ],
     "requiresLogin": false,
     "isReusable": true
-  },
-  {
-    "name": "RS_address_generate.py",
-    "display_name": "Address Generator",
-    "team": "QA",
-    "isReusable": true,
-    "requiresLogin": false,
-    "description": "Fetch addresses/lat-lng from Excel, query Google Geocode, return address JSONs.",
-    "expected_columns": [
-      "Address"
-    ],
-    "columns": [
-      {
-        "name": "Address",
-        "type": "Optional",
-        "description": "Address text to geocode"
-      },
-      {
-        "name": "Latitude",
-        "type": "Optional",
-        "description": "Latitude for reverse geocoding"
-      },
-      {
-        "name": "Longitude",
-        "type": "Optional",
-        "description": "Longitude for reverse geocoding"
-      }
-    ]
   },
   {
     "name": "PR Enable",
@@ -696,33 +655,13 @@
   {
     "name": "Add_Farmer_Tag.py",
     "filename": "Add_Farmer_Tag.py",
-    "team": "Unassigned",
+    "team": "Both",
     "description": "Add tags to farmers. \nNote: This script will update tag in excel to existing tags. It wont delete the existing tag.",
-    "expected_columns": [
-      "Farmer Name",
-      "Farmer ID",
-      "Tag Name"
-    ],
-    "columns": [
-      {
-        "name": "Farmer Name",
-        "type": "Optional",
-        "description": "Farmer Name"
-      },
-      {
-        "name": "Farmer ID",
-        "type": "Optional",
-        "description": "Farmer ID"
-      },
-      {
-        "name": "Tag Name",
-        "type": "Mandatory",
-        "description": "Tag Name to Add"
-      }
-    ],
+    "expected_columns": [],
+    "columns": [],
     "requiresLogin": true,
     "isMultithreaded": true,
-    "batchSize": "10",
+    "batchSize": "5",
     "groupByColumn": "",
     "enableGeofencing": false,
     "outputConfig": {
@@ -745,7 +684,7 @@
         {
           "colName": "Status",
           "value": "",
-          "logic": "Pass if farmer update API status code is 200, else Fail"
+          "logic": "Pass if farmer update API status code is 200 or 201, else Fail"
         }
       ],
       "aiInstructions": "",
@@ -758,17 +697,19 @@
         {
           "colName": "Status",
           "value": "",
-          "logic": "'Fail' if tag not found or if status code of farmer update is not 200\n'Pass' if status of farmer update is 200"
+          "logic": "'Fail' if tag not found or if status code of farmer update is not 200\n'Pass' if status of farmer update is 200 or 201"
         },
         {
           "colName": "Response",
           "value": "",
-          "logic": "'Tag not found' if tag not found or \nwhole response of farmer update if status code is not 200\n'Tag updated to farmer' if farmer update response code is 200"
+          "logic": "'Tag not found' if tag not found or \nwhole response of farmer update if status code is not 200\n'Tag updated to farmer' if farmer update response code is 200 or 201"
         }
       ],
       "isDynamicUI": true
     },
-    "generation_prompt": "Script Name: Add_Farmer_Tag\nExcel Columns: Farmer Name, Farmer ID, Tag Name, Tag ID, Status, Response\n\nOUTPUT MAPPING CONFIGURATION:\n- UI Output Definition:\n- UI Column 'Farmer Name': Set to '' (Logic: from excel)\n- UI Column 'Farmer ID': Set to '' (Logic: from excel)\n- UI Column 'Tag Name': Set to '' (Logic: from excel)\n- UI Column 'Status': Set to '' (Logic: Pass if farmer update API status code is 200, else Fail)\n- Excel Output Definition:\n   - Column 'Tag ID': Set to '' (Logic: attribute 'id' from tag API response)\n   - Column 'Status': Set to '' (Logic: 'Fail' if tag not found or if status code of farmer update is not 200\n'Pass' if status of farmer update is 200)\n   - Column 'Response': Set to '' (Logic: 'Tag not found' if tag not found or \nwhole response of farmer update if status code is not 200\n'Tag updated to farmer' if farmer update response code is 200)\nIMPORTANT: Include this configuration as a comment block at the top of the generated Python script for reference.\n\nStep 1 [API]:\n  - Step/Variable Name: Fetch Master Tags\n  - Call GET /services/master/api/filter?type=FARMER\n  - Run Once: Yes (Master Data / Setup Step)\n  - Payload Type: QUERY\n  - Payload Example: {\"type\": \"FARMER\"}\n  - Expected Response: [ {  \"id\" : 3410601,  \"name\" : \"testpavan\",  \"clientId\" : \"ce804f83-95d5-4c07-8628-3f7aa60df5e7\",  \"tagType\" : \"FARMER\",  \"validFrom\" : \"2025-07-01T00:00:00Z\",  \"validTill\" : \"2026-07-09T00:00:00Z\",  \"status\" : \"Active\",  \"description\" : null}, {  \"id\" : 3591201,  \"name\" : \"RS Multi Project Farmer\",  \"clientId\" : \"783f0712-c671-455b-ad8e-81941f53b7d7\",  \"tagType\" : \"FARMER\",  \"validFrom\" : \"2025-07-01T00:00:00Z\",  \"validTill\" : \"2026-07-09T00:00:00Z\",  \"status\" : \"Active\",  \"description\" : null}, {  \"id\" : 5883651,  \"name\" : \"Raja farmer tag 01\",  \"clientId\" : \"e038b6c3-6910-4119-a723-1afc4399a356\",  \"tagType\" : \"FARMER\",  \"validFrom\" : \"2025-07-01T00:00:00Z\",  \"validTill\" : \"2025-07-31T00:00:00Z\",  \"status\" : \"Active\",  \"description\" : null}]\n  - Instructions: Fetches a map of tag names to tag IDs for 'FARMER' type. validate the response attribute 'name' with excel column 'Tag Name'. If the name matches, add the response attribute 'id' value in column 'Tag ID'. If not found, add 'Status' column as 'Fail' and add 'Response' column value as 'Tag not found' Skip the row execution if tag not found\n\nStep 2 [API]:\n  - Step/Variable Name: Fetch Farmer Details\n  - Call GET /services/farm/api/farmers/{Farmer ID}\n  - Payload Type: QUERY\n  - Expected Response: {  \"id\" : 5775643,  \"firstName\" : \"0805- bulk fill\",  \"lastName\" : null,  \"gender\" : null,  \"images\" : {    \"butterfly1770016526324.jpeg\" : \"data.profilePic\"  },  \"status\" : \"DISABLE\",  \"data\" : {    \"rajaNewAddAttr02\" : \"test2\",    \"rajaNewAddAttr03\" : 888,    \"rajaNewAddAttr01\" : \"test\",    \"countryIsoCode\" : \"IN\",    \"countryCode\" : \"+91\",    \"mobileNumber\" : \"87654678\",    \"profilePic\" : [ {      \"size\" : 7648,      \"active\" : true,      \"channel\" : \"web\",      \"feature\" : \"farmer\",      \"imageLat\" : null,      \"imageLong\" : null,      \"imageType\" : \"profile\",      \"identifier\" : \"a642eacd-c01e-47be-8d60-3018b36630ba\",      \"contentType\" : \"image/jpeg\",      \"imageSource\" : null,      \"capturedDateTime\" : null,      \"originalFileName\" : \"butterfly1770016526324.jpeg\"    } ],    \"profileImage\" : [ ],    \"tags\" : [ 5921851 ]  },  \"contractorId\" : null,  \"contractorName\" : null,  \"contractorLocation\" : null,  \"clientId\" : \"4ee03ec9-cbb2-4a85-b9b4-b6051888701d\",  \"declaredArea\" : null,  \"address\" : {    \"id\" : 5776162,    \"formattedAddress\" : \"Madhugiri, Karnataka 572132, India\",    \"postalCode\" : \"572132\",    \"locality\" : \"Madhugiri\",    \"data\" : null,    \"administrativeAreaLevel5\" : null,    \"administrativeAreaLevel4\" : null,    \"administrativeAreaLevel3\" : null,    \"administrativeAreaLevel2\" : \"Bangalore Division\",    \"administrativeAreaLevel1\" : \"Karnataka\",    \"country\" : \"India\",    \"latitude\" : 13.6643166,    \"longitude\" : 77.20889869999999,    \"placeId\" : \"ChIJsfkoVqO0sTsRLbvVqd06cTU\",    \"sublocalityLevel1\" : \"\",    \"sublocalityLevel2\" : \"\",    \"sublocalityLevel3\" : null,    \"sublocalityLevel4\" : null,    \"sublocalityLevel5\" : null,    \"houseNo\" : \"\",    \"buildingName\" : \"\",    \"landmark\" : \"\",    \"clientId\" : \"9029326d-a380-4ad8-ac29-a6b754aede64\"  },  \"farmerCode\" : \"0805- bulk fill\",  \"isDeleted\" : false,  \"email\" : null,  \"deviceToken\" : null,  \"deviceType\" : null,  \"isAcreSquareEnabled\" : null,  \"isGDPRCompliant\" : true,  \"companyId\" : 1251,  \"createdDate\" : \"2025-05-08T09:23:02.964Z\",  \"lastModifiedDate\" : \"2026-02-02T07:15:33.259Z\",  \"loginType\" : null,  \"externalId\" : null,  \"assignedTo\" : [ {    \"id\" : 1551,    \"name\" : \"Sub Admin1\",    \"data\" : {      \"geoIds\" : [ 656497 ],      \"environment\" : \"dev\",      \"countryIsoCode\" : \"IN\",      \"srRegionEnabled\" : true,      \"isExecutiveProfileEnabled\" : false,      \"isSREnabled\" : true    },    \"assignedManagersName\" : [ ],    \"conversionFactor\" : null,    \"managers\" : [ 6501, 2951, 1401, 1801 ],    \"userStatus\" : \"ACTIVE\",    \"location\" : null,    \"contactNumber\" : \"1111111111\",    \"email\" : \"Subadmin12@cropin.com\",    \"preferences\" : {      \"id\" : 1601,      \"currency\" : \"INR\",      \"language\" : \"en\",      \"timeZone\" : \"IST\",      \"areaUnits\" : \"ACRE\",      \"locale\" : \"en-IN\",      \"data\" : {        \"cropPreferences\" : [ ],        \"cropUnit\" : \"Tons\",        \"planTypePreferences\" : [ ],        \"farmerTag\" : [ ],        \"assetTag\" : [ ],        \"caTag\" : [ ],        \"precipitationUnit\" : \"Millimeters\",        \"tempratureUnit\" : \"Celsius\"      },      \"locations\" : null    },    \"address\" : null,    \"assignedTo\" : null,    \"managersName\" : null,    \"companyId\" : 1251,    \"parentCompanyId\" : null,    \"userRoleId\" : 1351,    \"userRoleName\" : \"ROLE_ADMIN\",    \"correspondingKcId\" : null,    \"resources\" : null,    \"countryCode\" : \"+91\",    \"companyStatus\" : null,    \"clientId\" : \"f146aa1e-d40b-46df-8c97-29ca50a18c18\",    \"images\" : { },    \"companyPreferences\" : null,    \"locations\" : {      \"id\" : 1501,      \"name\" : \"Bengaluru\",      \"administrativeAreaLevel5\" : null,      \"administrativeAreaLevel4\" : null,      \"administrativeAreaLevel3\" : null,      \"administrativeAreaLevel2\" : \"Bangalore Urban\",      \"administrativeAreaLevel1\" : \"Karnataka\",      \"country\" : \"India\",      \"latitude\" : null,      \"longitude\" : null,      \"sublocalityLevel1\" : null,      \"sublocalityLevel2\" : null,      \"sublocalityLevel3\" : null,      \"sublocalityLevel4\" : null,      \"sublocalityLevel5\" : null,      \"geoInfo\" : {        \"type\" : \"FeatureCollection\",        \"features\" : [ {          \"type\" : \"Feature\",          \"geometry\" : {            \"type\" : \"Polygon\",            \"coordinates\" : [ [ [ 77.37919807560223, 12.73428884772176 ], [ 77.88268086666527, 12.73428884772176 ], [ 77.88268086666527, 13.17370600858147 ], [ 77.37919807560223, 13.17370600858147 ], [ 77.37919807560223, 12.73428884772176 ] ] ]          },          \"properties\" : { }        } ]      },      \"bounds\" : {        \"southwest\" : {          \"lat\" : 12.73428884772176,          \"lng\" : 77.37919807560223        },        \"northeast\" : {          \"lat\" : 13.17370600858147,          \"lng\" : 77.88268086666527        }      },      \"placeId\" : \"ChIJbU60yXAWrjsR4E9-UejD3_g\"    },    \"enabled\" : true,    \"isAcreSquareUser\" : false,    \"isGDPRCompliant\" : true,    \"lastModifiedDate\" : \"2026-02-03T06:21:08.795Z\",    \"loginType\" : null,    \"executiveRoleUser\" : false,    \"preferredName\" : \"1234560001\",    \"deviceToken\" : \"ei_Gol0VS3mCl44FmAv2nn:APA91bGxCCpGgpy7zdvAfmbl2Z0HFKLmJDHEfPuxxASeCrd834nbAn5iaoe3pU3ljTWlDb4BMBknaUPxLLAQ3Dr-VIuYSLZ7Hw8o-wFa9B-rbgu6_QwJb1E\",    \"deviceType\" : \"samsung/a31xx/a31:12/SP1A.210812.016/A315FXXU4DWI2:user/release-keysSM-A315F\",    \"createdBy\" : \"1401\",    \"lastModifiedBy\" : \"1551\",    \"deleted\" : false  } ],  \"massUpload\" : false,  \"deleted\" : false,  \"acreSquareEnabled\" : null}\n  - Instructions: Fetches the complete details of the target farmer using the resolved farmer ID.\n\nStep 3 [LOGIC]:\n  - Logic: Extracts current tags from farmer_data['data']['tags']. If the resolved tag_id is not already present, it's added to the list of tags. Prepares the farmer_data object for the PUT request.\n\nStep 4 [API]:\n  - Step/Variable Name: Update Farmer Tags\n  - Call PUT /services/farm/api/farmers\n  - Payload Type: DTO_FILE\n  - Payload Example: {\"dto\": {\"data\": {\"tags\": [\"list of tag IDs\"]}}} | Structure: Updates nested data.data (array)\n  - Expected Response: put_resp\n  - Instructions: Sends the updated farmer_data (including new tags) to the API to update the farmer. Only executed if a new tag was added. If the response code is 200, add 'Status' column as 'Pass' and add 'Response' column value as 'Tag updated to farmer' if response is not 200, add 'Status' column as 'Fail' and add whole response in column 'Response'\n\n"
+    "generation_prompt": "Script Name: Add_Farmer_Tag\nExcel Columns: Farmer Name, Farmer ID, Tag Name, Tag ID, Status, Response\n\nOUTPUT MAPPING CONFIGURATION:\n- UI Output Definition:\n- UI Column 'Farmer Name': Set to '' (Logic: from excel)\n- UI Column 'Farmer ID': Set to '' (Logic: from excel)\n- UI Column 'Tag Name': Set to '' (Logic: from excel)\n- UI Column 'Status': Set to '' (Logic: Pass if farmer update API status code is 200 or 201, else Fail)\n- Excel Output Definition:\n   - Column 'Tag ID': Set to '' (Logic: attribute 'id' from tag API response)\n   - Column 'Status': Set to '' (Logic: 'Fail' if tag not found or if status code of farmer update is not 200\n'Pass' if status of farmer update is 200 or 201)\n   - Column 'Response': Set to '' (Logic: 'Tag not found' if tag not found or \nwhole response of farmer update if status code is not 200\n'Tag updated to farmer' if farmer update response code is 200 or 201)\nIMPORTANT: Include this configuration as a comment block at the top of the generated Python script for reference.\n\nStep 1 [MASTER]:\n  - Master Type: farmertag\n  - Input Column: Tag Name\n  - Output Column: Tag ID\n  - Lookup Path: id\n  - On Failure: Skip Row\n  - Run Method: once\n  - IMPORTANT: You MUST import and use 'components.master_search' for this step.\n  - CRITICAL OPTIMIZATION: This master type is configured as 'Run Once'.\n  - 1. use 'master_search.fetch_all(\"farmertag\", env_config)' OUTSIDE the loop to get all items.\n  - 2. use 'master_search.lookup_from_cache(cache_data, \"name\", input_value, \"id\")' INSIDE the loop.\n  - 3. Do NOT use 'master_search.search()' inside the loop for this type.\n\nStep 2 [API]:\n  - Step/Variable Name: Fetch Farmer Details\n  - Call GET /services/farm/api/farmers/{Farmer ID}\n  - Payload Type: QUERY\n  - Expected Response: {  \"id\" : 5775643,  \"firstName\" : \"0805- bulk fill\",  \"lastName\" : null,  \"gender\" : null,  \"images\" : {    \"butterfly1770016526324.jpeg\" : \"data.profilePic\"  },  \"status\" : \"DISABLE\",  \"data\" : {    \"rajaNewAddAttr02\" : \"test2\",    \"rajaNewAddAttr03\" : 888,    \"rajaNewAddAttr01\" : \"test\",    \"countryIsoCode\" : \"IN\",    \"countryCode\" : \"+91\",    \"mobileNumber\" : \"87654678\",    \"profilePic\" : [ {      \"size\" : 7648,      \"active\" : true,      \"channel\" : \"web\",      \"feature\" : \"farmer\",      \"imageLat\" : null,      \"imageLong\" : null,      \"imageType\" : \"profile\",      \"identifier\" : \"a642eacd-c01e-47be-8d60-3018b36630ba\",      \"contentType\" : \"image/jpeg\",      \"imageSource\" : null,      \"capturedDateTime\" : null,      \"originalFileName\" : \"butterfly1770016526324.jpeg\"    } ],    \"profileImage\" : [ ],    \"tags\" : [ 5921851 ]  },  \"contractorId\" : null,  \"contractorName\" : null,  \"contractorLocation\" : null,  \"clientId\" : \"4ee03ec9-cbb2-4a85-b9b4-b6051888701d\",  \"declaredArea\" : null,  \"address\" : {    \"id\" : 5776162,    \"formattedAddress\" : \"Madhugiri, Karnataka 572132, India\",    \"postalCode\" : \"572132\",    \"locality\" : \"Madhugiri\",    \"data\" : null,    \"administrativeAreaLevel5\" : null,    \"administrativeAreaLevel4\" : null,    \"administrativeAreaLevel3\" : null,    \"administrativeAreaLevel2\" : \"Bangalore Division\",    \"administrativeAreaLevel1\" : \"Karnataka\",    \"country\" : \"India\",    \"latitude\" : 13.6643166,    \"longitude\" : 77.20889869999999,    \"placeId\" : \"ChIJsfkoVqO0sTsRLbvVqd06cTU\",    \"sublocalityLevel1\" : \"\",    \"sublocalityLevel2\" : \"\",    \"sublocalityLevel3\" : null,    \"sublocalityLevel4\" : null,    \"sublocalityLevel5\" : null,    \"houseNo\" : \"\",    \"buildingName\" : \"\",    \"landmark\" : \"\",    \"clientId\" : \"9029326d-a380-4ad8-ac29-a6b754aede64\"  },  \"farmerCode\" : \"0805- bulk fill\",  \"isDeleted\" : false,  \"email\" : null,  \"deviceToken\" : null,  \"deviceType\" : null,  \"isAcreSquareEnabled\" : null,  \"isGDPRCompliant\" : true,  \"companyId\" : 1251,  \"createdDate\" : \"2025-05-08T09:23:02.964Z\",  \"lastModifiedDate\" : \"2026-02-02T07:15:33.259Z\",  \"loginType\" : null,  \"externalId\" : null,  \"assignedTo\" : [ {    \"id\" : 1551,    \"name\" : \"Sub Admin1\",    \"data\" : {      \"geoIds\" : [ 656497 ],      \"environment\" : \"dev\",      \"countryIsoCode\" : \"IN\",      \"srRegionEnabled\" : true,      \"isExecutiveProfileEnabled\" : false,      \"isSREnabled\" : true    },    \"assignedManagersName\" : [ ],    \"conversionFactor\" : null,    \"managers\" : [ 6501, 2951, 1401, 1801 ],    \"userStatus\" : \"ACTIVE\",    \"location\" : null,    \"contactNumber\" : \"1111111111\",    \"email\" : \"Subadmin12@cropin.com\",    \"preferences\" : {      \"id\" : 1601,      \"currency\" : \"INR\",      \"language\" : \"en\",      \"timeZone\" : \"IST\",      \"areaUnits\" : \"ACRE\",      \"locale\" : \"en-IN\",      \"data\" : {        \"cropPreferences\" : [ ],        \"cropUnit\" : \"Tons\",        \"planTypePreferences\" : [ ],        \"farmerTag\" : [ ],        \"assetTag\" : [ ],        \"caTag\" : [ ],        \"precipitationUnit\" : \"Millimeters\",        \"tempratureUnit\" : \"Celsius\"      },      \"locations\" : null    },    \"address\" : null,    \"assignedTo\" : null,    \"managersName\" : null,    \"companyId\" : 1251,    \"parentCompanyId\" : null,    \"userRoleId\" : 1351,    \"userRoleName\" : \"ROLE_ADMIN\",    \"correspondingKcId\" : null,    \"resources\" : null,    \"countryCode\" : \"+91\",    \"companyStatus\" : null,    \"clientId\" : \"f146aa1e-d40b-46df-8c97-29ca50a18c18\",    \"images\" : { },    \"companyPreferences\" : null,    \"locations\" : {      \"id\" : 1501,      \"name\" : \"Bengaluru\",      \"administrativeAreaLevel5\" : null,      \"administrativeAreaLevel4\" : null,      \"administrativeAreaLevel3\" : null,      \"administrativeAreaLevel2\" : \"Bangalore Urban\",      \"administrativeAreaLevel1\" : \"Karnataka\",      \"country\" : \"India\",      \"latitude\" : null,      \"longitude\" : null,      \"sublocalityLevel1\" : null,      \"sublocalityLevel2\" : null,      \"sublocalityLevel3\" : null,      \"sublocalityLevel4\" : null,      \"sublocalityLevel5\" : null,      \"geoInfo\" : {        \"type\" : \"FeatureCollection\",        \"features\" : [ {          \"type\" : \"Feature\",          \"geometry\" : {            \"type\" : \"Polygon\",            \"coordinates\" : [ [ [ 77.37919807560223, 12.73428884772176 ], [ 77.88268086666527, 12.73428884772176 ], [ 77.88268086666527, 13.17370600858147 ], [ 77.37919807560223, 13.17370600858147 ], [ 77.37919807560223, 12.73428884772176 ] ] ]          },          \"properties\" : { }        } ]      },      \"bounds\" : {        \"southwest\" : {          \"lat\" : 12.73428884772176,          \"lng\" : 77.37919807560223        },        \"northeast\" : {          \"lat\" : 13.17370600858147,          \"lng\" : 77.88268086666527        }      },      \"placeId\" : \"ChIJbU60yXAWrjsR4E9-UejD3_g\"    },    \"enabled\" : true,    \"isAcreSquareUser\" : false,    \"isGDPRCompliant\" : true,    \"lastModifiedDate\" : \"2026-02-03T06:21:08.795Z\",    \"loginType\" : null,    \"executiveRoleUser\" : false,    \"preferredName\" : \"1234560001\",    \"deviceToken\" : \"ei_Gol0VS3mCl44FmAv2nn:APA91bGxCCpGgpy7zdvAfmbl2Z0HFKLmJDHEfPuxxASeCrd834nbAn5iaoe3pU3ljTWlDb4BMBknaUPxLLAQ3Dr-VIuYSLZ7Hw8o-wFa9B-rbgu6_QwJb1E\",    \"deviceType\" : \"samsung/a31xx/a31:12/SP1A.210812.016/A315FXXU4DWI2:user/release-keysSM-A315F\",    \"createdBy\" : \"1401\",    \"lastModifiedBy\" : \"1551\",    \"deleted\" : false  } ],  \"massUpload\" : false,  \"deleted\" : false,  \"acreSquareEnabled\" : null}\n  - Instructions: Fetches the complete details of the target farmer using the resolved farmer ID.\n\nStep 3 [LOGIC]:\n  - Logic: Extracts current tags from farmer_data['data']['tags']. If the resolved tag_id is not already present, it's added to the list of tags. Prepares the farmer_data object for the PUT request.\n\nStep 4 [API]:\n  - Step/Variable Name: Update Farmer Tags\n  - Call PUT /services/farm/api/farmers\n  - Payload Type: DTO_FILE\n  - Payload Example: {\"dto\": {\"data\": {\"tags\": [\"list of tag IDs\"]}}} | Structure: Updates nested data.data (array)\n  - Expected Response: put_resp\n  - Instructions: Sends the updated farmer_data (including new tags) to the API to update the farmer. Only executed if a new tag was added.\n\n",
+    "allowAdditionalAttributes": false,
+    "additionalAttributes": []
   },
   {
     "name": "getLocationsForAddVariety.py",
@@ -1046,5 +987,92 @@
       "isDynamicUI": true
     },
     "generation_prompt": "Script Name: Add_Asset_Tag\nExcel Columns: Asset Name, Asset ID, Tag Name, Tag ID, Status, Response\n\nOUTPUT MAPPING CONFIGURATION:\n- UI Output Definition:\n- UI Column 'Asset Name': Set to '' (Logic: from excel)\n- UI Column 'Asset ID': Set to '' (Logic: from excel)\n- UI Column 'Tag Name': Set to '' (Logic: from excel)\n- UI Column 'Status': Set to '' (Logic: Pass if asset update API status code is 200 or 201, else Fail)\n- Excel Output Definition:\n   - Column 'Tag ID': Set to '' (Logic: attribute 'id' from asset tag API response)\n   - Column 'Status': Set to '' (Logic: 'Fail' if tag not found or if status code of asset update is not 200 or 201\n'Pass' if status of asset update is 200 or 201)\n   - Column 'Response': Set to '' (Logic: 'Tag not found' if tag not found or \nwhole response of asset update if status code is not 200 or 201\n'Tag updated to asset' if asset update response code is 200 or 201)\nIMPORTANT: Include this configuration as a comment block at the top of the generated Python script for reference.\n\nStep 1 [MASTER]:\n  - Master Type: assettag\n  - Input Column: Tag Name\n  - Output Column: Tag ID\n  - Lookup Path: id\n  - On Failure: Skip Row\n  - Run Method: once\n  - IMPORTANT: You MUST import and use 'components.master_search' for this step.\n  - CRITICAL OPTIMIZATION: This master type is configured as 'Run Once'.\n  - 1. use 'master_search.fetch_all(\"assettag\", env_config)' OUTSIDE the loop to get all items.\n  - 2. use 'master_search.lookup_from_cache(cache_data, \"name\", input_value, \"id\")' INSIDE the loop.\n  - 3. Do NOT use 'master_search.search()' inside the loop for this type.\n\nStep 2 [API]:\n  - Step/Variable Name: Fetch Asset Details\n  - Call GET /services/farm/api/assets/{Asset ID}\n  - Payload Type: QUERY\n  - Expected Response: {  \"id\" : 5936151,  \"name\" : \"RS AI 1\",  \"companyStatus\" : null,  \"data\" : {    \"rajaAssetAddAttr\" : \"2026-02-14T00:00:00.000Z\",    \"tags\" : [ 5929601 ]  },  \"ownerId\" : 5917951,  \"ownerFirstName\" : \"RS F 25311001\",  \"soilType\" : {    \"id\" : 1056,    \"name\" : \"Clay Loam\",    \"description\" : \"Clay Loam Soil Type Description\",    \"data\" : null,    \"clientId\" : \"115825fe-a0d3-4c95-a831-1dc4fa93d261\"  },  \"irrigationType\" : {    \"id\" : 1101,    \"name\" : \"Bore well\",    \"description\" : \"Bore well Irrigation Type Description\",    \"clientId\" : \"8db73384-94ab-43ad-9827-0ca9f30e2eea\",    \"data\" : null  },  \"surveyNumber\" : null,  \"leased\" : null,  \"auditedArea\" : null,  \"usableArea\" : {    \"count\" : 5.0  },  \"declaredArea\" : {    \"count\" : 5.0  },  \"availableArea\" : null,  \"images\" : { },  \"assetStatus\" : \"AVAILABLE\",  \"clientId\" : \"0705162e-dd48-47f6-bfd3-bf7d5950d24d\",  \"address\" : {    \"id\" : 5935832,    \"formattedAddress\" : \"Madhugiri, Karnataka 572132, India\",    \"postalCode\" : \"572132\",    \"locality\" : \"Madhugiri\",    \"data\" : null,    \"administrativeAreaLevel5\" : null,    \"administrativeAreaLevel4\" : null,    \"administrativeAreaLevel3\" : null,    \"administrativeAreaLevel2\" : \"Bangalore Division\",    \"administrativeAreaLevel1\" : \"Karnataka\",    \"country\" : \"India\",    \"latitude\" : 13.6643166,    \"longitude\" : 77.20889869999999,    \"placeId\" : \"ChIJsfkoVqO0sTsRLbvVqd06cTU\",    \"sublocalityLevel1\" : \"\",    \"sublocalityLevel2\" : \"\",    \"sublocalityLevel3\" : null,    \"sublocalityLevel4\" : null,    \"sublocalityLevel5\" : null,    \"houseNo\" : \"\",    \"buildingName\" : \"\",    \"landmark\" : \"\",    \"clientId\" : \"bf7fa3dc-56c8-4059-951f-681a76f1507f\"  },  \"ownerCode\" : \"RSF25311001\",  \"nameCounter\" : null,  \"acreSquareAssetId\" : null,  \"lastModifiedDate\" : \"2026-02-14T12:32:48.587Z\",  \"ownerClientId\" : \"ea8e94f6-8771-4b72-9ba7-875f86279d79\",  \"externalId\" : null,  \"massUpload\" : false,  \"deleted\" : false}\n  - Instructions: Fetches the complete details of the target farmer using the resolved farmer ID.\n\nStep 3 [LOGIC]:\n  - Logic: Extracts current tags from asset_data['data']['tags']. If the resolved tag_id is not already present, it's added to the list of tags. If the ['data']['tags'] directory not present add it. Prepares the asset_data object for the PUT request.\n\nStep 4 [API]:\n  - Step/Variable Name: Update Asset Tags\n  - Call PUT /services/farm/api/assets\n  - Payload Type: DTO_FILE\n  - Payload Example: {\"id\":5936903,\"name\":\"RS AI 8\",\"companyStatus\":null,\"data\":{\"rajaAssetAddAttr\":\"2026-02-16T00:00:00.000Z\"},\"ownerId\":5917951,\"ownerFirstName\":\"RS F 25311001\",\"soilType\":{\"id\":1056,\"name\":\"Clay Loam\",\"description\":\"Clay Loam Soil Type Description\",\"data\":null,\"clientId\":\"115825fe-a0d3-4c95-a831-1dc4fa93d261\"},\"irrigationType\":{\"id\":1101,\"name\":\"Bore well\",\"description\":\"Bore well Irrigation Type Description\",\"clientId\":\"8db73384-94ab-43ad-9827-0ca9f30e2eea\",\"data\":null},\"surveyNumber\":null,\"leased\":null,\"auditedArea\":{\"enableConversion\":\"true\",\"unit\":\"ACRE\"},\"usableArea\":{\"count\":5},\"declaredArea\":{\"count\":5,\"enableConversion\":\"true\",\"unit\":\"ACRE\"},\"availableArea\":null,\"images\":{},\"assetStatus\":\"AVAILABLE\",\"clientId\":\"041e3e99-77e4-42e6-b1ac-55ba6e09f5d4\",\"address\":{\"id\":5936735,\"formattedAddress\":\"Pune, Maharashtra, India\",\"postalCode\":\"\",\"locality\":\"Pune\",\"data\":null,\"administrativeAreaLevel5\":\"\",\"administrativeAreaLevel4\":\"\",\"administrativeAreaLevel3\":\"Pune\",\"administrativeAreaLevel2\":\"Pune Division\",\"administrativeAreaLevel1\":\"Maharashtra\",\"country\":\"India\",\"latitude\":18.5246091,\"longitude\":73.8786239,\"placeId\":\"ChIJARFGZy6_wjsRQ-Oenb9DjYI\",\"sublocalityLevel1\":\"\",\"sublocalityLevel2\":\"\",\"sublocalityLevel3\":\"\",\"sublocalityLevel4\":\"\",\"sublocalityLevel5\":\"\",\"houseNo\":\"\",\"buildingName\":\"\",\"landmark\":\"\",\"clientId\":\"02f5f29c-e3f6-41ec-a311-56de9f74ebac\"},\"ownerCode\":\"RSF25311001\",\"nameCounter\":null,\"acreSquareAssetId\":null,\"lastModifiedDate\":\"2026-02-16T17:55:47.963Z\",\"ownerClientId\":\"ea8e94f6-8771-4b72-9ba7-875f86279d79\",\"externalId\":null,\"deleted\":false,\"massUpload\":false}\n  - Expected Response: put_resp\n  - Instructions: Sends the updated asset_data (including new tags) to the API to update the asset. Only executed if a new tag was added.\n\n"
+  },
+  {
+    "name": "AddPlaces.py",
+    "filename": "AddPlaces.py",
+    "team": "Both",
+    "description": "Use this script to add places for the address provided",
+    "expected_columns": [
+      "name",
+      "type",
+      "tags",
+      "latitude",
+      "longitude",
+      "address"
+    ],
+    "columns": [
+      {
+        "name": "name",
+        "type": "Mandatory",
+        "description": "Auto-detected"
+      },
+      {
+        "name": "type",
+        "type": "Mandatory",
+        "description": "Auto-detected"
+      },
+      {
+        "name": "tags",
+        "type": "Mandatory",
+        "description": "Auto-detected"
+      },
+      {
+        "name": "latitude",
+        "type": "Mandatory",
+        "description": "Auto-detected"
+      },
+      {
+        "name": "longitude",
+        "type": "Mandatory",
+        "description": "Auto-detected"
+      },
+      {
+        "name": "address",
+        "type": "Mandatory",
+        "description": "Auto-detected"
+      }
+    ],
+    "requiresLogin": true,
+    "isMultithreaded": true,
+    "batchSize": "5",
+    "groupByColumn": "",
+    "enableGeofencing": false,
+    "allowAdditionalAttributes": false,
+    "additionalAttributes": [],
+    "outputConfig": {
+      "uiMapping": [
+        {
+          "colName": "Name",
+          "value": "",
+          "logic": "from excel"
+        },
+        {
+          "colName": "Status",
+          "value": "",
+          "logic": "'Fail' if tag not found or if status code of place creation is not 200 or 201\n'Pass' if status of place creation is 200 or 201"
+        }
+      ],
+      "aiInstructions": "",
+      "excelMapping": [
+        {
+          "colName": "tag_id",
+          "value": "",
+          "logic": "attribute 'id' from tag API response"
+        },
+        {
+          "colName": "Status",
+          "value": "",
+          "logic": "'Fail' if tag not found or if status code of place creation is not 200 or 201\n'Pass' if status of place creation is 200 or 201"
+        },
+        {
+          "colName": "Response",
+          "value": "",
+          "logic": "'Tag not found' if tag not found or \nwhole response of place creation if status code is not 200 or 201\n'Place added' if place creation response code is 200 or 201"
+        }
+      ],
+      "isDynamicUI": true
+    },
+    "generation_prompt": "Script Name: AddPlaces\nExcel Columns: name, type, tags, tag_id, latitude, longitude, address\n\nOUTPUT MAPPING CONFIGURATION:\n- UI Output Definition:\n- UI Column 'Name': Set to '' (Logic: from excel)\n- UI Column 'Status': Set to '' (Logic: 'Fail' if tag not found or if status code of place creation is not 200 or 201\n'Pass' if status of place creation is 200 or 201)\n- Excel Output Definition:\n   - Column 'tag_id': Set to '' (Logic: attribute 'id' from tag API response)\n   - Column 'Status': Set to '' (Logic: 'Fail' if tag not found or if status code of place creation is not 200 or 201\n'Pass' if status of place creation is 200 or 201)\n   - Column 'Response': Set to '' (Logic: 'Tag not found' if tag not found or \nwhole response of place creation if status code is not 200 or 201\n'Place added' if place creation response code is 200 or 201)\nIMPORTANT: Include this configuration as a comment block at the top of the generated Python script for reference.\n\nStep 1 [MASTER]:\n  - Master Type: plottag\n  - Input Column: tags\n  - Output Column: tag_id\n  - Lookup Path: id\n  - On Failure: Skip Row\n  - Run Method: search\n  - IMPORTANT: You MUST import and use 'components.master_search' for this step.\n  - The master_data_config is available in env_config, so master_search will auto-detect run_method (usually 'search').\n\nStep 2 [GEO]:\n  - Geo Location Logic: Generate address_component in the below format using 'latitude' and 'longitude' columns have values, else use column 'address'. Note: check only forst row to decide the method. If first row has 'latitude' and 'longitude', then searching using latitude and longitude is common for all rows (fail row immediately if first row have these and any subsequent rows dont have these). Else, search using location for all rows. \nFormat:\n{\n        \"country\": \"India\",\n        \"formattedAddress\": \"Kundapura, Karnataka, India\",\n        \"administrativeAreaLevel1\": \"Karnataka\",\n        \"locality\": \"Kundapura\",\n        \"administrativeAreaLevel2\": \"Mysore Division\",\n        \"sublocalityLevel1\": \"\",\n        \"sublocalityLevel2\": \"\",\n        \"landmark\": \"\",\n        \"postalCode\": \"\",\n        \"houseNo\": \"\",\n        \"buildingName\": \"\",\n        \"placeId\": \"ChIJcYwVewaOvDsRy73eNhezPjs\",\n        \"latitude\": 13.6235274,\n        \"longitude\": 74.6917418\n    }\n  - IMPORTANT: You MUST import and use 'components.geofence_utils' for this step.\n  - Usage: boundary_data = geofence_utils.get_boundary(location_name, env_config.get('google_api_key'))\n  - CRITICAL: 'boundary_data' IS the direct result object. It is NOT wrapped in 'google_response' or 'data'.\n  - 'boundary_data' structure: { \"formatted_address\": \"...\", \"geometry\": { \"location\": {...}, \"viewport\": {...}, \"bounds\": {...} }, \"place_id\": \"...\", \"address_components\": [...], \"geojson_polygon\": {...} }\n  - NOTE: 'geojson_polygon' is ALREADY a FeatureCollection. DO NOT wrap it in another FeatureCollection or check for 'Polygon' type.\n  - CRITICAL: When mapping 'bounds' and 'geoInfo', ALWAYS prioritize 'geometry.bounds' over 'geometry.viewport' if available, as 'bounds' is the strict geopolitical boundary.\n  - CRITICAL: The final Output column MUST be a JSON string. Use 'json.dumps(output_payload)' to populate the row.\n  - YOU MUST PARSE 'boundary_data' directly to extract fields required by the logic (e.g. boundary_data['formatted_address'], boundary_data['geometry']['location']).\n\nStep 3 [API]:\n  - Step/Variable Name: Create Place\n  - Call POST /services/farm/api/place\n  - Payload Type: JSON\n  - Payload Example: {    \"data\": null,    \"type\": \"PORT\",    \"name\": \"RS Kundapura Port\",    \"address\": {        \"country\": \"India\",        \"formattedAddress\": \"Kundapura, Karnataka, India\",        \"administrativeAreaLevel1\": \"Karnataka\",        \"locality\": \"Kundapura\",        \"administrativeAreaLevel2\": \"Mysore Division\",        \"sublocalityLevel1\": \"\",        \"sublocalityLevel2\": \"\",        \"landmark\": \"\",        \"postalCode\": \"\",        \"houseNo\": \"\",        \"buildingName\": \"\",        \"placeId\": \"ChIJcYwVewaOvDsRy73eNhezPjs\",        \"latitude\": 13.6235274,        \"longitude\": 74.6917418    },    \"latitude\": 13.6235274,    \"longitude\": 74.6917418}\n  - Expected Response: {  \"id\" : 3830202,  \"name\" : \"RS Kundapura Port\",  \"type\" : \"PORT\",  \"subType\" : null,  \"data\" : null,  \"images\" : null,  \"capacity\" : null,  \"address\" : {    \"id\" : 3830252,    \"formattedAddress\" : \"Kundapura, Karnataka, India\",    \"postalCode\" : \"\",    \"locality\" : \"Kundapura\",    \"data\" : null,    \"administrativeAreaLevel5\" : null,    \"administrativeAreaLevel4\" : null,    \"administrativeAreaLevel3\" : null,    \"administrativeAreaLevel2\" : \"Mysore Division\",    \"administrativeAreaLevel1\" : \"Karnataka\",    \"country\" : \"India\",    \"latitude\" : 13.6235274,    \"longitude\" : 74.6917418,    \"placeId\" : \"ChIJcYwVewaOvDsRy73eNhezPjs\",    \"sublocalityLevel1\" : \"\",    \"sublocalityLevel2\" : \"\",    \"sublocalityLevel3\" : null,    \"sublocalityLevel4\" : null,    \"sublocalityLevel5\" : null,    \"houseNo\" : \"\",    \"buildingName\" : \"\",    \"landmark\" : \"\",    \"clientId\" : \"d682cbce-d104-4800-a95e-d0ce02de2091\"  },  \"areaAudit\" : null,  \"auditedArea\" : null,  \"visibility\" : true,  \"latitude\" : 13.6235274,  \"longitude\" : 74.6917418}\n  - Instructions: Create the payload using the below:  1.1 attribute 'data' as null if 'tags' column is empty 1.2 attribute data as \"data\" : {\"tags\" : [ 3811552 ]} if 'tags' column is empty 2. attribute 'type' from column 'type' in capitals 3. attribute 'name' from column 'name' 4. attribute 'address' from geo step 5. attributes 'latitude' and 'longitude' if columns have values else from address component of geo step\n\n"
   }
 ]

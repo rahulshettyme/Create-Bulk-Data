@@ -1,7 +1,15 @@
 import concurrent.futures
 import builtins
 
-def run_in_parallel(process_func, items, max_workers=10, token=None, env_config=None):
+def run_in_parallel(process_func, items, max_workers=None, token=None, env_config=None):
+    if max_workers is None:
+        # Default to 1 (No multi-threading), but respect batchSize from env_config if present
+        max_workers = 1
+        if env_config and 'batchSize' in env_config:
+            try:
+                max_workers = int(env_config['batchSize'])
+            except:
+                pass
     """
     Runs process_func on each item in items list in parallel.
     Maintains the order of results corresponding to items.

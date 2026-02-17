@@ -26,9 +26,17 @@
         }
 
         .form-section {
-            background: transparent !important;
-            border: none !important;
-            padding: 0 !important;
+            background: #ffffff !important;
+            border: 1px solid #e0e0e0 !important;
+            padding: 1.5rem !important;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Different background for action column */
+        .action-column {
+            background: #f8f9fa !important;
+            border: 1px solid #dee2e6 !important;
         }
 
         /* Material Design Input Styles */
@@ -465,6 +473,59 @@
         }
 
         /* Remove unused styles */
+
+        /* Two-Column Main Layout */
+        .main-layout-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Section Titles */
+        .section-title {
+            color: #264554;
+            font-size: 1rem;
+            font-weight: 700;
+            margin: 0 0 1.25rem 0;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        /* Compact form groups */
+        .config-column .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .action-column .form-group {
+            margin-bottom: 1rem;
+        }
+
+        /* Compact action rows */
+        .compact-action-rows {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        /* Responsive: Stack on smaller screens */
+        @media (max-width: 1024px) {
+            .main-layout-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+        }
+
+        /* Reduce header padding */
+        header {
+            padding-bottom: 0.75rem !important;
+            margin-bottom: 1.5rem !important;
+        }
+
+        /* Compact data container */
+        .data-generate-container {
+            padding: 1.5rem !important;
+        }
     </style>
 </head>
 
@@ -489,9 +550,13 @@
             </div>
         </header>
 
-        <!-- Data Selection -->
-        <section class="form-section">
-            <div class="boundary-grid" style="margin-top: 0; margin-bottom: 1.5rem;">
+        <!-- Main Two-Column Layout -->
+        <div class="main-layout-grid">
+            <!-- LEFT COLUMN: Configuration -->
+            <section class="form-section config-column">
+                <h3 class="section-title">⚙️ Configuration</h3>
+
+                <!-- Team & Script Selection -->
                 <div class="form-group">
                     <label for="data-needed-for">Data needed for *</label>
                     <select id="data-needed-for" class="material-input">
@@ -500,6 +565,7 @@
                         <option value="qa_team">QA Team</option>
                     </select>
                 </div>
+
                 <div class="form-group">
                     <label for="data-type-select">Select Script *</label>
                     <div id="script-dropdown-container" class="custom-dropdown">
@@ -518,200 +584,218 @@
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Script Description (New) -->
-            <div id="script-description-container" class="hidden"
-                style="margin-bottom: 1.5rem; padding: 1rem; background: #e3f2fd; border-left: 4px solid #2196f3; border-radius: 4px;">
-                <h4 style="margin: 0 0 0.5rem 0; color: #1565c0; font-size: 0.95rem;">📄 Script Description</h4>
-                <p id="script-description-text"
-                    style="margin: 0; color: #0d47a1; font-size: 0.9rem; line-height: 1.5; white-space: pre-wrap;"></p>
-            </div>
+                <!-- Script Description (New) -->
+                <div id="script-description-container" class="hidden"
+                    style="margin-bottom: 1rem; padding: 0.75rem; background: #e3f2fd; border-left: 4px solid #2196f3; border-radius: 4px;">
+                    <h4 style="margin: 0 0 0.35rem 0; color: #1565c0; font-size: 0.85rem;">📄 Script Description</h4>
+                    <p id="script-description-text"
+                        style="margin: 0; color: #0d47a1; font-size: 0.85rem; line-height: 1.4; white-space: pre-wrap;">
+                    </p>
+                </div>
 
-            <!-- Boundary Configuration (shown for coordinates type) -->
-            <div id="boundary-config" class="boundary-config hidden">
-                <h4 style="color: var(--text-primary); margin-bottom: 0.5rem;">📍 Boundary Configuration</h4>
-                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">Define the area where
-                    1-acre polygons will be generated</p>
+                <!-- Boundary Configuration (shown for coordinates type) -->
+                <div id="boundary-config" class="boundary-config hidden">
+                    <h4 style="color: #264554; margin-bottom: 0.35rem; font-size: 0.9rem;">📍 Boundary Configuration
+                    </h4>
 
-                <!-- Area Audit V2 Specific Inputs -->
-                <div id="v2-specific-config" class="hidden"
-                    style="margin-bottom: 1.5rem; padding: 1rem; background: #e8f5e9; border: 1px solid #c8e6c9; border-radius: 4px;">
-                    <h5 style="margin: 0 0 1rem 0; color: #2e7d32;">📏 Area Audit Configuration</h5>
+                    <!-- Area Audit V2 Specific Inputs -->
+                    <div id="v2-specific-config" class="hidden"
+                        style="margin-bottom: 1rem; padding: 0.75rem; background: #e8f5e9; border: 1px solid #c8e6c9; border-radius: 4px;">
+                        <h5 style="margin: 0 0 0.75rem 0; color: #2e7d32; font-size: 0.85rem;">📏 Area Audit
+                            Configuration</h5>
 
-                    <div class="boundary-grid" style="margin-top: 0; margin-bottom: 1rem;">
-                        <div class="form-group">
-                            <label for="v2-area-size">Area Size</label>
-                            <input type="number" id="v2-area-size" class="boundary-input" value="1" min="0.1"
-                                step="0.1">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 0.75rem;">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label for="v2-area-size">Area Size</label>
+                                <input type="number" id="v2-area-size" class="boundary-input" value="1" min="0.1"
+                                    step="0.1">
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label for="v2-area-unit">Unit</label>
+                                <select id="v2-area-unit" class="material-input">
+                                    <option value="Acre">Acre</option>
+                                    <option value="Hectare">Hectare</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="v2-area-unit">Unit</label>
-                            <select id="v2-area-unit" class="material-input">
-                                <option value="Acre">Acre</option>
-                                <option value="Hectare">Hectare</option>
+
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label for="v2-location-name">Target Location (for Boundary)</label>
+                            <div style="display: flex; gap: 8px;">
+                                <input type="text" id="v2-location-name" class="boundary-input"
+                                    placeholder="e.g. Bangalore">
+                                <button type="button" id="v2-resolve-btn" class="btn-secondary"
+                                    style="background: #2e7d32; color: white; border: none; padding: 0 0.75rem; border-radius: 4px; cursor: pointer; white-space: nowrap; font-size: 0.85rem;">
+                                    📍 Resolve
+                                </button>
+                            </div>
+                            <small style="color: #666; font-size: 0.75rem;">Clicking Resolve will update the Min/Max
+                                Lat/Long fields below.</small>
+                        </div>
+                    </div>
+
+                    <!-- Saved Locations Dropdown -->
+                    <div class="form-group">
+                        <label for="saved-location-select">Select Saved Location</label>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <select id="saved-location-select" style="flex: 1;" class="material-input">
+                                <option value="" selected>-- Enter values manually --</option>
                             </select>
+                            <button id="delete-location-btn" class="btn-delete-small hidden">🗑️</button>
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="v2-location-name">Target Location (for Boundary)</label>
-                        <div style="display: flex; gap: 10px;">
-                            <input type="text" id="v2-location-name" class="boundary-input"
-                                placeholder="e.g. Bangalore">
-                            <button type="button" id="v2-resolve-btn" class="btn-secondary"
-                                style="background: #2e7d32; color: white; border: none; padding: 0 1rem; border-radius: 4px; cursor: pointer;">
-                                📍 Resolve
-                            </button>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label for="min-lat">Min Latitude *</label>
+                            <input type="number" step="any" id="min-lat" class="boundary-input"
+                                placeholder="e.g., 12.9">
                         </div>
-                        <small style="color: #666;">Clicking Resolve will update the Min/Max Lat/Long fields
-                            below.</small>
+                        <div class="form-group">
+                            <label for="max-lat">Max Latitude *</label>
+                            <input type="number" step="any" id="max-lat" class="boundary-input"
+                                placeholder="e.g., 13.1">
+                        </div>
+                        <div class="form-group">
+                            <label for="min-long">Min Longitude *</label>
+                            <input type="number" step="any" id="min-long" class="boundary-input"
+                                placeholder="e.g., 77.5">
+                        </div>
+                        <div class="form-group">
+                            <label for="max-long">Max Longitude *</label>
+                            <input type="number" step="any" id="max-long" class="boundary-input"
+                                placeholder="e.g., 77.7">
+                        </div>
+                    </div>
+
+                    <!-- Save Location -->
+                    <div style="display: flex; gap: 0.5rem; align-items: flex-end; margin-top: 0.75rem;">
+                        <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                            <label for="location-name">Save as (optional)</label>
+                            <input type="text" id="location-name" class="boundary-input"
+                                placeholder="e.g., Bangalore Area">
+                        </div>
+                        <button id="save-location-btn" class="btn-save-small" style="height: 36px; margin-bottom: 0;">💾
+                            Save</button>
                     </div>
                 </div>
 
-                <!-- Saved Locations Dropdown -->
-                <div class="form-group">
-                    <label for="saved-location-select">Select Saved Location</label>
-                    <div style="display: flex; gap: 0.5rem;">
-                        <select id="saved-location-select" style="flex: 1;" class="material-input">
-                            <option value="" selected>-- Enter values manually --</option>
-                        </select>
-                        <button id="delete-location-btn" class="btn-delete-small hidden">🗑️</button>
+                <!-- Template Info (shown when type selected) -->
+                <div id="template-info" class="template-info hidden" style="margin-top: 1rem;">
+                    <h4 style="font-size: 0.9rem; margin-bottom: 0.5rem;">📋 Required Columns for <span
+                            id="template-type-name">-</span></h4>
+                    <ul id="template-columns" style="font-size: 0.85rem; margin: 0; padding-left: 1.5rem;">
+                        <!-- Populated dynamically -->
+                    </ul>
+                </div>
+
+                <!-- Additional Attributes Section -->
+                <div id="additional-attributes-section" class="hidden"
+                    style="margin-top: 1rem; padding: 0.75rem; background: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;">
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                        <label
+                            style="font-weight: 500; color: #495057; display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.85rem;">
+                            <input type="checkbox" id="enable-additional-attributes">
+                            Enable Additional Attributes
+                        </label>
+                    </div>
+
+                    <div id="additional-attributes-input-container" class="hidden" style="margin-top: 0.5rem;">
+                        <label class="form-label" style="font-size: 0.8em; color: #6c757d;">Enter Attribute Keys (comma
+                            separated):</label>
+                        <input type="text" id="additional-attributes-input" class="form-control"
+                            placeholder="e.g. attr1, attr2, customKey">
                     </div>
                 </div>
 
-                <div class="boundary-grid">
-                    <div class="form-group">
-                        <label for="min-lat">Min Latitude *</label>
-                        <input type="number" step="any" id="min-lat" class="boundary-input" placeholder="e.g., 12.9">
-                    </div>
-                    <div class="form-group">
-                        <label for="max-lat">Max Latitude *</label>
-                        <input type="number" step="any" id="max-lat" class="boundary-input" placeholder="e.g., 13.1">
-                    </div>
-                    <div class="form-group">
-                        <label for="min-long">Min Longitude *</label>
-                        <input type="number" step="any" id="min-long" class="boundary-input" placeholder="e.g., 77.5">
-                    </div>
-                    <div class="form-group">
-                        <label for="max-long">Max Longitude *</label>
-                        <input type="number" step="any" id="max-long" class="boundary-input" placeholder="e.g., 77.7">
-                    </div>
-                </div>
-
-                <!-- Save Location -->
-                <div class="save-location-row">
-                    <div class="form-group">
-                        <label for="location-name">Save as (optional)</label>
-                        <input type="text" id="location-name" class="boundary-input" placeholder="e.g., Bangalore Area">
-                    </div>
-                    <button id="save-location-btn" class="btn-save-small">💾 Save</button>
-                </div>
-            </div>
-
-            <!-- Template Info (shown when type selected) -->
-            <div id="template-info" class="template-info hidden">
-                <h4>📋 Required Columns for <span id="template-type-name">-</span></h4>
-                <ul id="template-columns">
-                    <!-- Populated dynamically -->
-                </ul>
-            </div>
-
-
-            <!-- Additional Attributes Section -->
-            <div id="additional-attributes-section" class="hidden"
-                style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;">
-                <div style="display: flex; align-items: center; justify-content: space-between;">
+                <!-- Target Location Section (Dynamic Geofencing) -->
+                <div id="target-location-section" class="hidden"
+                    style="margin-top: 1rem; padding: 0.75rem; background: #e3f2fd; border-radius: 4px; border: 1px solid #90caf9;">
                     <label
-                        style="font-weight: 500; color: #495057; display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                        <input type="checkbox" id="enable-additional-attributes">
-                        Enable Additional Attributes
+                        style="font-weight: 500; color: #1565c0; display: block; margin-bottom: 0.5rem; font-size: 0.85rem;">
+                        📍 Target Location (Dynamic Geofencing)
+                    </label>
+                    <input type="text" id="target-location-input" class="material-input"
+                        placeholder="e.g. Karnataka, India" style="background: white !important; padding: 8px;">
+                    <p style="font-size: 0.75rem; color: #1e88e5; margin-top: 0.35rem; margin-bottom: 0;">
+                        Enter a location name to dynamically validate coordinates against its boundary.
+                    </p>
+                </div>
+
+                <!-- GDPR Section (Specific to Farmer) -->
+                <div id="gdpr-section" class="hidden"
+                    style="margin-top: 1rem; padding: 0.75rem; background: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;">
+                    <label
+                        style="font-weight: 500; color: #495057; display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.85rem;">
+                        <input type="checkbox" id="is-gdpr-tenant">
+                        Is GDPR Tenant?
                     </label>
                 </div>
+            </section>
 
-                <div id="additional-attributes-input-container" class="hidden" style="margin-top: 10px;">
-                    <label class="form-label" style="font-size: 0.85em; color: #6c757d;">Enter Attribute Keys (comma
-                        separated):</label>
-                    <input type="text" id="additional-attributes-input" class="form-control"
-                        placeholder="e.g. attr1, attr2, customKey">
+            <!-- RIGHT COLUMN: Actions & Login -->
+            <section class="form-section action-column">
+                <h3 class="section-title">🚀 Actions</h3>
+
+                <!-- Action Buttons -->
+                <div class="compact-action-rows">
+                    <div class="form-group">
+                        <label
+                            style="font-size: 0.85rem; color: #264554; margin-bottom: 0.5rem; display: block;">Download
+                            Template</label>
+                        <button id="export-btn" class="btn-green-action" disabled style="width: 100%;">
+                            📥 Download Template
+                        </button>
+                    </div>
+                    <div class="form-group">
+                        <label style="font-size: 0.85rem; color: #264554; margin-bottom: 0.5rem; display: block;">Import
+                            Template</label>
+                        <button id="import-btn" class="btn-blue-action" disabled style="width: 100%;">
+                            📤 Login and Import Template
+                        </button>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Target Location Section (Dynamic Geofencing) -->
-            <div id="target-location-section" class="hidden"
-                style="margin-top: 15px; padding: 10px; background: #e3f2fd; border-radius: 4px; border: 1px solid #90caf9;">
-                <label style="font-weight: 500; color: #1565c0; display: block; margin-bottom: 8px;">
-                    📍 Target Location (Dynamic Geofencing)
-                </label>
-                <input type="text" id="target-location-input" class="material-input" placeholder="e.g. Karnataka, India"
-                    style="background: white !important; padding: 8px;">
-                <p style="font-size: 0.8rem; color: #1e88e5; margin-top: 5px;">
-                    Enter a location name to dynamically validate coordinates against its boundary.
-                </p>
-            </div>
+                <!-- Login Section (shown after Import clicked) -->
+                <div id="login-section" class="hidden" style="margin-top: 1.5rem;">
+                    <h3 class="section-title" style="font-size: 0.95rem; margin-bottom: 1rem;">🔐 Authentication</h3>
 
-            <!-- Advanced Execution Settings Removed (Automated based on Script Template) -->
+                    <!-- Login Component Container -->
+                    <div id="login-component-container"></div>
 
-            <!-- GDPR Section (Specific to Farmer) -->
-            <div id="gdpr-section" class="hidden"
-                style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;">
-                <label
-                    style="font-weight: 500; color: #495057; display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                    <input type="checkbox" id="is-gdpr-tenant">
-                    Is GDPR Tenant?
-                </label>
-            </div>
-
-            <!-- Action Rows -->
-            <div class="action-rows">
-                <div class="action-row">
-                    <span class="action-label">Download the excel template to add details needed to create data in the
-                        system</span>
-                    <button id="export-btn" class="btn-green-action" disabled>
-                        Download Template
-                    </button>
-                </div>
-                <div class="action-row">
-                    <span class="action-label">Import data added excel template to create data in system</span>
-                    <button id="import-btn" class="btn-blue-action" disabled>
-                        Import Template
-                    </button>
-                </div>
-            </div>
-        </section>
-
-        <!-- Login Section (shown after Import clicked) -->
-        <section id="login-section" class="login-section hidden">
-            <!-- Login Component Container -->
-            <div id="login-component-container"></div>
-
-            <!-- Session Info (shown after login) -->
-            <div id="session-container" class="hidden">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                    <div>
-                        <span style="color: var(--text-secondary);">Logged in: </span>
-                        <strong id="session-info" style="color: #264554;">-</strong>
+                    <!-- Session Info (shown after login) -->
+                    <div id="session-container" class="hidden">
+                        <div
+                            style="padding: 0.75rem; background: #d4edda; border: 1px solid #c3e6cb; border-radius: 4px; margin-bottom: 1rem;">
+                            <span style="color: #155724; font-size: 0.85rem;">Logged in: </span>
+                            <strong id="session-info" style="color: #155724; font-size: 0.85rem;">-</strong>
+                        </div>
                     </div>
 
-                </div>
-            </div>
+                    <!-- File Upload & Execution Area (Always visible but disabled if not logged in) -->
+                    <div id="upload-workflow-container" class="disabled-area"
+                        style="opacity: 0.5; pointer-events: none;">
+                        <!-- File Upload Area -->
+                        <div id="file-upload-area"
+                            style="border: 2px dashed #e0e0e0; padding: 1.5rem; text-align: center; border-radius: 8px; margin-bottom: 1rem;">
+                            <input type="file" id="file-upload" accept=".xlsx, .xls" style="display: none;">
+                            <label for="file-upload" class="upload-label"
+                                style="display: inline-block; padding: 0.6rem 1.2rem; background: #1976d2; color: white; border-radius: 4px; cursor: pointer;">📂
+                                Choose Excel File</label>
+                            <p id="file-name" style="margin-top: 0.75rem; color: #8898aa; font-size: 0.85rem;">Supported
+                                formats: .xlsx, .xls</p>
+                        </div>
 
-            <!-- File Upload & Execution Area (Always visible but disabled if not logged in) -->
-            <div id="upload-workflow-container" class="disabled-area" style="opacity: 0.5; pointer-events: none;">
-                <!-- File Upload Area -->
-                <div id="file-upload-area" class="file-upload-area">
-                    <input type="file" id="file-upload" accept=".xlsx, .xls" style="display: none;">
-                    <label for="file-upload" class="upload-label">📂 Choose Excel File</label>
-                    <p id="file-name" style="margin-top: 1rem; color: var(--text-secondary);">Supported formats: .xlsx,
-                        .xls</p>
+                        <!-- Execute Button -->
+                        <button id="execute-btn" class="action-btn btn-import" disabled
+                            style="width: 100%; padding: 0.75rem; background: #28a745; color: white; border: none; border-radius: 4px; font-weight: 500; cursor: pointer;">
+                            🚀 Execute Data Creation
+                        </button>
+                    </div>
                 </div>
-
-                <!-- Execute Button -->
-                <button id="execute-btn" class="action-btn btn-import" disabled style="margin-top: 1rem; width: 100%;">
-                    🚀 Execute Data Creation
-                </button>
-            </div>
-        </section>
+            </section>
+        </div>
 
         <!-- Results Section (shown after execution) -->
         <section id="results-section" class="results-section hidden">

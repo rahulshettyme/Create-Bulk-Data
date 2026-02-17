@@ -39,7 +39,7 @@
     ],
     "requiresLogin": true,
     "isMultithreaded": true,
-    "batchSize": "10",
+    "batchSize": "2",
     "groupByColumn": "",
     "enableGeofencing": false,
     "allowAdditionalAttributes": true,

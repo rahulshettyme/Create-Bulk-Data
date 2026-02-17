@@ -1,0 +1,86 @@
+{
+    "name": "AddPlaces.py",
+    "filename": "AddPlaces.py",
+    "team": "Both",
+    "description": "Use this script to add places for the address provided",
+    "expected_columns": [
+        "name",
+        "type",
+        "tags",
+        "latitude",
+        "longitude",
+        "address"
+    ],
+    "columns": [
+        {
+            "name": "name",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        },
+        {
+            "name": "type",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        },
+        {
+            "name": "tags",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        },
+        {
+            "name": "latitude",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        },
+        {
+            "name": "longitude",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        },
+        {
+            "name": "address",
+            "type": "Mandatory",
+            "description": "Auto-detected"
+        }
+    ],
+    "requiresLogin": true,
+    "isMultithreaded": true,
+    "batchSize": "5",
+    "groupByColumn": "",
+    "enableGeofencing": false,
+    "allowAdditionalAttributes": false,
+    "additionalAttributes": [],
+    "outputConfig": {
+        "uiMapping": [
+            {
+                "colName": "Name",
+                "value": "",
+                "logic": "from excel"
+            },
+            {
+                "colName": "Status",
+                "value": "",
+                "logic": "'Fail' if tag not found or if status code of place creation is not 200 or 201\n'Pass' if status of place creation is 200 or 201"
+            }
+        ],
+        "aiInstructions": "",
+        "excelMapping": [
+            {
+                "colName": "tag_id",
+                "value": "",
+                "logic": "attribute 'id' from tag API response"
+            },
+            {
+                "colName": "Status",
+                "value": "",
+                "logic": "'Fail' if tag not found or if status code of place creation is not 200 or 201\n'Pass' if status of place creation is 200 or 201"
+            },
+            {
+                "colName": "Response",
+                "value": "",
+                "logic": "'Tag not found' if tag not found or \nwhole response of place creation if status code is not 200 or 201\n'Place added' if place creation response code is 200 or 201"
+            }
+        ],
+        "isDynamicUI": true
+    }
+}

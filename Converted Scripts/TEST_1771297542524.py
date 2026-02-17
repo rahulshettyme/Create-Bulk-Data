@@ -12,7 +12,6 @@ def run(data, token, env_config):
     import json
     import thread_utils
     import builtins
-    import components.master_search as master_search
 
     def _log_req(method, url, **kwargs):
 
@@ -223,128 +222,138 @@ def run(data, token, env_config):
     builtins.wk = wk
     builtins.wb = wk
     wb = wk
-    global _farmertag_all_items_cache
-    _farmertag_all_items_cache = None
+    global _tag_master_cache, _use_provided_farmer_ids
+    _tag_master_cache = {}
+    _use_provided_farmer_ids = False
 
-    def _user_run(data, token, env_config):
+    def _fetch_master_tags(env_config):
         """
-    Main entry point for the script. Initializes builtins and master data cache,
-    then delegates to thread_utils for parallel processing.
+    Fetches master tags of type 'FARMER' and caches them.
+    This function is called once if the cache is empty.
     """
-        builtins.token = token
-        builtins.env_config = env_config
-        global _farmertag_all_items_cache
-        if _farmertag_all_items_cache is None:
-            print("[MASTER_DATA] Fetching all 'farmertag' data (Run Once)...")
-            try:
-                _farmertag_all_items_cache = master_search.fetch_all('farmertag', env_config)
-                print(f"[MASTER_DATA] Fetched {len(_farmertag_all_items_cache)} 'farmertag' items.")
-            except Exception as e:
-                print(f"[MASTER_DATA] Error fetching 'farmertag' data: {e}")
-                _farmertag_all_items_cache = []
-        return thread_utils.run_in_parallel(process_func=process_row, items=data, token=token, env_config=env_config)
+        global _tag_master_cache
+        url = f'{base_url}/services/master/api/filter'
+        params = {'type': 'FARMER'}
+        headers = {'Authorization': f'Bearer {builtins.token}', 'Content-Type': 'application/json'}
+        try:
+            response = _log_get(url, headers=headers, params=params)
+            response.raise_for_status()
+            tags_data = response.json()
+            with _lock:
+                if not _tag_master_cache:
+                    for tag in tags_data:
+                        _tag_master_cache[tag.get('name')] = tag.get('id')
+                    print(f'[MASTER_TAGS] Fetched {len(_tag_master_cache)} FARMER tags.')
+            return True
+        except requests.exceptions.RequestException as e:
+            print(f'[MASTER_TAGS_ERROR] Failed to fetch master tags: {e}')
+            return False
 
     def process_row(row):
         """
-    Processes a single row of data to add a tag to a farmer.
+    Processes a single row from the Excel input to add a tag to a farmer.
     """
-        row_status = 'Fail'
-        row_response = ''
-        row['Farmer Name'] = row.get('Farmer Name')
-        row['Farmer ID'] = row.get('Farmer ID')
-        row['Tag Name'] = row.get('Tag Name')
+        headers = {'Authorization': f'Bearer {builtins.token}', 'Content-Type': 'application/json'}
+        row['Farmer Name'] = row.get('Farmer Name', '')
+        row['Farmer ID'] = row.get('Farmer ID', '')
+        row['Tag Name'] = row.get('Tag Name', '')
+        row['Tag ID'] = ''
+        row['Status'] = 'Fail'
+        row['Response'] = 'Processing started.'
         farmer_name = row.get('Farmer Name')
         farmer_id = row.get('Farmer ID')
         tag_name = row.get('Tag Name')
-        headers = {'Authorization': f'Bearer {builtins.token}', 'Content-Type': 'application/json'}
         if not farmer_id:
-            row_response = 'Missing Farmer ID.'
-            print(f"[ADD_FARMER_TAG] Skipping row for '{farmer_name}': {row_response}")
-            row['Status'] = row_status
-            row['Response'] = row_response
-            row['Tag ID'] = None
+            row['Response'] = 'Farmer ID is missing.'
+            print(f'[ERROR] Skipping row for Farmer Name: {farmer_name} - Farmer ID is missing.')
             return row
         if not tag_name:
-            row_response = 'Missing Tag Name.'
-            print(f"[ADD_FARMER_TAG] Skipping row for Farmer ID '{farmer_id}': {row_response}")
-            row['Status'] = row_status
-            row['Response'] = row_response
-            row['Tag ID'] = None
+            row['Response'] = 'Tag Name is missing.'
+            print(f'[ERROR] Skipping row for Farmer ID: {farmer_id} - Tag Name is missing.')
             return row
-        resolved_tag_id = None
-        if _farmertag_all_items_cache is None or not _farmertag_all_items_cache:
-            row_response = 'Failed to load master tag data during initialization or no tags found.'
-            print(f'[TAG_LOOKUP] {tag_name} → Result: Failed to load master data or empty cache')
-            row['Status'] = row_status
-            row['Response'] = row_response
-            row['Tag ID'] = None
+        with _lock:
+            if not _tag_master_cache:
+                if not _fetch_master_tags(builtins.env_config):
+                    row['Response'] = 'Failed to fetch master tags during initialization.'
+                    return row
+        resolved_tag_id = _tag_master_cache.get(tag_name)
+        if resolved_tag_id is None:
+            row['Tag ID'] = ''
+            row['Status'] = 'Fail'
+            row['Response'] = 'Tag not found'
+            print(f"[MASTER_TAG_LOOKUP] Tag Name: '{tag_name}' → ID: Not Found. Skipping row execution.")
             return row
-        tag_lookup_result = master_search.lookup_from_cache(_farmertag_all_items_cache, 'name', tag_name, 'id')
-        if not tag_lookup_result['found']:
-            row_response = 'Tag not found.'
-            print(f'[TAG_LOOKUP] {tag_name} → Result: Not Found')
-            row['Status'] = row_status
-            row['Response'] = row_response
-            row['Tag ID'] = None
-            return row
-        resolved_tag_id = tag_lookup_result['value']
-        print(f'[TAG_LOOKUP] {tag_name} → ID: {resolved_tag_id}')
-        row['Tag ID'] = resolved_tag_id
+        else:
+            row['Tag ID'] = resolved_tag_id
+            print(f"[MASTER_TAG_LOOKUP] Tag Name: '{tag_name}' → ID: {resolved_tag_id}")
         fetch_farmer_url = f'{base_url}/services/farm/api/farmers/{farmer_id}'
-        farmer_data = None
         try:
-            fetch_farmer_resp = _log_get(fetch_farmer_url, headers=headers)
-            if fetch_farmer_resp.ok:
-                farmer_data = fetch_farmer_resp.json()
-                print(f'[FETCH_FARMER] ID: {farmer_id} → Status: Success')
-            else:
-                row_response = f'Failed to fetch farmer details. Status Code: {fetch_farmer_resp.status_code}, Response: {fetch_farmer_resp.text}'
-                print(f'[FETCH_FARMER] ID: {farmer_id} → Status: Failed ({fetch_farmer_resp.status_code})')
-                row['Status'] = row_status
-                row['Response'] = row_response
+            farmer_resp = _log_get(fetch_farmer_url, headers=headers)
+            if not farmer_resp.ok:
+                row['Response'] = f'Failed to fetch farmer details (Status: {farmer_resp.status_code}): {farmer_resp.text}'
+                row['Status'] = 'Fail'
+                print(f'[FARMER_FETCH] Farmer ID: {farmer_id} → Status: Fail ({farmer_resp.status_code})')
                 return row
+            farmer_data = farmer_resp.json()
+            print(f'[FARMER_FETCH] Farmer ID: {farmer_id} → Details fetched successfully.')
         except requests.exceptions.RequestException as e:
-            row_response = f'Network error fetching farmer details: {e}'
-            print(f'[FETCH_FARMER] ID: {farmer_id} → Status: Network Error ({e})')
-            row['Status'] = row_status
-            row['Response'] = row_response
+            row['Response'] = f'Error fetching farmer details for ID {farmer_id}: {e}'
+            row['Status'] = 'Fail'
+            print(f'[FARMER_FETCH_ERROR] Farmer ID: {farmer_id} → Error: {e}')
             return row
-        current_tags = farmer_data.get('data', {}).get('tags', [])
-        current_tags = [tag for tag in current_tags if isinstance(tag, (int, float))]
-        tag_added = False
-        if resolved_tag_id not in current_tags:
-            current_tags.append(resolved_tag_id)
-            tag_added = True
-            print(f"[LOGIC] Tag ID {resolved_tag_id} added to farmer {farmer_id}'s tags for update.")
-        else:
-            print(f'[LOGIC] Tag ID {resolved_tag_id} already exists for farmer {farmer_id}. No update action needed.')
-        if 'data' not in farmer_data:
+        if 'data' not in farmer_data or not isinstance(farmer_data['data'], dict):
             farmer_data['data'] = {}
-        farmer_data['data']['tags'] = current_tags
-        if tag_added:
-            update_farmer_url = f'{base_url}/services/farm/api/farmers'
-            update_payload = farmer_data
-            files = {'dto': (None, json.dumps(update_payload), 'application/json')}
-            try:
-                update_farmer_resp = _log_put(update_farmer_url, headers={'Authorization': f'Bearer {builtins.token}'}, files=files)
-                if update_farmer_resp.status_code in [200, 201]:
-                    row_status = 'Pass'
-                    row_response = 'Tag updated to farmer.'
-                    print(f'[UPDATE_FARMER_TAGS] Farmer ID: {farmer_id} → Status: Success ({update_farmer_resp.status_code})')
-                else:
-                    row_status = 'Fail'
-                    row_response = update_farmer_resp.text
-                    print(f'[UPDATE_FARMER_TAGS] Farmer ID: {farmer_id} → Status: Failed ({update_farmer_resp.status_code})')
-            except requests.exceptions.RequestException as e:
-                row_status = 'Fail'
-                row_response = f'Network error updating farmer tags: {e}'
-                print(f'[UPDATE_FARMER_TAGS] Farmer ID: {farmer_id} → Status: Network Error ({e})')
+        current_tags = farmer_data['data'].get('tags', [])
+        if not isinstance(current_tags, list):
+            current_tags = []
+        original_tags_set = set(current_tags)
+        updated_tags_set = set(current_tags)
+        if resolved_tag_id not in updated_tags_set:
+            updated_tags_set.add(resolved_tag_id)
+            tag_added = True
         else:
-            row_status = 'Pass'
-            row_response = 'Tag already present for farmer.'
-        row['Status'] = row_status
-        row['Response'] = row_response
+            tag_added = False
+        updated_tags_list = sorted(list(updated_tags_set))
+        print(f'[LOGIC] Farmer ID: {farmer_id}. Original tags: {list(original_tags_set)}. Proposed tags: {updated_tags_list}.')
+        if tag_added:
+            update_payload = {'data': {'tags': updated_tags_list}}
+            files = {'dto': (None, json.dumps(update_payload), 'application/json')}
+            update_farmer_url = f'{base_url}/services/farm/api/farmers'
+            try:
+                update_resp = _log_put(update_farmer_url, headers={'Authorization': f'Bearer {builtins.token}'}, files=files)
+                if update_resp.status_code in [200, 201]:
+                    row['Status'] = 'Pass'
+                    row['Response'] = 'Tag updated to farmer'
+                    print(f'[FARMER_UPDATE] Farmer ID: {farmer_id} → Status: Pass ({update_resp.status_code})')
+                else:
+                    row['Status'] = 'Fail'
+                    row['Response'] = f'Failed to update farmer tags (Status: {update_resp.status_code}): {update_resp.text}'
+                    print(f'[FARMER_UPDATE] Farmer ID: {farmer_id} → Status: Fail ({update_resp.status_code})')
+            except requests.exceptions.RequestException as e:
+                row['Status'] = 'Fail'
+                row['Response'] = f'Error updating farmer tags for ID {farmer_id}: {e}'
+                print(f'[FARMER_UPDATE_ERROR] Farmer ID: {farmer_id} → Error: {e}')
+        else:
+            row['Status'] = 'Pass'
+            row['Response'] = 'Tag already present for farmer'
+            print(f"[FARMER_UPDATE] Farmer ID: {farmer_id} → Tag '{tag_name}' already present. No update needed.")
         return row
+
+    def _user_run(data, token, env_config):
+        """
+    Main function to orchestrate the parallel processing of rows.
+    """
+        builtins.token = token
+        builtins.env_config = env_config
+        global _use_provided_farmer_ids
+        _use_provided_farmer_ids = bool(data and data[0].get('Farmer ID'))
+        with _lock:
+            if not _tag_master_cache:
+                if not _fetch_master_tags(env_config):
+                    print('[ERROR] Script cannot proceed: Master tags could not be fetched.')
+                    pass
+        return thread_utils.run_in_parallel(process_func=process_row, items=data, token=token, env_config=env_config)
+    _lock = thread_utils.create_lock()
     res = _user_run(data, token, env_config)
     try:
         if res is None and hasattr(builtins, 'data_df'):

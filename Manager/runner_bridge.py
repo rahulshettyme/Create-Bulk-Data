@@ -311,7 +311,9 @@ if __name__ == "__main__":
     print(f"📝 Args: {' '.join(display_args)}")
     print("="*60 + "\n")
     
+    
     # [MONKEY-PATCH] Global API Interceptor & Debug Logging
+    print("⚙️  Initializing API Interceptor...", flush=True)
     try:
         import sys
         import os
@@ -321,82 +323,92 @@ if __name__ == "__main__":
         if project_root not in sys.path:
             sys.path.insert(0, project_root)
 
+        print("⚙️  Importing requests module...", flush=True)
         import requests
-        from components import attribute_utils
+        
+        print("⚙️  Importing attribute_utils...", flush=True)
+        try:
+            from components import attribute_utils
+            print("✅ attribute_utils imported successfully", flush=True)
+        except ImportError as e:
+            print(f"⚠️  Warning: Could not import attribute_utils: {e}", flush=True)
+            print("⚠️  Continuing without attribute injection support", flush=True)
+            # Set a flag to skip interceptor setup
+            attribute_utils = None
         
         # Determine if we should automate attribute injection
-        auto_inject = env_config.get('allowAdditionalAttributes', False)
+        auto_inject = env_config.get('allowAdditionalAttributes', False) and attribute_utils is not None
         print(f"⚙️  API Interceptor Setup. Auto-Inject: {auto_inject}", flush=True)
-        # print(f"DEBUG: Env Config Keys: {list(env_config.keys())}", flush=True)
         
-        original_request = requests.Session.request
-        
-        def intercepted_request(self, method, url, *args, **kwargs):
-            # 1. Debug logging if enabled
-            if getattr(builtins, 'DEBUG_MODE', False) or auto_inject: # Force logs if injection active
-                 print(f"\n📡 [INTERCEPTOR] {method.upper()} {url}", flush=True)
-                 # Fix: Check for truthy json to avoid 'Payload: null' when files are used
-                 # Use Final DTO only as requested
-                 # if kwargs.get('json'):
-                 #     print(f"   📤 Original Payload: {truncate_str(json.dumps(kwargs['json']), 200)}", flush=True)
-                 # elif 'files' in kwargs and 'dto' in kwargs['files']:
-                 #     # DTO is usually (filename, content, content_type)
-                 #     dto_content = kwargs['files']['dto'][1]
-                 #     print(f"   📤 Original DTO: {truncate_str(dto_content, 200)}", flush=True)
-
-            # 2. GLOBAL ATTRIBUTE INJECTION
-            if auto_inject:
-                row = attribute_utils.get_current_row()
-                if row:
-                    # Case A: JSON Payload
-                    if kwargs.get('json'):
-                        target_key = 'data'
-                        attribute_utils.add_attributes_to_payload(row, kwargs['json'], env_config, target_key=target_key)
-                        if getattr(builtins, 'DEBUG_MODE', False):
-                             print(f"   ✨ Injected Attributes into JSON.", flush=True)
-                    
-                    # Case B: DTO Payload (multipart/form-data)
-                    elif 'files' in kwargs and 'dto' in kwargs['files']:
-                        dto_entry = kwargs['files']['dto']
-                        if isinstance(dto_entry, tuple) and len(dto_entry) >= 2:
-                            try:
-                                dto_json = json.loads(dto_entry[1])
-                                target_key = 'data'
-                                attribute_utils.add_attributes_to_payload(row, dto_json, env_config, target_key=target_key)
-                                
-                                # Re-package the DTO
-                                new_dto_content = json.dumps(dto_json)
-                                new_list = list(dto_entry)
-                                new_list[1] = new_dto_content
-                                kwargs['files']['dto'] = tuple(new_list)
-                                if getattr(builtins, 'DEBUG_MODE', False):
-                                     print(f"   ✨ Injected Attributes into DTO.", flush=True)
-                            except: pass
-
-            # 3. Log FINAL Payload (Post-Injection) to verify changes
-            if getattr(builtins, 'DEBUG_MODE', False) or auto_inject:
-                if kwargs.get('json'):
-                     print(f"   📦 Final Payload: {json.dumps(kwargs['json'])}", flush=True)
-                elif 'files' in kwargs and 'dto' in kwargs['files']:
-                     print(f"   📦 Final DTO: {kwargs['files']['dto'][1]}", flush=True)
-
-            # 4. Execute original
-            response = original_request(self, method, url, *args, **kwargs)
+        if attribute_utils is not None:
+            original_request = requests.Session.request
             
-            # 4. Debug response logging
-            if getattr(builtins, 'DEBUG_MODE', False):
-                print(f"📥 [INTERCEPTOR] Response: {response.status_code}", flush=True)
-                if response.status_code >= 400:
-                    try:
-                        preview = response.text[:200] if response.text else ""
-                        print(f"   ⚠️ Error: {preview}", flush=True)
-                    except: pass
-                    
-            return response
+            def intercepted_request(self, method, url, *args, **kwargs):
+                # 1. Debug logging if enabled
+                if getattr(builtins, 'DEBUG_MODE', False) or auto_inject: # Force logs if injection active
+                     print(f"\n📡 [INTERCEPTOR] {method.upper()} {url}", flush=True)
 
-        requests.Session.request = intercepted_request
-        print(f"✅ API Interceptor Active.", flush=True)
+                # 2. GLOBAL ATTRIBUTE INJECTION
+                if auto_inject:
+                    row = attribute_utils.get_current_row()
+                    if row:
+                        # Case A: JSON Payload
+                        if kwargs.get('json'):
+                            target_key = 'data'
+                            attribute_utils.add_attributes_to_payload(row, kwargs['json'], env_config, target_key=target_key)
+                            if getattr(builtins, 'DEBUG_MODE', False):
+                                 print(f"   ✨ Injected Attributes into JSON.", flush=True)
+                        
+                        # Case B: DTO Payload (multipart/form-data)
+                        elif 'files' in kwargs and 'dto' in kwargs['files']:
+                            dto_entry = kwargs['files']['dto']
+                            if isinstance(dto_entry, tuple) and len(dto_entry) >= 2:
+                                try:
+                                    dto_json = json.loads(dto_entry[1])
+                                    target_key = 'data'
+                                    attribute_utils.add_attributes_to_payload(row, dto_json, env_config, target_key=target_key)
+                                    
+                                    # Re-package the DTO
+                                    new_dto_content = json.dumps(dto_json)
+                                    new_list = list(dto_entry)
+                                    new_list[1] = new_dto_content
+                                    kwargs['files']['dto'] = tuple(new_list)
+                                    if getattr(builtins, 'DEBUG_MODE', False):
+                                         print(f"   ✨ Injected Attributes into DTO.", flush=True)
+                                except: pass
+
+                # 3. Log FINAL Payload (Post-Injection) to verify changes
+                if getattr(builtins, 'DEBUG_MODE', False) or auto_inject:
+                    if kwargs.get('json'):
+                         print(f"   📦 Final Payload: {json.dumps(kwargs['json'])}", flush=True)
+                    elif 'files' in kwargs and 'dto' in kwargs['files']:
+                         print(f"   📦 Final DTO: {kwargs['files']['dto'][1]}", flush=True)
+
+                # 4. Execute original
+                response = original_request(self, method, url, *args, **kwargs)
+                
+                # 4. Debug response logging
+                if getattr(builtins, 'DEBUG_MODE', False):
+                    print(f"📥 [INTERCEPTOR] Response: {response.status_code}", flush=True)
+                    if response.status_code >= 400:
+                        try:
+                            preview = response.text[:200] if response.text else ""
+                            print(f"   ⚠️ Error: {preview}", flush=True)
+                        except: pass
+                        
+                return response
+
+            requests.Session.request = intercepted_request
+            print(f"✅ API Interceptor Active.", flush=True)
+        else:
+            print(f"⚠️  API Interceptor skipped (attribute_utils not available).", flush=True)
+            
     except Exception as e:
         print(f"❌ Failed to setup API interceptor: {e}", flush=True)
+        import traceback
+        print(f"   Traceback: {traceback.format_exc()}", flush=True)
+        print(f"⚠️  Continuing without API interceptor...", flush=True)
 
+    print("🚀 Starting script execution...", flush=True)
     run_script(args.script, data, args.token, env_config)
+
