@@ -17,9 +17,9 @@ app.use(express.static(path.join(__dirname, '..')));
 // Import Backend Logic
 require('../backend/api')(app);
 
-// Default route
+// Default route - Show the Data Generate tool
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'script_management.html'));
+    res.sendFile(path.join(__dirname, '..', 'createbulkdata.html'));
 });
 
 app.listen(PORT, () => {
