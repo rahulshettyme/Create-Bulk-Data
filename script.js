@@ -580,7 +580,7 @@ async function handleScriptSelection(value) {
     if (template && selectedDataType !== 'coordinates') {
         elements.templateTypeName.textContent = template.name;
         elements.templateColumns.innerHTML = template.columns
-            .map(col => `<li><strong>${col.header}</strong>${col.required ? ' (required)' : ''} - ${col.description}</li>`)
+            .map(col => `<li><strong>${col.header}</strong>${col.required ? ' (required)' : ''}</li>`)
             .join('');
         elements.templateInfo.classList.remove('hidden');
     } else {
@@ -680,6 +680,11 @@ async function saveSavedLocations() {
 
 function renderSavedLocations() {
     if (!elements.savedLocationSelect) return;
+
+    // Clear existing dynamic options (keep only the first static placeholder option)
+    while (elements.savedLocationSelect.options.length > 1) {
+        elements.savedLocationSelect.remove(1);
+    }
 
     savedLocations.forEach((loc, index) => {
         const option = document.createElement('option');
@@ -1226,11 +1231,15 @@ async function syncTemplateWithLiveMeta(scriptName) {
                 if (currentTemplate) {
                     console.log(`[Template Sync] Overriding registry columns with live metadata (${cols.length} cols).`);
                     // Map to template format: { header: 'Name', key: 'Name' }
-                    currentTemplate.columns = cols.map(c => ({
-                        header: c.name || c,
-                        key: c.name || c,
-                        width: 20
-                    }));
+                    currentTemplate.columns = cols.map(c => {
+                        const colName = typeof c === 'string' ? c : (c.name || c.header || 'Unknown');
+                        return {
+                            header: colName,
+                            key: colName,
+                            required: typeof c === 'object' ? (c.type === 'Mandatory' || c.required === true) : false,
+                            description: typeof c === 'object' ? (c.description || "") : ""
+                        };
+                    });
 
                     // Also sync other config if present
                     if (meta.batchSize) currentTemplate.batchSize = meta.batchSize;

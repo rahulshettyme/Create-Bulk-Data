@@ -26,6 +26,8 @@
       }
     ],
     "requiresLogin": true,
+    "isMultithreaded": true,
+    "batchSize": 5,
     "outputConfig": {
       "isDynamicUI": true,
       "uiMapping": [
@@ -79,6 +81,8 @@
       }
     ],
     "requiresLogin": true,
+    "isMultithreaded": true,
+    "batchSize": 5,
     "outputConfig": {
       "isDynamicUI": true,
       "uiMapping": [

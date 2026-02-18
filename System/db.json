@@ -126,6 +126,21 @@
       "maxLat": 24.39475,
       "minLong": -105.179822,
       "maxLong": -102.103447
+    },
+    {
+      "name": "maharashtra",
+      "minLat": 15.6060851,
+      "maxLat": 22.0302694,
+      "minLong": 72.64199049999999,
+      "maxLong": 80.89768430000001
+    },
+    {
+      "name": "Bangalore",
+      "minLat": 12.7342888,
+      "maxLat": 13.173706,
+      "minLong": 77.3791981,
+      "maxLong": 77.8826809
     }
-  ]
+  ],
+  "jiraTokens": []
 }

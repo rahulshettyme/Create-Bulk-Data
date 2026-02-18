@@ -19,7 +19,7 @@ require('../backend/api')(app);
 
 // Default route
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'createbulkdata.html'));
+    res.sendFile(path.join(__dirname, '..', 'script_management.html'));
 });
 
 app.listen(PORT, () => {

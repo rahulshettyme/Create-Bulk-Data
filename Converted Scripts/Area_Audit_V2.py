@@ -1,3 +1,7 @@
+# CONFIG: isMultithreaded = True
+# CONFIG: batchSize = 2
+# EXPECTED_INPUT_COLUMNS: CAName, CA_ID, Coordinates
+
 import json
 import math
 import random
@@ -227,4 +231,4 @@ def run(rows, token, env_config):
             
         return new_row
 
-    return thread_utils.run_in_parallel(process_row, rows)
+    return thread_utils.run_in_parallel(process_row, rows, token=token, env_config=env_config)

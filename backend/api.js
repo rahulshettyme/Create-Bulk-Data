@@ -42,7 +42,7 @@ const dbData = readDb();
 const secretsData = readSecrets();
 const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY || secretsData.google_api_key || secretsData.gemini_api_key || dbData.google_api_key || dbData.gemini_api_key || "";
 // Specific Key for Geocoding (User Request)
-const GEOCODING_API_KEY = secretsData.Geocoding_api_key || GOOGLE_API_KEY;
+const GEOCODING_API_KEY = process.env.Geocoding_api_key || process.env.GEOCODING_API_KEY || secretsData.Geocoding_api_key || GOOGLE_API_KEY;
 
 
 // Helper to write DB
@@ -794,39 +794,32 @@ module.exports = function (app) {
             return res.status(404).json({ error: 'Script file not found' });
         }
 
-        // LOAD COLUMNS FROM CONFIG
+        // LOAD COLUMNS FROM REGISTRY (Fallback to Code Header)
         let columns = [];
         try {
-            const configPath = path.join(__dirname, '..', 'Script Configs', scriptName.replace('.py', '.json'));
-            if (fs.existsSync(configPath)) {
-                const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-                // Support both keys (legacy/new)
-                columns = config.expected_columns || config.columns || [];
-                // If it is an object array (legacy), map to names? 
-                // In register we savd: `expected_columns: [...names], columns: objectArray`
-                // runner_bridge expects List of Strings for columns.
-
-                // FALLBACK 0: Read from Code Header (Truth Source)
-                if (columns.length === 0) {
-                    try {
-                        const content = fs.readFileSync(scriptPath, 'utf8');
-                        const headerMatch = content.match(/#\s*EXPECTED_INPUT_COLUMNS:\s*([^\n]+)/);
-                        if (headerMatch && headerMatch[1]) {
-                            columns = headerMatch[1].split(',').map(c => c.trim()).filter(c => c);
-                            // console.log(`[Execute] Parsed columns from code header: ${columns.length}`);
-                        }
-                    } catch (e) {
-                        console.error("[Execute] Failed to parse columns from code header:", e);
-                    }
+            const registryPath = path.join(__dirname, '..', 'System', 'scripts_registry.json');
+            if (fs.existsSync(registryPath)) {
+                const registry = JSON.parse(fs.readFileSync(registryPath, 'utf8'));
+                const entry = registry.find(r => r.filename === scriptName || r.name === scriptName);
+                if (entry) {
+                    columns = entry.expected_columns || (entry.columns ? entry.columns.map(c => c.name || c.header) : []);
                 }
+            }
 
-                // FALLBACK 1: REMOVED (User requested single flow - Code Header is Source of Truth)
-                if (columns.length > 0 && typeof columns[0] === 'object') {
-                    columns = columns.map(c => c.name || c.header);
+            // FALLBACK 0: Read from Code Header (Truth Source)
+            if (columns.length === 0) {
+                try {
+                    const content = fs.readFileSync(scriptPath, 'utf8');
+                    const headerMatch = content.match(/#\s*EXPECTED_INPUT_COLUMNS:\s*([^\n]+)/);
+                    if (headerMatch && headerMatch[1]) {
+                        columns = headerMatch[1].split(',').map(c => c.trim()).filter(c => c);
+                    }
+                } catch (e) {
+                    console.error("[Execute] Failed to parse columns from code header:", e);
                 }
             }
         } catch (e) {
-            console.warn(`[Execute] Failed to load config for columns: ${e.message}`);
+            console.warn(`[Execute] Failed to load columns for script: ${e.message}`);
         }
 
         // Prepare Arguments
@@ -943,9 +936,6 @@ module.exports = function (app) {
                 if (scriptName.startsWith('TEST_')) {
                     try {
                         if (fs.existsSync(scriptPath)) fs.unlinkSync(scriptPath);
-                        // Also clean up the temp config if it exists
-                        const tempConfigPath = path.join(__dirname, '..', 'Script Configs', scriptName.replace('.py', '.json'));
-                        if (fs.existsSync(tempConfigPath)) fs.unlinkSync(tempConfigPath);
                     } catch (cleanupErr) {
                         console.error('Warning: Failed to cleanup temp script:', cleanupErr.message);
                     }
@@ -1064,18 +1054,9 @@ module.exports = function (app) {
                 return res.status(400).json({ error: 'Script must be a .py file' });
             }
 
-            // 2. Save Config JSON to 'Script Configs'
-            const configDir = path.join(__dirname, '..', 'Script Configs');
-            if (!fs.existsSync(configDir)) fs.mkdirSync(configDir, { recursive: true });
-
-            const configPath = path.join(configDir, scriptFile.originalname.replace('.py', '.json'));
-
-            // Parse to validate JSON before saving
-            const configObj = JSON.parse(configJson);
-            // Force filename in config to match
-            configObj.filename = scriptFile.originalname;
-
-            fs.writeFileSync(configPath, JSON.stringify(configObj, null, 2));
+            // 2. [DEPRECATED] Save Config JSON to 'Script Configs'
+            // Individual config files are removed in favor of scripts_registry.json
+            // We skip saving individual JSON files now.
 
             // 3. Save Original Content (if provided) to 'Original Scripts'
             // This preserves the raw user script before auto-conversion
@@ -1194,21 +1175,8 @@ module.exports = function (app) {
 
             fs.writeFileSync(registryPath, JSON.stringify(registry, null, 2));
 
-            // Also try to update the individual config file if it exists (for team only usually, but let's sync)
-            try {
-                const configPath = path.join(__dirname, '..', 'Script Configs', filename.replace('.py', '.json'));
-                if (fs.existsSync(configPath)) {
-                    const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-                    if (team !== undefined) config.team = team;
-                    // Configs might not use isReusable, but we can add it safely
-                    if (isReusable !== undefined) config.isReusable = isReusable;
-                    if (description !== undefined) config.description = description;
-
-                    fs.writeFileSync(configPath, JSON.stringify(config, null, 4));
-                }
-            } catch (err) {
-                console.error("Warning: Failed to update individual config file", err);
-            }
+            // [DEPRECATED] Update individual config file
+            // Configs are now consolidated in scripts_registry.json only.
 
             res.json({ success: true });
         } catch (e) {
@@ -1230,7 +1198,6 @@ module.exports = function (app) {
 
             // Paths
             const draftsDir = path.join(__dirname, '..', 'Draft Scripts');
-            const configsDir = path.join(__dirname, '..', 'Script Configs');
             const scriptsDir = path.join(__dirname, '..', 'Converted Scripts');
             // const originalDir = path.join(__dirname, '..', 'Original Scripts'); // DEPRECATED
             const registryPath = path.join(__dirname, '..', 'System', 'scripts_registry.json');
@@ -1239,12 +1206,8 @@ module.exports = function (app) {
             if (fs.existsSync(path.join(draftsDir, pyName))) fs.unlinkSync(path.join(draftsDir, pyName));
             if (fs.existsSync(path.join(draftsDir, metaName))) fs.unlinkSync(path.join(draftsDir, metaName));
 
-            // 2. Delete Active Files
+            // 2. [DEPRECATED] Delete Active Files (Individual Configs)
             if (fs.existsSync(path.join(scriptsDir, pyName))) fs.unlinkSync(path.join(scriptsDir, pyName));
-            if (fs.existsSync(path.join(configsDir, jsonName))) fs.unlinkSync(path.join(configsDir, jsonName));
-            // if (fs.existsSync(path.join(originalDir, pyName.replace('.py', '_original.py')))) {
-            //     fs.unlinkSync(path.join(originalDir, pyName.replace('.py', '_original.py')));
-            // }
 
             // 3. Update Registry
             if (fs.existsSync(registryPath)) {
@@ -1401,8 +1364,8 @@ module.exports = function (app) {
             "--debug" // ENABLE DEBUG LOGGING FOR TEST RUN
         ];
 
-        console.log('[Test Run] Spawning Python process with args:', args.map((a, i) => 
-            i === 0 ? a : (args[i-1] === '--token' ? '[REDACTED]' : (args[i-1] === '--data' ? '[DATA]' : a))
+        console.log('[Test Run] Spawning Python process with args:', args.map((a, i) =>
+            i === 0 ? a : (args[i - 1] === '--token' ? '[REDACTED]' : (args[i - 1] === '--data' ? '[DATA]' : a))
         ).join(' '));
 
         const pythonProcess = spawn('python', args, {
@@ -1423,7 +1386,7 @@ module.exports = function (app) {
             if (!processCompleted) {
                 console.error('[Test Run] TIMEOUT: Process exceeded 90 seconds. Killing process.');
                 pythonProcess.kill('SIGTERM');
-                
+
                 // Give it 2 seconds to cleanup, then force kill
                 setTimeout(() => {
                     if (!processCompleted) {
@@ -1431,10 +1394,10 @@ module.exports = function (app) {
                         pythonProcess.kill('SIGKILL');
                     }
                 }, 2000);
-                
+
                 // Cleanup temp file
                 try { if (fs.existsSync(tempPath)) fs.unlinkSync(tempPath); } catch (e) { }
-                
+
                 return res.status(500).json({
                     error: 'Test run timeout',
                     details: 'The script execution exceeded 90 seconds and was terminated. This may indicate an infinite loop, deadlock, or network issue.',
@@ -1468,10 +1431,10 @@ module.exports = function (app) {
             processCompleted = true;
             clearTimeout(timeoutHandle);
             console.error('[Test Run] Process error:', err);
-            
+
             // Cleanup
             try { if (fs.existsSync(tempPath)) fs.unlinkSync(tempPath); } catch (e) { }
-            
+
             return res.status(500).json({
                 error: 'Failed to spawn Python process',
                 details: err.message,
@@ -1482,9 +1445,9 @@ module.exports = function (app) {
         pythonProcess.on('close', (code) => {
             processCompleted = true;
             clearTimeout(timeoutHandle);
-            
+
             console.log(`[Test Run] Process closed with code: ${code}`);
-            
+
             // Cleanup
             try { if (fs.existsSync(tempPath)) fs.unlinkSync(tempPath); } catch (e) { }
 
@@ -1516,7 +1479,7 @@ module.exports = function (app) {
                 const jsonStr = parts.length > 1 ? parts[parts.length - 1].trim() : "{}";
 
                 let resultData = {};
-                try { resultData = JSON.parse(jsonStr); } catch (e) { 
+                try { resultData = JSON.parse(jsonStr); } catch (e) {
                     console.error('[Test Run] Failed to parse JSON result:', e.message);
                 }
 
@@ -1553,7 +1516,6 @@ module.exports = function (app) {
             const newMetaName = `${cleanNew}.py.meta.json`;
 
             const draftsDir = path.join(__dirname, '..', 'Draft Scripts');
-            const configsDir = path.join(__dirname, '..', 'Script Configs');
             const scriptsDir = path.join(__dirname, '..', 'Converted Scripts');
             const registryPath = path.join(__dirname, '..', 'System', 'scripts_registry.json');
             // const originalDir = path.join(__dirname, '..', 'Original Scripts'); // DEPRECATED
@@ -1580,19 +1542,8 @@ module.exports = function (app) {
                 renamedAny = true;
             }
 
-            // 2. Rename Registered Configs
-            if (fs.existsSync(path.join(configsDir, oldJsonName))) {
-                try {
-                    const config = JSON.parse(fs.readFileSync(path.join(configsDir, oldJsonName), 'utf8'));
-                    config.name = newPyName;
-                    config.filename = newPyName;
-                    fs.writeFileSync(path.join(configsDir, newJsonName), JSON.stringify(config, null, 4), 'utf8');
-                    fs.unlinkSync(path.join(configsDir, oldJsonName));
-                } catch (e) {
-                    fs.renameSync(path.join(configsDir, oldJsonName), path.join(configsDir, newJsonName));
-                }
-                renamedAny = true;
-            }
+            // 2. [DEPRECATED] Rename Registered Configs
+            // Individual config files are removed. Renaming is skipped.
 
             // 3. Rename Converted Script
             if (fs.existsSync(path.join(scriptsDir, oldPyName))) {
@@ -1673,17 +1624,14 @@ module.exports = function (app) {
             // 2. Generate Filenames
             const safeName = name.replace(/[^a-zA-Z0-9_-]/g, '_');
             const pyFilename = `${safeName}.py`;
-            const jsonFilename = `${safeName}.json`;
 
             const scriptsDir = path.join(__dirname, '..', 'Converted Scripts');
             const draftsDir = path.join(__dirname, '..', 'Draft Scripts');
-            const configsDir = path.join(__dirname, '..', 'Script Configs');
             // const originalDir = path.join(__dirname, '..', 'Original Scripts'); // DEPRECATED
 
             // Ensure dirs exist
             if (!fs.existsSync(scriptsDir)) fs.mkdirSync(scriptsDir, { recursive: true });
             if (!fs.existsSync(draftsDir)) fs.mkdirSync(draftsDir, { recursive: true });
-            if (!fs.existsSync(configsDir)) fs.mkdirSync(configsDir, { recursive: true });
 
             // 3. Save Python File
             fs.writeFileSync(path.join(scriptsDir, pyFilename), cleanedCode, 'utf8');
@@ -1735,7 +1683,9 @@ module.exports = function (app) {
                 outputConfig: req.body.outputConfig || {}
             };
 
-            fs.writeFileSync(path.join(configsDir, jsonFilename), JSON.stringify(config, null, 4), 'utf8');
+            // 4. [DEPRECATED] Save JSON Config
+            // Configs are now consolidated in scripts_registry.json.
+            // We skip saving individual JSON files.
 
             // 4b. Save Sidecar Meta JSON - DISABLED (Single Flow Architecture)
             // User requested NO redundant files in Converted Scripts.
